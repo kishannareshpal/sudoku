@@ -7,25 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DAE536C12C71368F00F6386F /* sudoku Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = DAE536C02C71368F00F6386F /* sudoku Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DAE536C12C71368F00F6386F /* App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = DAE536C02C71368F00F6386F /* App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DAE537212C713A5D00F6386F /* UIColorHexSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DAE537202C713A5D00F6386F /* UIColorHexSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		DA4867A82C7A28E500B2FB9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAE536B42C71368F00F6386F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAE536BF2C71368F00F6386F;
+			remoteInfo = App;
+		};
 		DAE536C22C71368F00F6386F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DAE536B42C71368F00F6386F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DAE536BF2C71368F00F6386F;
-			remoteInfo = "sudoku Watch App";
-		};
-		DAE536D32C71369000F6386F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DAE536B42C71368F00F6386F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DAE536BF2C71368F00F6386F;
-			remoteInfo = "sudoku Watch App";
-		};
-		DAE536DD2C71369000F6386F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DAE536B42C71368F00F6386F /* Project object */;
 			proxyType = 1;
@@ -41,7 +35,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				DAE536C12C71368F00F6386F /* sudoku Watch App.app in Embed Watch Content */,
+				DAE536C12C71368F00F6386F /* App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -50,25 +44,32 @@
 
 /* Begin PBXFileReference section */
 		DAE536BA2C71368F00F6386F /* sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sudoku.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DAE536C02C71368F00F6386F /* sudoku Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sudoku Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DAE536D22C71369000F6386F /* sudoku Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "sudoku Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DAE536DC2C71369000F6386F /* sudoku Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "sudoku Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAE536C02C71368F00F6386F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAFC1C2D2C7A083E0003D1A1 /* AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DA2DF0A52CF778AD00217502 /* Exceptions for "AppTests" folder in "AppTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DAFC1C2C2C7A083E0003D1A1 /* AppTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DAE536C42C71368F00F6386F /* sudoku Watch App */ = {
+		DAE536C42C71368F00F6386F /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "sudoku Watch App";
+			path = App;
 			sourceTree = "<group>";
 		};
-		DAE536D52C71369000F6386F /* sudoku Watch AppTests */ = {
+		DAFC1C2E2C7A083E0003D1A1 /* AppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "sudoku Watch AppTests";
-			sourceTree = "<group>";
-		};
-		DAE536DF2C71369000F6386F /* sudoku Watch AppUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "sudoku Watch AppUITests";
+			exceptions = (
+				DA2DF0A52CF778AD00217502 /* Exceptions for "AppTests" folder in "AppTests" target */,
+			);
+			path = AppTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -78,17 +79,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAE537212C713A5D00F6386F /* UIColorHexSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DAE536CF2C71369000F6386F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DAE536D92C71369000F6386F /* Frameworks */ = {
+		DAFC1C2A2C7A083E0003D1A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -101,9 +96,8 @@
 		DAE536B32C71368F00F6386F = {
 			isa = PBXGroup;
 			children = (
-				DAE536C42C71368F00F6386F /* sudoku Watch App */,
-				DAE536D52C71369000F6386F /* sudoku Watch AppTests */,
-				DAE536DF2C71369000F6386F /* sudoku Watch AppUITests */,
+				DAE536C42C71368F00F6386F /* App */,
+				DAFC1C2E2C7A083E0003D1A1 /* AppTests */,
 				DAE536BB2C71368F00F6386F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,9 +106,8 @@
 			isa = PBXGroup;
 			children = (
 				DAE536BA2C71368F00F6386F /* sudoku.app */,
-				DAE536C02C71368F00F6386F /* sudoku Watch App.app */,
-				DAE536D22C71369000F6386F /* sudoku Watch AppTests.xctest */,
-				DAE536DC2C71369000F6386F /* sudoku Watch AppUITests.xctest */,
+				DAE536C02C71368F00F6386F /* App.app */,
+				DAFC1C2D2C7A083E0003D1A1 /* AppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,9 +134,9 @@
 			productReference = DAE536BA2C71368F00F6386F /* sudoku.app */;
 			productType = "com.apple.product-type.application.watchapp2-container";
 		};
-		DAE536BF2C71368F00F6386F /* sudoku Watch App */ = {
+		DAE536BF2C71368F00F6386F /* App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DAE536E62C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch App" */;
+			buildConfigurationList = DAE536E62C71369000F6386F /* Build configuration list for PBXNativeTarget "App" */;
 			buildPhases = (
 				DAE536BC2C71368F00F6386F /* Sources */,
 				DAE536BD2C71368F00F6386F /* Frameworks */,
@@ -154,60 +147,38 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DAE536C42C71368F00F6386F /* sudoku Watch App */,
+				DAE536C42C71368F00F6386F /* App */,
 			);
-			name = "sudoku Watch App";
+			name = App;
 			packageProductDependencies = (
+				DAE537202C713A5D00F6386F /* UIColorHexSwift */,
 			);
 			productName = "sudoku Watch App";
-			productReference = DAE536C02C71368F00F6386F /* sudoku Watch App.app */;
+			productReference = DAE536C02C71368F00F6386F /* App.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DAE536D12C71369000F6386F /* sudoku Watch AppTests */ = {
+		DAFC1C2C2C7A083E0003D1A1 /* AppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DAE536ED2C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch AppTests" */;
+			buildConfigurationList = DAFC1C332C7A083E0003D1A1 /* Build configuration list for PBXNativeTarget "AppTests" */;
 			buildPhases = (
-				DAE536CE2C71369000F6386F /* Sources */,
-				DAE536CF2C71369000F6386F /* Frameworks */,
-				DAE536D02C71369000F6386F /* Resources */,
+				DAFC1C292C7A083E0003D1A1 /* Sources */,
+				DAFC1C2A2C7A083E0003D1A1 /* Frameworks */,
+				DAFC1C2B2C7A083E0003D1A1 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				DAE536D42C71369000F6386F /* PBXTargetDependency */,
+				DA4867A92C7A28E500B2FB9D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				DAE536D52C71369000F6386F /* sudoku Watch AppTests */,
+				DAFC1C2E2C7A083E0003D1A1 /* AppTests */,
 			);
-			name = "sudoku Watch AppTests";
+			name = AppTests;
 			packageProductDependencies = (
 			);
-			productName = "sudoku Watch AppTests";
-			productReference = DAE536D22C71369000F6386F /* sudoku Watch AppTests.xctest */;
+			productName = tests;
+			productReference = DAFC1C2D2C7A083E0003D1A1 /* AppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		DAE536DB2C71369000F6386F /* sudoku Watch AppUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DAE536F02C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch AppUITests" */;
-			buildPhases = (
-				DAE536D82C71369000F6386F /* Sources */,
-				DAE536D92C71369000F6386F /* Frameworks */,
-				DAE536DA2C71369000F6386F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DAE536DE2C71369000F6386F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				DAE536DF2C71369000F6386F /* sudoku Watch AppUITests */,
-			);
-			name = "sudoku Watch AppUITests";
-			packageProductDependencies = (
-			);
-			productName = "sudoku Watch AppUITests";
-			productReference = DAE536DC2C71369000F6386F /* sudoku Watch AppUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -217,7 +188,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					DAE536B92C71368F00F6386F = {
 						CreatedOnToolsVersion = 16.0;
@@ -225,12 +196,9 @@
 					DAE536BF2C71368F00F6386F = {
 						CreatedOnToolsVersion = 16.0;
 					};
-					DAE536D12C71369000F6386F = {
+					DAFC1C2C2C7A083E0003D1A1 = {
 						CreatedOnToolsVersion = 16.0;
-						TestTargetID = DAE536BF2C71368F00F6386F;
-					};
-					DAE536DB2C71369000F6386F = {
-						CreatedOnToolsVersion = 16.0;
+						LastSwiftMigration = 1600;
 						TestTargetID = DAE536BF2C71368F00F6386F;
 					};
 				};
@@ -244,15 +212,17 @@
 			);
 			mainGroup = DAE536B32C71368F00F6386F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DAE536BB2C71368F00F6386F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				DAE536B92C71368F00F6386F /* sudoku */,
-				DAE536BF2C71368F00F6386F /* sudoku Watch App */,
-				DAE536D12C71369000F6386F /* sudoku Watch AppTests */,
-				DAE536DB2C71369000F6386F /* sudoku Watch AppUITests */,
+				DAE536BF2C71368F00F6386F /* App */,
+				DAFC1C2C2C7A083E0003D1A1 /* AppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -272,14 +242,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DAE536D02C71369000F6386F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DAE536DA2C71369000F6386F /* Resources */ = {
+		DAFC1C2B2C7A083E0003D1A1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -296,14 +259,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DAE536CE2C71369000F6386F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DAE536D82C71369000F6386F /* Sources */ = {
+		DAFC1C292C7A083E0003D1A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -313,20 +269,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		DA4867A92C7A28E500B2FB9D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAE536BF2C71368F00F6386F /* App */;
+			targetProxy = DA4867A82C7A28E500B2FB9D /* PBXContainerItemProxy */;
+		};
 		DAE536C32C71368F00F6386F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DAE536BF2C71368F00F6386F /* sudoku Watch App */;
+			target = DAE536BF2C71368F00F6386F /* App */;
 			targetProxy = DAE536C22C71368F00F6386F /* PBXContainerItemProxy */;
-		};
-		DAE536D42C71369000F6386F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DAE536BF2C71368F00F6386F /* sudoku Watch App */;
-			targetProxy = DAE536D32C71369000F6386F /* PBXContainerItemProxy */;
-		};
-		DAE536DE2C71369000F6386F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DAE536BF2C71368F00F6386F /* sudoku Watch App */;
-			targetProxy = DAE536DD2C71369000F6386F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -365,6 +316,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -426,6 +378,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -450,13 +403,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"sudoku Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
+				DEVELOPMENT_TEAM = 75D56365P2;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = sudoku;
+				INFOPLIST_FILE = "sudoku-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -464,14 +420,15 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				WATCHOS_DEPLOYMENT_TARGET = 8.7;
 			};
 			name = Debug;
 		};
@@ -480,13 +437,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"sudoku Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
+				DEVELOPMENT_TEAM = 75D56365P2;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = sudoku;
+				INFOPLIST_FILE = "sudoku-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -494,28 +454,31 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				WATCHOS_DEPLOYMENT_TARGET = 8.7;
 			};
 			name = Release;
 		};
 		DAE536EB2C71369000F6386F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
-				INFOPLIST_KEY_CFBundleDisplayName = sudoku;
+				DEVELOPMENT_TEAM = 75D56365P2;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 			};
@@ -524,94 +487,63 @@
 		DAE536EC2C71369000F6386F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
-				INFOPLIST_KEY_CFBundleDisplayName = sudoku;
+				DEVELOPMENT_TEAM = 75D56365P2;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		DAE536EE2C71369000F6386F /* Debug */ = {
+		DAFC1C342C7A083E0003D1A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
+				DEVELOPMENT_TEAM = 75D56365P2;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AppTests/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kishanjadav.sudoku-Watch-AppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sudoku Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/sudoku Watch App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/App";
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
-		DAE536EF2C71369000F6386F /* Release */ = {
+		DAFC1C352C7A083E0003D1A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
+				DEVELOPMENT_TEAM = 75D56365P2;
+				ENABLE_TESTABILITY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AppTests/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kishanjadav.sudoku-Watch-AppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kishanjadav.sudoku.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sudoku Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/sudoku Watch App";
-				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Release;
-		};
-		DAE536F12C71369000F6386F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kishanjadav.sudoku-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "sudoku Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Debug;
-		};
-		DAE536F22C71369000F6386F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6L5RNAPGX5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kishanjadav.sudoku-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "sudoku Watch App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/App";
 				VALIDATE_PRODUCT = YES;
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
@@ -629,7 +561,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DAE536E62C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch App" */ = {
+		DAE536E62C71369000F6386F /* Build configuration list for PBXNativeTarget "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DAE536E72C71369000F6386F /* Debug */,
@@ -647,25 +579,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DAE536ED2C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch AppTests" */ = {
+		DAFC1C332C7A083E0003D1A1 /* Build configuration list for PBXNativeTarget "AppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DAE536EE2C71369000F6386F /* Debug */,
-				DAE536EF2C71369000F6386F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DAE536F02C71369000F6386F /* Build configuration list for PBXNativeTarget "sudoku Watch AppUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DAE536F12C71369000F6386F /* Debug */,
-				DAE536F22C71369000F6386F /* Release */,
+				DAFC1C342C7A083E0003D1A1 /* Debug */,
+				DAFC1C352C7A083E0003D1A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yeahdongcn/UIColor-Hex-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DAE537202C713A5D00F6386F /* UIColorHexSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */;
+			productName = UIColorHexSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DAE536B42C71368F00F6386F /* Project object */;
 }
