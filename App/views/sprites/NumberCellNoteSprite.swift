@@ -1,5 +1,5 @@
 //
-//  HintSprite.swift
+//  NumberCellsNoteSprite.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 31/08/2024.

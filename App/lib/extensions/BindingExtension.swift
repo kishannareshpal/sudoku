@@ -1,6 +1,6 @@
 //
 //  BindingExtension.swift
-//  Sudoku WatchKit Extension
+//  sudoku
 //
 //  Created by Kishan Jadav on 14/01/2023.
 //

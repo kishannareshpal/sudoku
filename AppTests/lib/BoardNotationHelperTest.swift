@@ -1,5 +1,5 @@
 //
-//  BoardNotationTest.swift
+//  BoardNotationHelperTest.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 22/09/2024.

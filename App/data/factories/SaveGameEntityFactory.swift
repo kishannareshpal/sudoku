@@ -1,5 +1,5 @@
 //
-//  Factory.swift
+//  SaveGameEntityFactory.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 28/08/2024.

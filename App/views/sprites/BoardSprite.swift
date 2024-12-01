@@ -1,6 +1,6 @@
 //
-//  GridSpriteNode.swift
-//  Sudoku WatchKit Extension
+//  BoardSprite.swift
+//  sudoku
 //
 //  Created by Kishan Jadav on 03/04/2022.
 //

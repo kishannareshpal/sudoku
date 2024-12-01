@@ -1,6 +1,6 @@
 //
-//  retry.utils.swift
-//  Sudoku WatchKit Extension
+//  Retry.swift
+//  sudoku
 //
 //  Created by Kishan Jadav on 26/04/2022.
 //  - Adapted from https://github.com/dmytro-anokhin/retry by Dmytro Anokhin

@@ -1,6 +1,6 @@
 //
-//  ActivationMode.swift
-//  Sudoku WatchKit Extension
+//  CursorActivationwMode.swift
+//  App
 //
 //  Created by Kishan Jadav on 18/04/2022.
 //

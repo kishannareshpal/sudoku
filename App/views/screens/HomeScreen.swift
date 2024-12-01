@@ -1,6 +1,6 @@
 //
 //  HomeScreen.swift
-//  Sudoku WatchKit Extension
+//  sudoku
 //
 //  Created by Kishan Jadav on 13/01/2023.
 //
