@@ -1,5 +1,5 @@
 //
-//  Untitled.swift
+//  IntExtension.swift
 //  Sudoku
 //
 //  Created by Kishan Jadav on 11/08/2024.

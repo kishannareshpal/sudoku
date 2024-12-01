@@ -1,6 +1,6 @@
 //
 //  ZIndex.swift
-//  Sudoku WatchKit Extension
+//  sudoku
 //
 //  Created by Kishan Jadav on 08/01/2023.
 //

@@ -1,6 +1,6 @@
 //
 //  sudokuApp.swift
-//  sudoku Watch App
+//  sudoku
 //
 //  Created by Kishan Jadav on 17/08/2024.
 //

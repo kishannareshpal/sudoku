@@ -1,6 +1,6 @@
 //
 //  Location.swift
-//  Sudoku WatchKit Extension
+//  sudoku
 //
 //  Created by Kishan Jadav on 10/04/2022.
 //

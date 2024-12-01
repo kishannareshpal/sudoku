@@ -1,6 +1,6 @@
 //
-//  CellSprite.swift
-//  Sudoku WatchKit Extension
+//  NumberCellSprite.swift
+//  sudoku
 //
 //  Created by Kishan Jadav on 08/01/2023.
 //

@@ -1,6 +1,6 @@
 //
-//  HighlightCell.swift
-//  Sudoku WatchKit Extension
+//  CursorCellSprite.swift
+//  sudoku
 //
 //  Created by Kishan Jadav on 15/01/2023.
 //

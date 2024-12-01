@@ -1,6 +1,6 @@
 //
 //  GameGraphics.swift
-//  Sudoku WatchKit Extension
+//  sudoku
 //
 //  Created by Kishan Jadav on 07/01/2023.
 //

@@ -1,5 +1,5 @@
 //
-//  ButtonSprite.swift
+//  IconSprite.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 25/08/2024.
