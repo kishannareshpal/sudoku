@@ -45,17 +45,19 @@ struct GameToolbarItem: View {
   
   var body: some View {
     GameToolbarItemContainer(action: action) {
-      HStack {
-        if let symbolName = symbolName {
-          Image(systemName: symbolName)
-            .foregroundStyle(symbolColor)
-        }
-        
-        if let label {
-          Text(label)
-            .fontWeight(.medium)
-            .font(.caption)
-            .foregroundStyle(labelColor)
+      HStack(alignment: .center) {
+        Group {
+          if let symbolName = symbolName {
+            Image(systemName: symbolName)
+              .foregroundStyle(symbolColor)
+          }
+          
+          if let label {
+            Text(label)
+              .font(.caption)
+              .fontWeight(.medium)
+              .foregroundStyle(labelColor)
+          }
         }
       }
     }
@@ -80,7 +82,9 @@ private struct GameToolbarItemContainer<Content: View>: View {
       // If action is provided, wrap the content into a button
       Button(action: action) {
         content
-      }.buttonStyle(.plain)
+      }
+      .buttonStyle(.plain)
+
     } else {
       // If no action is provided, just display the content
       content

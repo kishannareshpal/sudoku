@@ -23,7 +23,7 @@ struct GameMenuToolbar: View {
         GameToolbarItem(
           label: "Cancel",
           tint: .red,
-          symbolName: "xmark.square.fill"
+          symbolName: "xmark.circle.fill"
         ) {
           withAnimation(.interactiveSpring) {
             let cursorState = gameScene.toggleCellUnderCursor(
@@ -32,11 +32,11 @@ struct GameMenuToolbar: View {
             )
             self.cursorActivationMode = cursorState.activationMode
           }
-        }.transition(
-          .scale(scale: 0.9)
+        }
+        .transition(
+          .scale(scale: 1.1)
           .combined(with: .opacity)
         )
-        
       } else {
         // Back button
         GameToolbarItem(
@@ -45,8 +45,9 @@ struct GameMenuToolbar: View {
           symbolName: "chevron.backward.circle.fill"
         ) {
           self.backConfirmationShowing = true
-        }.transition(
-          .scale(scale: 0.9)
+        }
+        .transition(
+          .scale(scale: 1.1)
           .combined(with: .opacity)
         )
         .confirmationDialog(
@@ -64,11 +65,23 @@ struct GameMenuToolbar: View {
           )
         }
       }
-    }.frame(
+    }
+    .frame(
       maxWidth: .infinity,
       maxHeight: .infinity,
       alignment: .leading
-    ).padding()
+    )
+    .padding(
+      .top,
+      // We want to make the toolbar items inline with the clock
+      // - To make it inline with that, on 40mm and lower watches,
+      // there doesn't seem to be a need for the top padding but on other
+      // watches higher than that there is a need.
+      // - There's probably a better way of handling this! I couldn't for the
+      // life of me figure it out. I
+      WKInterfaceDevice.current().needsSafeTopPadding() ? 0 : nil
+    )
+    .padding(.leading)
   }
 }
 
