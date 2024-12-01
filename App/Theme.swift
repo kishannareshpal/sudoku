@@ -18,7 +18,6 @@ struct Theme {
   struct Fonts {
     static let emphasis: String = "SF Compact Rounded Bold"
     static let mono: String = "Spline Sans Mono Bold"
-    static let minuscule: String = "Bell Centennial"
   }
   
   struct Difficulty {
