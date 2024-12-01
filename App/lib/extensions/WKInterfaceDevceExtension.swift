@@ -8,7 +8,7 @@
 import WatchKit
 
 extension WKInterfaceDevice {
-  func is40mm() -> Bool {
+  func needsSafeTopPadding() -> Bool {
     let currentDevice = WKInterfaceDevice.current()
     let bounds = currentDevice.screenBounds
     let retinaFactor = currentDevice.screenScale
@@ -16,8 +16,19 @@ extension WKInterfaceDevice {
     let width = bounds.width * retinaFactor
     let height = bounds.height * retinaFactor
     
-    // Matches 40mm
-    return (width == 324) && (height == 394)
+    switch (width, height) {
+    // 38mm
+    case (272, 340):
+      fallthrough
+    // 40mm
+    case (324, 394):
+      fallthrough
+    // 41mm
+    case (352, 430):
+      return true
+    default:
+      return false
+    }
   }
   
   func statusBarHeight() -> CGFloat {
