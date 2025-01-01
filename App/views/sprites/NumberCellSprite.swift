@@ -34,9 +34,15 @@ class NumberCellSprite: SKSpriteNode {
   var noteValueToBeCommitted: Int {
     return round(self.draftNoteValue).toInt()
   }
-  
+
   var isChangeable: Bool {
     return !self.isStatic
+  }
+  
+  /// Whether or not a note can be added or removed from this cell
+  /// - Can only add notes to a changeable cell and when it has no value on it
+  var isNotable: Bool {
+    return self.value == 0
   }
   
   init(

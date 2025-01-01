@@ -30,8 +30,7 @@ class GameScene: SKScene {
 
     self.game = Game(
       sceneSize: size,
-      difficulty: difficulty,
-      existingGame: existingGame
+      difficulty: difficulty
     )
     
     super.init(size: size)

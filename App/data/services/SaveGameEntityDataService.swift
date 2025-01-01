@@ -6,6 +6,10 @@
 //
 
 class SaveGameEntityDataService {
+  static func hasSaveGame() -> Bool {
+    return SaveGameEntityDataRepository.hasAny()
+  }
+  
   static func findLastGame() -> SaveGameEntity? {
     return SaveGameEntityDataRepository.findLast()
   }

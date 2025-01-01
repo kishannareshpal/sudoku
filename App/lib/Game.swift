@@ -43,10 +43,10 @@ class Game {
   
   init(
     sceneSize: CGSize,
-    difficulty: Difficulty,
-    existingGame: SaveGameEntity?
+    difficulty: Difficulty
   ) {
     self.difficulty = difficulty
+    let existingGame = SaveGameEntityDataService.findLastGame()
     
     self.board = Board(difficulty: self.difficulty, existingGame: existingGame)
     self.graphics = GameGraphics(sceneSize: sceneSize, puzzle: self.board.puzzle)
@@ -167,7 +167,17 @@ class Game {
   }
   
   private func activateNumberCell(_ numberCell: NumberCellSprite, mode: CursorActivationMode) -> Bool {
-    guard (numberCell.isChangeable && !self.isNumberCellActive) else {
+    guard !self.isNumberCellActive else {
+      return false
+    }
+    
+    if mode == .note {
+      guard numberCell.isNotable else {
+        return false
+      }
+    }
+    
+    guard numberCell.isChangeable else {
       return false
     }
     
