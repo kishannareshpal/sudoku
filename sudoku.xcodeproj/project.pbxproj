@@ -406,7 +406,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 75D56365P2;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
@@ -419,7 +419,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -440,7 +440,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 75D56365P2;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = NO;
@@ -453,7 +453,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -472,10 +472,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 75D56365P2;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -489,10 +489,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 75D56365P2;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mini Sudoku";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kishannareshpal.sudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

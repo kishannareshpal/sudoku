@@ -9,6 +9,14 @@ import CoreData
 import Foundation
 
 class SaveGameEntityDataRepository: DataRepository {
+  static func hasAny() -> Bool {
+    let request = SaveGameEntity.fetchRequest()
+    request.predicate = .all
+    request.fetchLimit = 1
+    
+    let count = (try? self.context.count(for: request)) ?? 0
+    return count > 0
+  }
   
   /// Find and return the last save game stored if any.
   static func findLast() -> SaveGameEntity? {
@@ -21,7 +29,7 @@ class SaveGameEntityDataRepository: DataRepository {
     return result.first
   }
   
-static func new(
+  static func new(
     difficulty: Difficulty,
     givenNotation: BoardPlainStringNotation,
     solutionNotation: BoardPlainStringNotation,

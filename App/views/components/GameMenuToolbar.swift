@@ -21,8 +21,8 @@ struct GameMenuToolbar: View {
       if (cursorActivationMode != .none) {
         // Cancel currently active number cell
         GameToolbarItem(
-          label: "Cancel",
-          tint: .red,
+          label: cursorActivationMode == .note ? "Dismiss" : "Cancel",
+          tint: cursorActivationMode == .note ? .yellow : .red,
           symbolName: "xmark.circle.fill"
         ) {
           withAnimation(.interactiveSpring) {
@@ -105,12 +105,19 @@ struct GameMenuToolbar: View {
     Spacer()
     
     // For preview purposes only:
-    // - Simulates the cursor activation that on a real application is triggered
-    // by tapping on the game scene.
+    // - Simulates the activation of a cursor
     Button("Simulate cursor activation") {
       withAnimation(.snappy) {
         // Toggle
         cursorCellActivationMode =  cursorCellActivationMode == .none ? .number : .none
+      }
+    }
+    
+    // - Simulates the note mode activation on a cursor
+    Button("Simulate note mode") {
+      withAnimation(.snappy) {
+        // Toggle
+        cursorCellActivationMode =  cursorCellActivationMode == .none ? .note : .none
       }
     }
   }

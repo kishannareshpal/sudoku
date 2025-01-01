@@ -64,6 +64,7 @@ struct HomeScreen: View {
           ) {
             Button("Cancel", role: .cancel) {}
             Button("New game", role: .destructive) {
+              SaveGameEntityDataService.clear()
               self.newGameConfirmed = true
             }
             
