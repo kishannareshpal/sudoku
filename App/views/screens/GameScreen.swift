@@ -16,10 +16,9 @@ struct GameScreen: View {
     crownRotationValue: 0.0
   )
 
+  @StateObject private var sessionTracker = GameSessionDurationTracker()
   @State private var gameOver: Bool = false
   @State private var exitedGame: Bool = false
-  
-  @Environment(\.scenePhase) var scenePhase
 
   var difficulty: Difficulty
   var existingGame: SaveGameEntity?
@@ -83,10 +82,20 @@ struct GameScreen: View {
           edges: [.top]
         )
 
-      }.overlay {
+      }
+      .overlay {
         if gameOver {
           GameOverOverlay()
         }
+      }
+      .onAppear() {
+        self.sessionTracker.startedAt = Date()
+      }
+      .onDisappear() {
+        SaveGameEntityDataService
+          .incrementSessionDuration(
+            durationInSeconds: self.sessionTracker.elapsedDurationInSeconds
+          )
       }
     }
   }

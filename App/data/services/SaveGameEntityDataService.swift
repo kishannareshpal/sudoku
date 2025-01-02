@@ -20,8 +20,6 @@ class SaveGameEntityDataService {
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
     
-    print("New game called with: \(difficulty)")
-    
     SaveGameEntityDataRepository
       .new(
         difficulty: difficulty,
@@ -30,18 +28,23 @@ class SaveGameEntityDataService {
         playerNotation: serializedPlayerNotation,
         notesNotation: serializedNotesNotation
       )
+    
+    print("New game with difficulty '\(difficulty)' created!")
+  }
+  
+  static func incrementSessionDuration(durationInSeconds: Int64) -> Void {
+    SaveGameEntityDataRepository.incrementSessionDuration(lastSessionDurationInSeconds: durationInSeconds)
   }
   
   static func autoSave(puzzle: Puzzle) -> Void {
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
-    
-    print("Auto saved!")
-    
+        
     SaveGameEntityDataRepository.save(
       playerNotation: serializedPlayerNotation,
       notesNotation: serializedNotesNotation
     )
+    print("Auto saved!")
   }
   
   static func clear() -> Void {

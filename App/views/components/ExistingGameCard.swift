@@ -31,7 +31,7 @@ struct ExistingGameCard: View {
       ) {
         VStack(alignment: .leading) {
           HStack(alignment: .center) {
-            Text(existingGame.difficulty ?? "Unknown")
+            Text(existingGame.difficulty ?? "Unknown difficulty")
               .font(.title3)
               .fontWeight(.black)
             
@@ -41,6 +41,10 @@ struct ExistingGameCard: View {
               .font(.title2)
               .foregroundStyle(Color(Theme.Colors.primary))
           }
+          
+          Text("Time spent: \(GameSessionDurationTracker.format(existingGame.durationInSeconds))")
+            .font(.footnote)
+            .fontWeight(.regular)
           
           Spacer(minLength: 8)
           
