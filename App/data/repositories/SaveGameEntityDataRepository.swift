@@ -41,22 +41,24 @@ class SaveGameEntityDataRepository: DataRepository {
     saveGameEntity.difficulty = difficulty.rawValue
     saveGameEntity.givenNotation = givenNotation
     saveGameEntity.solutionNotation = solutionNotation
+    saveGameEntity.durationInSeconds = 0
     saveGameEntity.playerNotation = playerNotation
     saveGameEntity.notesNotation = notesNotation
     saveGameEntity.createdAt = Date()
     saveGameEntity.updatedAt = Date()
-    saveGameEntity.durationInSeconds = 0
     
     try? self.context.save()
   }
   
-  static func save(durationInSeconds: Int64) -> Void {
+  static func incrementSessionDuration(lastSessionDurationInSeconds: Int64) -> Void {
     let lastSaveGameEntity = self.findLast()
     guard let lastSaveGameEntity = lastSaveGameEntity else {
       return
     }
     
-    lastSaveGameEntity.durationInSeconds = durationInSeconds
+    let now = Date()
+    lastSaveGameEntity.updatedAt = now
+    lastSaveGameEntity.durationInSeconds = lastSaveGameEntity.durationInSeconds + lastSessionDurationInSeconds
     try? self.context.save()
   }
   
@@ -69,7 +71,8 @@ class SaveGameEntityDataRepository: DataRepository {
       return
     }
 
-    lastSaveGameEntity.updatedAt = Date()
+    let now = Date()
+    lastSaveGameEntity.updatedAt = now
     lastSaveGameEntity.playerNotation = playerNotation
     lastSaveGameEntity.notesNotation = notesNotation
     try? self.context.save()
