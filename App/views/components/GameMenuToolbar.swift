@@ -12,25 +12,26 @@ struct GameMenuToolbar: View {
   @Environment(\.dismiss) var dismissScreen: DismissAction
   
   var gameScene: GameScene
-  @Binding var cursorActivationMode: CursorActivationMode
+  @Binding var cursorState: CursorState
   @Binding var exitedGame: Bool
   @State var backConfirmationShowing: Bool = false
   
   var body: some View {
     HStack {
-      if (cursorActivationMode != .none) {
+      if (cursorState.activationMode != .none) {
         // Cancel currently active number cell
         GameToolbarItem(
-          label: cursorActivationMode == .note ? "Dismiss" : "Cancel",
-          tint: cursorActivationMode == .note ? .yellow : .red,
+          label: cursorState.activationMode == .note ? "Dismiss" : "Cancel",
+          tint: cursorState.activationMode == .note ? .yellow : .red,
           symbolName: "xmark.circle.fill"
         ) {
-          withAnimation(.interactiveSpring) {
-            let cursorState = gameScene.toggleCellUnderCursor(
-              mode: .number,
-              cancelled: true
-            )
-            self.cursorActivationMode = cursorState.activationMode
+          let newCursorState = gameScene.toggleCellUnderCursor(
+            mode: self.cursorState.activationMode,
+            cancelled: true
+          )
+
+          withAnimation(.smooth) {
+            self.cursorState = newCursorState
           }
         }
         .transition(
@@ -61,7 +62,7 @@ struct GameMenuToolbar: View {
           }
         } message: {
           Text(
-            "Your progress is saved. You can resume at any time."
+            "Your progress is always auto-saved. You can resume at any time."
           )
         }
       }
@@ -87,7 +88,12 @@ struct GameMenuToolbar: View {
 
 @available(watchOS 10.0, *)
 #Preview {
-  @Previewable @State var cursorCellActivationMode: CursorActivationMode = .none
+  @Previewable @State var cursorState: CursorState = .init(
+    activationMode: .none,
+    location: .zero,
+    crownRotationValue: 0.0,
+    preActivationModeChangeCrownRotationValue: 0.0
+  )
 
   VStack {
     GameMenuToolbar(
@@ -98,7 +104,7 @@ struct GameMenuToolbar: View {
         difficulty: .easy,
         existingGame: nil
       ),
-      cursorActivationMode: $cursorCellActivationMode,
+      cursorState: $cursorState,
       exitedGame: .constant(false)
     )
     
@@ -109,7 +115,7 @@ struct GameMenuToolbar: View {
     Button("Simulate cursor activation") {
       withAnimation(.snappy) {
         // Toggle
-        cursorCellActivationMode =  cursorCellActivationMode == .none ? .number : .none
+        cursorState.activationMode = cursorState.activationMode == .none ? .number : .none
       }
     }
     
@@ -117,7 +123,7 @@ struct GameMenuToolbar: View {
     Button("Simulate note mode") {
       withAnimation(.snappy) {
         // Toggle
-        cursorCellActivationMode =  cursorCellActivationMode == .none ? .note : .none
+        cursorState.activationMode = cursorState.activationMode == .none ? .note : .none
       }
     }
   }

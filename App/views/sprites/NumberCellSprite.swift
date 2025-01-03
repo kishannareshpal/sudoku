@@ -94,7 +94,7 @@ class NumberCellSprite: SKSpriteNode {
     self.updateLabelText(with: self.numberValueToBeCommitted)
   }
   
-  func clearNotes() {
+  func clearNotes() -> Void {
     self.notes.removeAll()
     self.notesNode.removeAllChildren()
   }
