@@ -73,6 +73,10 @@ class GameScene: SKScene {
     )
   }
   
+  func clearActivatedNumberCellNotes() -> Void {
+    self.game.clearActivatedNumberCellNotes()
+  }
+  
   func applyActivatedNumberCellNoteValue(to value: Int) async -> Void {
     await self.game.applyActivatedNumberCellNoteValue(to: value)
   }

@@ -49,17 +49,19 @@ struct GameScreen: View {
                                 isContinuous: true,
                                 isHapticFeedbackEnabled: true)
           .onTapGesture {
-            let state = gameScene.toggleCellUnderCursor(mode: .number)
+            let newCursorState = gameScene.toggleCellUnderCursor(mode: .number)
 
             withAnimation(.smooth) {
-              self.cursorState = state
+              self.cursorState = newCursorState
             }
           }
           .onLongPressGesture {
-            let state = gameScene.toggleCellUnderCursor(mode: .note)
+            // Toggle notes mode ON:
+            // - See GameNotesToolbar.swift where the logic for untoggling this lives.
+            let newCursorState = gameScene.toggleCellUnderCursor(mode: .note)
 
             withAnimation(.smooth) {
-              self.cursorState = state
+              self.cursorState = newCursorState
             }
           }
         
@@ -70,7 +72,7 @@ struct GameScreen: View {
         
         GameMenuToolbar(
           gameScene: gameScene,
-          cursorActivationMode: $cursorState.activationMode,
+          cursorState: $cursorState,
           exitedGame: $exitedGame
         )
         .frame(

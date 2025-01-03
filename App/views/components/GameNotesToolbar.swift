@@ -17,6 +17,8 @@ enum GameNotesToolbarPosition {
 struct GameNotesToolbar: View {
   var gameScene: GameScene
   @Binding var cursorState: CursorState
+  
+  @State private var releaseNoteModeConfirmationShowing: Bool = false
 
   var selectedNumber: Int {
     // Applying the `preActivationModeChangeCrownRotationValue` offset ensures that the selectedNumber always
@@ -33,6 +35,14 @@ struct GameNotesToolbar: View {
     return pastMiddleRow ? .top : .bottom
   }
   
+  func untoggleCellUnderCursor() {
+    let newCursorState = self.gameScene.toggleCellUnderCursor(mode: .none, cancelled: true)
+    
+    withAnimation(.smooth) {
+      self.cursorState = newCursorState
+    }
+  }
+  
   var tappableTargetView: some View {
     Color.clear
       .contentShape(Rectangle())
@@ -43,8 +53,29 @@ struct GameNotesToolbar: View {
         }
       }
       .onLongPressGesture {
-        self.cursorState = self.gameScene
-          .toggleCellUnderCursor(mode: .none, cancelled: true)
+        // Toggle notes mode OFF?
+        self.releaseNoteModeConfirmationShowing = true
+      }
+      .confirmationDialog(
+        "Notes",
+        isPresented: $releaseNoteModeConfirmationShowing
+      ) {
+        Button("Just Dismiss") {
+          // Just untoggle and maintain the current notes
+          self.untoggleCellUnderCursor()
+          self.releaseNoteModeConfirmationShowing = false
+        }
+        Button("Clear & Dismiss", role: .destructive) {
+          // Clear all of the notes from this cell
+          self.gameScene.clearActivatedNumberCellNotes()
+          
+          // Then untoggle the cell from notes mode
+          self.untoggleCellUnderCursor()
+        }
+      } message: {
+        Text(
+          "Tap 'Dismiss' to close notes input, or 'Clear' to erase all notes from this cell."
+        )
       }
   }
 

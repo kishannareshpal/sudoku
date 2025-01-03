@@ -140,6 +140,13 @@ class Game {
     self.highlightNumberCellsRelatedToCursor()
   }
   
+  func clearActivatedNumberCellNotes() -> Void {
+    guard let activatedNumberCell = self.activatedNumberCell else { return }
+    
+    self.board.puzzle.clearNotes(at: activatedNumberCell.location)
+    activatedNumberCell.clearNotes()
+  }
+  
   private func highlightNumberCellsRelatedToCursor() -> Void {
     for numberCell in self.numberCells {
       if (numberCell.location == numberCellUnderCursor.location) {
@@ -239,12 +246,11 @@ class Game {
     // Commit changes
     self.board.puzzle.updatePlayer(value: value, at: location)
     activatedNumberCell.commitValueChange()
-    
 
-    // Clear all the notes from this cell if committing a non-zero value to the cell
+    // Committing a non-empty value to the cell
     if value != 0 {
-      self.board.puzzle.clearNotes(at: location)
-      activatedNumberCell.clearNotes()
+      // Clear any previous notes from it
+      self.clearActivatedNumberCellNotes()
       
       scoreToAddForThisMove = Int64(
         (
