@@ -46,6 +46,10 @@ struct ExistingGameCard: View {
             .font(.footnote)
             .fontWeight(.regular)
           
+          Text("Score: \(existingGame.score)")
+            .font(.footnote)
+            .fontWeight(.regular)
+          
           Spacer(minLength: 8)
           
           Text("Tap to continue")

@@ -36,13 +36,14 @@ class SaveGameEntityDataService {
     SaveGameEntityDataRepository.incrementSessionDuration(lastSessionDurationInSeconds: durationInSeconds)
   }
   
-  static func autoSave(puzzle: Puzzle) -> Void {
+  static func autoSave(puzzle: Puzzle, scoreToAdd: Int64 = 0) -> Void {
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
-        
+    
     SaveGameEntityDataRepository.save(
       playerNotation: serializedPlayerNotation,
-      notesNotation: serializedNotesNotation
+      notesNotation: serializedNotesNotation,
+      scoreToAdd: scoreToAdd
     )
     print("Auto saved!")
   }

@@ -33,4 +33,19 @@ extension Difficulty {
       return Color(Theme.Difficulty.extreme)
     }
   }
+  
+  var scoreMultiplier: Int {
+    switch self {
+    case .easy:
+      return 1
+    case .medium:
+      return 2
+    case .hard:
+      return 3
+    case .veryHard:
+      return 4
+    case .extreme:
+      return 5
+    }
+  }
 }

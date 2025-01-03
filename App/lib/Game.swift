@@ -9,6 +9,9 @@ import Foundation
 import SpriteKit
 
 class Game {
+  private static let VALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = 10
+  private static let INVALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = -5
+  
   var difficulty: Difficulty!
 
   var gameScene: GameScene!
@@ -227,6 +230,7 @@ class Game {
     
     let value = activatedNumberCell.numberValueToBeCommitted
     let location = activatedNumberCell.location
+    var scoreToAddForThisMove: Int64 = 0
     
     // Validate comitting changes
     let validChange = self.board.puzzle.validate(value: value, at: location)
@@ -236,14 +240,24 @@ class Game {
     self.board.puzzle.updatePlayer(value: value, at: location)
     activatedNumberCell.commitValueChange()
     
+
     // Clear all the notes from this cell if committing a non-zero value to the cell
     if value != 0 {
       self.board.puzzle.clearNotes(at: location)
       activatedNumberCell.clearNotes()
+      
+      scoreToAddForThisMove = Int64(
+        (
+          validChange
+          ? Game.VALID_MOVE_SCORE_ADDITIVE_INCREMENT
+          : Game.INVALID_MOVE_SCORE_ADDITIVE_INCREMENT
+        ) * self.difficulty.scoreMultiplier
+      )
     }
     
     // Auto-save
-    SaveGameEntityDataService.autoSave(puzzle: self.board.puzzle)
+    SaveGameEntityDataService
+      .autoSave(puzzle: self.board.puzzle, scoreToAdd: scoreToAddForThisMove)
     
     // Check whether all cells have been correctly completed
     if self.isGameOver {
@@ -252,7 +266,7 @@ class Game {
   }
   
   private func gameOver() {
-    SaveGameEntityDataService.clear()    
+    SaveGameEntityDataService.clear()
     self.gameScene.didGameOver()
   }
 }
