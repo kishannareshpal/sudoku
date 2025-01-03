@@ -48,8 +48,9 @@ public class Puzzle {
     }
   }
 
+  /// Returns whether or not a value at a given location is correct for the current puzzle
   func validate(value: Int, at location: Location) -> Bool {
-    let solutionValue =  self.solution[location.row][location.col]
+    let solutionValue = self.solution[location.row][location.col]
     return value == solutionValue
   }
   

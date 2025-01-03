@@ -25,6 +25,8 @@ extension SaveGameEntity {
     entity.solutionNotation = solutionNotation
     entity.createdAt = createdAt
     entity.updatedAt = updatedAt
+    entity.durationInSeconds = 0
+    entity.score = 0
 
     return entity
   }
