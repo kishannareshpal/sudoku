@@ -13,9 +13,7 @@ struct NewGameCard: View {
   var body: some View {
     HStack(alignment: .center) {
       Text(difficulty.rawValue).fontWeight(.medium)
-
       Spacer()
-
       Image(systemName: "plus")
         .foregroundStyle(difficulty.color)
     }
