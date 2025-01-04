@@ -107,10 +107,6 @@ class NumberCellSprite: SKSpriteNode {
   }
   
   func toggleNotesVisibility(visible: Bool) {
-    // TODO: Use this non-animated version if the other one is too much
-//    self.notesNode.isHidden = !visible
-
-    // TODO: Experiment with animated first
     if visible {
       self.notesNode.run(SKAction.fadeIn(withDuration: 0.1))
     } else {

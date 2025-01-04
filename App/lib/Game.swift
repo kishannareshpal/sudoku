@@ -25,7 +25,7 @@ class Game {
   
   var cursorLocation: Location = Location(
     index: 0,
-    orientation: .topToBottom
+    orientation: AppConfig.getHighlightOrientation()
   )
   
   var isNumberCellActive: Bool {
@@ -145,6 +145,9 @@ class Game {
     
     self.board.puzzle.clearNotes(at: activatedNumberCell.location)
     activatedNumberCell.clearNotes()
+    
+    // Auto-save
+    SaveGameEntityDataService.autoSave(puzzle: self.board.puzzle, scoreToAdd: 0)
   }
   
   private func highlightNumberCellsRelatedToCursor() -> Void {

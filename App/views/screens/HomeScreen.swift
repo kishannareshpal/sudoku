@@ -72,6 +72,20 @@ struct HomeScreen: View {
             Text("Your existing game progress will be discarded when you start a new game.")
           }
         }
+        
+        Section() {
+          NavigationLink(destination: SettingsScreen()) {
+            Button(
+              action: {},
+              label: {
+                HStack {
+                  Image(systemName: "gear")
+                  Text("Settings")
+                }
+              }
+            )
+          }
+        }
       }
     }
     .navigationTitle("Sudoku")

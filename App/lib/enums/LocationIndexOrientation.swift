@@ -5,7 +5,7 @@
 //  Created by Kishan Jadav on 09/04/2022.
 //
 
-public enum LocationIndexOrientation {
+public enum LocationIndexOrientation: String {
   /// Rotating the crownWheel will move the highlight from left to right, top to bottom.
   /// E.g: Starts from the top of the first column (0), moves up to 8, then passes to the top of the second column (9) and so on...
   /// ```
@@ -14,7 +14,7 @@ public enum LocationIndexOrientation {
   ///   | 18 | . | . | . | . | . | . | . | 26 |
   ///   | ..
   /// ```
-  case leftToRight
+  case leftToRight = "leftToRight"
 
   /// Rotating the crownWheel will move the highlighted cell from top to bottom and left to right
   /// E.g: Starts from the top of the first column (0), moves up to 8, then moves to the second column (9) and goes down, and so on...
@@ -29,5 +29,5 @@ public enum LocationIndexOrientation {
   ///   | 7 | .. | .. |
   ///   | 8 | 17 | 26 |
   /// ```
-  case topToBottom
+  case topToBottom = "topToBottom"
 }

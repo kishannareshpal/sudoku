@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SpriteKit
-import SpriteKit
 
 struct GameScreen: View {
   @State private var cursorState: CursorState = .init(
