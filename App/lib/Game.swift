@@ -102,7 +102,7 @@ class Game {
     guard let activatedNumberCell = self.activatedNumberCell else { return }
 
     if (cursorCell.activeMode == .number) {
-      activatedNumberCell.changeNumberValue(direction: direction)
+      activatedNumberCell.changeDraftNumberValue(direction: direction)
     } else {
       Task {
         await activatedNumberCell.changeDraftNoteValue(direction: direction)
@@ -219,7 +219,7 @@ class Game {
     }
 
     // Cancel changes
-    activatedNumberCell.discardValueChange()
+    activatedNumberCell.discardDraftNumberValueChange()
     
     // Re-validate cell as it was reset during cell activation
     activatedNumberCell.toggleValidation(

@@ -74,7 +74,7 @@ class NumberCellSprite: SKSpriteNode {
     self.position = position
   }
 
-  func changeNumberValue(direction: Direction) -> Void {
+  func changeDraftNumberValue(direction: Direction) -> Void {
     guard self.isChangeable else { return }
     
     if direction == .forward {
@@ -91,12 +91,31 @@ class NumberCellSprite: SKSpriteNode {
       self.draftNumberValue = 0.0
     }
 
+    // Only show the notes note when changing to a non-empty value
+    self.toggleNotesVisibility(visible: self.draftNumberValue == 0)
+
     self.updateLabelText(with: self.numberValueToBeCommitted)
+  }
+  
+  func hasNotes() -> Bool {
+    return !self.notes.isEmpty
   }
   
   func clearNotes() -> Void {
     self.notes.removeAll()
     self.notesNode.removeAllChildren()
+  }
+  
+  func toggleNotesVisibility(visible: Bool) {
+    // TODO: Use this non-animated version if the other one is too much
+//    self.notesNode.isHidden = !visible
+
+    // TODO: Experiment with animated first
+    if visible {
+      self.notesNode.run(SKAction.fadeIn(withDuration: 0.1))
+    } else {
+      self.notesNode.run(SKAction.fadeOut(withDuration: 0.1))
+    }
   }
   
   func toggleNotes(of values: [Int], animate: Bool = true) async {
@@ -147,9 +166,12 @@ class NumberCellSprite: SKSpriteNode {
     }
   }
   
-  func discardValueChange() -> Void {
+  func discardDraftNumberValueChange() -> Void {
     self.draftNumberValue = self.value.toDouble()
     self.updateLabelText(with: self.value)
+
+    // Only show the notes note when the cell value is empty
+    self.toggleNotesVisibility(visible: self.value == 0)
   }
   
   func commitValueChange() -> Void {
