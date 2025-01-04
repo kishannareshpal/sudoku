@@ -88,7 +88,7 @@ struct HomeScreen: View {
         }
       }
     }
-    .navigationTitle("Sudoku")
+    .navigationTitle("MiniSudoku")
     .overlay {
       // Note: This is a workaround, in order to support watchOS 8. Navigating in SwiftUI is cumbersome,
       // especially when you want to do so from an alert or a dialog. Because dialogs are rendered out of scope
