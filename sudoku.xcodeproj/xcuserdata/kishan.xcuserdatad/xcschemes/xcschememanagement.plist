@@ -4,7 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>sudoku Watch App.xcscheme_^#shared#^_</key>
+		<key>MobileApp.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>WatchApp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,6 +17,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>DAD6FD5B2D2955CC006F8D37</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DAD6FD6A2D2955CD006F8D37</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>DAE536B92C71368F00F6386F</key>
 		<dict>
 			<key>primary</key>
