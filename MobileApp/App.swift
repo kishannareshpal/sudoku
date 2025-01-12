@@ -8,16 +8,15 @@
 import SwiftUI
 
 @main
-struct MobileApp: App {
+struct SudokuApp: App {
   @StateObject var dataProvider = AppDataProvider.shared
   
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        GameScreen(difficulty: .easy)
+        HomeScreen()
       }
     }
-    .environment(\.managedObjectContext
-                  , dataProvider.container.viewContext)
+    .environment(\.managedObjectContext, dataProvider.container.viewContext)
   }
 }
