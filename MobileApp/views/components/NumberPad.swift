@@ -1,5 +1,5 @@
 //
-//  KeyPad.swift
+//  NumberPad.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 07/01/2025.
@@ -10,7 +10,7 @@ import SpriteKit
 import UIKit.UIColor
 import UIColorHexSwift
 
-struct KeyPad: View {
+struct NumberPad: View {
   private var onNumberKeyPress: (_ number: Int) -> Void
   private var onClearKeyPress: () -> Void
   
@@ -34,7 +34,7 @@ struct KeyPad: View {
             numberKeyVibrator.impactOccurred()
             onNumberKeyPress(number)
           }
-          .buttonStyle(KeyButtonStyle())
+          .buttonStyle(NumberButtonStyle())
         }
       }
       
@@ -44,7 +44,7 @@ struct KeyPad: View {
             numberKeyVibrator.impactOccurred()
             onNumberKeyPress(number)
           }
-          .buttonStyle(KeyButtonStyle())
+          .buttonStyle(NumberButtonStyle())
         }
         
         Button(
@@ -55,13 +55,13 @@ struct KeyPad: View {
           label: {
             Image(systemName: "delete.left")
           }
-        ).buttonStyle(KeyButtonStyle())
+        ).buttonStyle(NumberButtonStyle())
       }
     }
   }
 }
 
-struct KeyButtonStyle: ButtonStyle {
+struct NumberButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.custom(Theme.Fonts.mono, size: 22))

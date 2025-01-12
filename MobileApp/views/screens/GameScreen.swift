@@ -11,8 +11,9 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct GameScreen: View {
+  @Environment(\.dismiss) var dismissScreen: DismissAction
+
 //  @StateObject private var sessionTracker = GameSessionDurationTracker()
-  @State private var exitedGame: Bool = false
   @State private var cursorState: CursorState = .init(mode: .number)
   
   var difficulty: Difficulty
@@ -42,32 +43,46 @@ struct GameScreen: View {
         }
 
         VStack {
+          Text("Hello")
+            .foregroundStyle(.white)
+          
+          Button("Increment") {
+            
+          }
+          
           HStack(alignment: .center) {
             Button {
-              
+              self.dismissScreen()
             } label: {
               Image(systemName: "chevron.left")
                 .font(.system(size: 24))
+                .foregroundStyle(.white)
             }
             .padding(12)
             
             Spacer()
             
-            Text("Sudoku")
-              .font(.largeTitle.weight(.black))
-              .foregroundStyle(Color(Theme.Colors.primary))
+            VStack {
+              Text("01:43:23")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(.white)
+              
+              Text("\(difficulty.rawValue) • 10 Points")
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(.white)
+            }
             
             Spacer()
             
             Button {
-              
+              gameScene.isPaused.toggle()
             } label: {
               Image(systemName: "pause.fill")
                 .font(.system(size: 24))
+                .foregroundStyle(.white)
             }
             .padding(12)
           }
-          
 
           Spacer()
         
@@ -90,7 +105,7 @@ struct GameScreen: View {
               }
             }
             
-            KeyPad (
+            NumberPad (
               onNumberKeyPress: { number in
                 if self.cursorState.mode == .note {
                   gameScene.applyActivatedNumberCellNoteValue(to: number)
@@ -108,6 +123,9 @@ struct GameScreen: View {
         }
       }
       .padding()
+//      .overlay {
+//        GameOverOverlay()
+//      }
     }
   }
 }

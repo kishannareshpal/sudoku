@@ -103,7 +103,7 @@ struct HomeScreen: View {
       // especially when you want to do so from an alert or a dialog. Because dialogs are rendered out of scope
       // of the navigation container, having a "NavigationLink" button as an action within a dialog is not supported.
       // There's no static API to use to navigate other than using these Navigation* views.
-      // - Instead, we're taking advantage of using the isActive: property to programmatically navigate to the view.
+      // - For that reason, here we're taking advantage of using the isActive: property to programmatically navigate to the view.
       // - When we navigate back, the isActive: bound value is toggled back to false! So this works out great.
       // - We are hiding this view as we're only using it for navigating.
       NavigationLink(
