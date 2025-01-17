@@ -9,27 +9,17 @@ import SwiftUI
 import SpriteKit
 
 class WatchGameScene: GameScene {
-  @Binding var cursorState: CursorState
-  
-  init(
+  @Published private(set) var cursorState: CursorState = .init()
+
+  override init(
     size: CGSize,
-    gameOver: Binding<Bool>,
-    difficulty: Difficulty,
-    existingGame: SaveGameEntity?,
-    cursorState: Binding<CursorState>
+    difficulty: Difficulty
   ) {
-    self._cursorState = cursorState
-    
-    super.init(
-      size: size,
-      gameOver: gameOver,
-      difficulty: difficulty,
-      existingGame: existingGame
-    )
+    super.init(size: size, difficulty: difficulty)
   }
 
   required init?(coder: NSCoder) {
-    fatalError("init(coder:) is not supported on this application")
+    super.init(coder: coder)
   }
   
   override func update(_ currentTime: TimeInterval) {

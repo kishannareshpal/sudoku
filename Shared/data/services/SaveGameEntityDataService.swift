@@ -29,26 +29,30 @@ class SaveGameEntityDataService {
         notesNotation: serializedNotesNotation
       )
     
-    print("New game with difficulty '\(difficulty)' created!")
   }
   
-  static func incrementSessionDuration(durationInSeconds: Int64) -> Void {
-    SaveGameEntityDataRepository.incrementSessionDuration(lastSessionDurationInSeconds: durationInSeconds)
+  static func saveDuration(seconds: Int64) -> Void {
+    SaveGameEntityDataRepository.saveDuration(seconds: seconds)
   }
   
-  static func autoSave(puzzle: Puzzle, scoreToAdd: Int64 = 0) -> Void {
+  static func autoSave(
+    puzzle: Puzzle,
+    duration: Int64? = nil,
+    score: Int64? = nil
+  ) -> Void {
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
     
     SaveGameEntityDataRepository.save(
       playerNotation: serializedPlayerNotation,
       notesNotation: serializedNotesNotation,
-      scoreToAdd: scoreToAdd
+      score: score,
+      duration: duration
     )
     print("Auto saved!")
   }
   
-  static func clear() -> Void {
-    SaveGameEntityDataRepository.clear()
+  static func delete() -> Void {
+    SaveGameEntityDataRepository.delete()
   }
 }

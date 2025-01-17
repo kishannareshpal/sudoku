@@ -12,9 +12,9 @@ struct GameMenuToolbar: View {
   @Environment(\.dismiss) var dismissScreen: DismissAction
   
   var gameScene: WatchGameScene
+  @ObservedObject var cursorState: CursorState
 
-  @Binding var cursorState: CursorState
-  @Binding var exitedGame: Bool
+//  @Binding var exitedGame: Bool
   @State var backConfirmationShowing: Bool = false
   
   var body: some View {
@@ -54,7 +54,7 @@ struct GameMenuToolbar: View {
         ) {
           Button("Cancel", role: .cancel) {}
           Button("Exit") {
-            self.exitedGame = true
+//            self.exitedGame = true
             self.dismissScreen()
           }
         } message: {
@@ -83,44 +83,44 @@ struct GameMenuToolbar: View {
   }
 }
 
-@available(watchOS 10.0, *)
-#Preview {
-  @Previewable @State var cursorState: CursorState = .init(
-    mode: .none,
-    crownRotationValue: 0.0,
-    preModeChangeCrownRotationValue: 0.0
-  )
-
-  VStack {
-    GameMenuToolbar(
-      gameScene: WatchGameScene(
-        size: CGSize(width: 20, height: 20),
-        gameOver: .constant(false),
-        difficulty: .easy,
-        existingGame: nil,
-        cursorState: $cursorState
-      ),
-      cursorState: $cursorState,
-      exitedGame: .constant(false)
-    )
-    
-    Spacer()
-    
-    // For preview purposes only:
-    // - Simulates the activation of a cursor
-    Button("Simulate cursor activation") {
-      withAnimation(.snappy) {
-        // Toggle
-        cursorState.mode = cursorState.mode == .none ? .number : .none
-      }
-    }
-    
-    // - Simulates the note mode activation on a cursor
-    Button("Simulate note mode") {
-      withAnimation(.snappy) {
-        // Toggle
-        cursorState.mode = cursorState.mode == .none ? .note : .none
-      }
-    }
-  }
-}
+//@available(watchOS 10.0, *)
+//#Preview {
+//  @Previewable @State var cursorState: CursorState = .init(
+//    mode: .none,
+//    crownRotationValue: 0.0,
+//    preModeChangeCrownRotationValue: 0.0
+//  )
+//
+//  VStack {
+//    GameMenuToolbar(
+//      gameScene: WatchGameScene(
+//        size: CGSize(width: 20, height: 20),
+//        gameOver: .constant(false),
+//        difficulty: .easy,
+//        existingGame: nil,
+//        cursorState: $cursorState
+//      ),
+//      cursorState: $cursorState,
+//      exitedGame: .constant(false)
+//    )
+//    
+//    Spacer()
+//    
+//    // For preview purposes only:
+//    // - Simulates the activation of a cursor
+//    Button("Simulate cursor activation") {
+//      withAnimation(.snappy) {
+//        // Toggle
+//        cursorState.mode = cursorState.mode == .none ? .number : .none
+//      }
+//    }
+//    
+//    // - Simulates the note mode activation on a cursor
+//    Button("Simulate note mode") {
+//      withAnimation(.snappy) {
+//        // Toggle
+//        cursorState.mode = cursorState.mode == .none ? .note : .none
+//      }
+//    }
+//  }
+//}

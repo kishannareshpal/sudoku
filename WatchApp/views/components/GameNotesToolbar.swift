@@ -8,16 +8,10 @@
 import SwiftUI
 import SpriteKit
 
-enum GameNotesToolbarPosition {
-  case top
-  case bottom
-}
-
-
 struct GameNotesToolbar: View {
   var gameScene: WatchGameScene
-  @Binding var cursorState: CursorState
-  
+  @ObservedObject var cursorState: CursorState
+
   @State private var releaseNoteModeConfirmationShowing: Bool = false
 
   var selectedNumber: Int {
@@ -43,7 +37,9 @@ struct GameNotesToolbar: View {
     Color.clear
       .contentShape(Rectangle())
       .onTapGesture {
-        self.gameScene.applyActivatedNumberCellNoteValue(to: selectedNumber)
+        self.gameScene.toggleActivatedNumberCellNoteValue(
+          with: selectedNumber
+        )
       }
       .onLongPressGesture {
         // Toggle notes mode OFF?
@@ -80,10 +76,28 @@ struct GameNotesToolbar: View {
             tappableTargetView
           }
           
-          Content(
-            gameScene: gameScene,
-            selectedNumber: selectedNumber,
-            position: position
+          HStack {
+            ForEach(1..<10) { number in
+              Spacer()
+              
+              GameNotesToolbarNumberButton(
+                number: number,
+                selected: self.selectedNumber == number,
+                onPress: {
+                  self.gameScene.toggleActivatedNumberCellNoteValue(with: number)
+                }
+              )
+              
+              Spacer()
+            }
+          }
+          .padding(.top, self.position == .bottom ? 6 : 0)
+          .padding(.bottom, self.position == .top ? 6 : 0)
+          .background(
+            Color.black
+              .opacity(0.8)
+              .shadow(color: .black, radius: 10)
+              .ignoresSafeArea()
           )
           
           if (position == .top) {
@@ -107,87 +121,39 @@ struct GameNotesToolbar: View {
   }
 }
 
-struct Content: View {
-  var gameScene: GameScene
-  var selectedNumber: Int
-  var position: GameNotesToolbarPosition
-  
-  var body: some View {
-    VStack {
-      HStack() {
-        // Cancel currently active number cell
-        ForEach(1..<10) { number in
-          Spacer()
-          
-          Button {
-            gameScene.applyActivatedNumberCellNoteValue(to: number)
-          } label: {
-            VStack {
-              Circle()
-                .frame(width: 8, height: 8)
-                .foregroundStyle(
-                  self.selectedNumber == number
-                  ? Color(NumberCellNoteSprite.color(for: number))
-                  : Color(NumberCellNoteSprite.color(for: number)).opacity(0.3)
-                )
-              
-              Text(number.toString())
-                .font(.custom(Theme.Fonts.mono, size: 12))
-            }
-          }
-          .buttonStyle(.plain)
-          .foregroundStyle(
-            self.selectedNumber == number
-            ? Color(NumberCellNoteSprite.color(for: number))
-            : .white.opacity(0.3)
-          )
-          
-          Spacer()
-        }
-      }
-    }
-    .padding(.top, self.position == .bottom ? 6 : 0)
-    .padding(.bottom, self.position == .top ? 6 : 0)
-    .background(
-      Color.black
-        .opacity(0.8)
-        .shadow(color: .black, radius: 10)
-        .ignoresSafeArea()
-    )
-  }
-}
 
 
-@available(watchOS 10.0, *)
-#Preview {
-  @Previewable @State var cursorState: CursorState = .init(
-    mode: .none,
-    crownRotationValue: 0.0,
-    preModeChangeCrownRotationValue: 0.0
-  )
-  
-  VStack {
-    // For preview purposes only:
-    // - Simulates the cursor activation that on a real application is triggered
-    // by tapping on the game scene.
-    Button("Simulate cursor activation") {
-      withAnimation(.snappy) {
-        cursorState.mode = cursorState.mode == .none ? .note : .none
-      }
-    }
-    
-    Spacer()
-    
-    GameNotesToolbar(
-      gameScene: WatchGameScene(
-        size: CGSize(width: 20, height: 20),
-        gameOver: .constant(false),
-        difficulty: .easy,
-        existingGame: nil,
-        cursorState: $cursorState
-      ),
-      cursorState: $cursorState
-    ).scaledToFit()
-  }
-}
 
+//@available(watchOS 10.0, *)
+//#Preview {
+//  @Previewable @State var cursorState: CursorState = .init(
+//    mode: .none,
+//    crownRotationValue: 0.0,
+//    preModeChangeCrownRotationValue: 0.0
+//  )
+//  
+//  VStack {
+//    // For preview purposes only:
+//    // - Simulates the cursor activation that on a real application is triggered
+//    // by tapping on the game scene.
+//    Button("Simulate cursor activation") {
+//      withAnimation(.snappy) {
+//        cursorState.mode = cursorState.mode == .none ? .note : .none
+//      }
+//    }
+//    
+//    Spacer()
+//    
+//    GameNotesToolbar(
+//      gameScene: WatchGameScene(
+//        size: CGSize(width: 20, height: 20),
+//        gameOver: .constant(false),
+//        difficulty: .easy,
+//        existingGame: nil,
+//        cursorState: $cursorState
+//      ),
+//      cursorState: $cursorState
+//    ).scaledToFit()
+//  }
+//}
+//

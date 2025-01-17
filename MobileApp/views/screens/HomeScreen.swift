@@ -17,6 +17,9 @@ struct HomeScreen: View {
   
   @State private var currentGame: SaveGameEntity?
   
+  @State private var colorToggle = false
+  @State private var animate = false
+  
   var body: some View {
     ZStack {
       Color(UIColor("#100D01"))
@@ -27,17 +30,17 @@ struct HomeScreen: View {
           Spacer().frame(height: 48)
           
           VStack(spacing: 8) {
-            Image("Logo")
+            Image("Softly rounded logo")
               .resizable()
               .frame(width: 82, height: 82)
-              .tint(.white)
+              .scaledToFit()
             
             Text("Sudoku")
               .font(.system(size: 48, weight: .medium))
               .foregroundStyle(.accent)
           }
           
-          ResumeGameButton(existingGame: currentGame)
+          ContinueGameButton()
           
           VStack(spacing: 12) {
             Text("Start a new game:")
@@ -69,7 +72,7 @@ struct HomeScreen: View {
               ) {
                 Button("Cancel", role: .cancel) {}
                 Button("New game", role: .destructive) {
-                  SaveGameEntityDataService.clear()
+                  SaveGameEntityDataService.delete()
                   self.currentGame = nil
                   self.newGameConfirmed = true
                 }

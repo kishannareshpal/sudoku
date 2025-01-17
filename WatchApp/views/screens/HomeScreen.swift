@@ -16,19 +16,19 @@ struct HomeScreen: View {
 
   @State private var lastGame: SaveGameEntity?
   
-  @StateObject private var manager = SharedSaveGameManager.instance
+//  @StateObject private var manager = SharedSaveGameManager.instance
   
   var body: some View {
     VStack {
       Spacer(minLength: 4)
       
       List {
-        Text("Data: \(manager.currentValue.updatedAt)")
-          .font(.caption2)
-        
-        Button("Send") {
-          manager.sendSample()
-        }
+//        Text("Data: \(manager.currentValue.updatedAt)")
+//          .font(.caption2)
+//        
+//        Button("Send") {
+//          manager.sendSample()
+//        }
         
         if lastGame != nil {
           Section(
@@ -37,7 +37,7 @@ struct HomeScreen: View {
               Text("Continue where you left off:").font(.system(size: 12))
             }
           ) {
-            ExistingGameCard()
+            ContinueGameButton()
           }.padding(.vertical)
         }
       
@@ -73,7 +73,7 @@ struct HomeScreen: View {
           ) {
             Button("Cancel", role: .cancel) {}
             Button("New game", role: .destructive) {
-              SaveGameEntityDataService.clear()
+              SaveGameEntityDataService.delete()
               self.newGameConfirmed = true
             }
             

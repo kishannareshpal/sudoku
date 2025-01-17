@@ -42,7 +42,19 @@ class NumberCellSprite: SKSpriteNode {
   /// Whether or not a note can be added or removed from this cell
   /// - Can only add notes to a changeable cell and when it has no value on it
   var isNotable: Bool {
+    return self.isValueEmpty
+  }
+  
+  var isEraseable: Bool {
+    return !self.isStatic && !(self.isValueEmpty && self.isNotesEmpty)
+  }
+  
+  var isValueEmpty: Bool {
     return self.value == 0
+  }
+  
+  var isNotesEmpty: Bool {
+    return self.notes.isEmpty
   }
   
   init(
@@ -114,10 +126,6 @@ class NumberCellSprite: SKSpriteNode {
     self.toggleNotesVisibility(visible: self.draftNumberValue == 0)
 
     self.updateLabelText(with: self.numberValueToBeCommitted)
-  }
-  
-  func hasNotes() -> Bool {
-    return !self.notes.isEmpty
   }
   
   func clearNotes() -> Void {

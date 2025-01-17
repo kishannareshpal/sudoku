@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Puzzle {
+public class Puzzle: ObservableObject {
   // TODO: Improve processor performance
   private let processor: QQWing;
   private let difficulty: Difficulty
@@ -17,6 +17,18 @@ public class Puzzle {
   private(set) var given: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var solution: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var notes: BoardGridNoteNotation = BoardNotationHelper.emptyGridNoteNotation();
+  
+  @Published var remainingNumbersWithCount: [Int: Int] = [
+    1: 9,
+    2: 9,
+    3: 9,
+    4: 9,
+    5: 9,
+    6: 9,
+    7: 9,
+    8: 9,
+    9: 9,
+  ]
   
   init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
     self.processor = QQWing()
@@ -30,10 +42,13 @@ public class Puzzle {
     } else {
       generateNewUsingProcessor()
     }
+    
+    self.calculateAndUpdateRemainingNumbersWithCount()
   }
   
   func updatePlayer(value: Int, at location: Location) -> Void {
     self.player[location.row][location.col] = value
+    self.calculateAndUpdateRemainingNumbersWithCount()
   }
   
   func clearNotes(at location: Location) -> Void {
@@ -52,6 +67,19 @@ public class Puzzle {
   func validate(value: Int, at location: Location) -> Bool {
     let solutionValue = self.solution[location.row][location.col]
     return value == solutionValue
+  }
+  
+  func checkGameOver() -> Bool {
+    return self.player.enumerated().allSatisfy { (rowIndex, row) in
+      return row.enumerated().allSatisfy { (colIndex, playerValue) in
+        // Player input array will have a default valu of 0 on given cells
+        // so we need to replace those on this check.
+        let givenValue = self.given[rowIndex][colIndex]
+        let value = givenValue != 0 ? givenValue : playerValue
+        
+        return self.solution[rowIndex][colIndex] == value
+      }
+    }
   }
   
   private func generateFromExistingGame() {
@@ -87,5 +115,34 @@ public class Puzzle {
     // The processor doesn't support notes generation, so we're just instatiating as empty.
     // - In the future, you may consider fetching the notes generated using the processor.
     self.notes = BoardNotationHelper.emptyGridNoteNotation()
+  }
+  
+  private func calculateAndUpdateRemainingNumbersWithCount() -> Void {
+    // Reset
+    self.remainingNumbersWithCount = [
+      1: 9,
+      2: 9,
+      3: 9,
+      4: 9,
+      5: 9,
+      6: 9,
+      7: 9,
+      8: 9,
+      9: 9,
+    ]
+    
+    self.player.enumerated().forEach { (rowIndex, row) in
+      return row.enumerated().forEach { (colIndex, playerValue) in
+        // Player input array will have a default valu of 0 on given cells
+        // so we need to replace those on this check.
+        let givenValue = self.given[rowIndex][colIndex]
+        let value = givenValue != 0 ? givenValue : playerValue
+        
+        let valid = self.solution[rowIndex][colIndex] == value
+        if valid, let count = self.remainingNumbersWithCount[value] {
+          self.remainingNumbersWithCount[value] = count - 1
+        }
+      }
+    }
   }
 }

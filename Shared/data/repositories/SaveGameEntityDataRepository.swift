@@ -60,7 +60,7 @@ class SaveGameEntityDataRepository: DataRepository {
     }
   }
   
-  static func incrementSessionDuration(lastSessionDurationInSeconds: Int64) -> Void {
+  static func saveDuration(seconds: Int64) -> Void {
     let currentSaveGameEntity = self.findCurrent()
     guard let currentSaveGameEntity = currentSaveGameEntity else {
       return
@@ -68,7 +68,7 @@ class SaveGameEntityDataRepository: DataRepository {
     
     let now = Date()
     currentSaveGameEntity.updatedAt = now
-    currentSaveGameEntity.durationInSeconds += lastSessionDurationInSeconds
+    currentSaveGameEntity.durationInSeconds = seconds
     
     do {
       try self.context.save()
@@ -85,7 +85,8 @@ class SaveGameEntityDataRepository: DataRepository {
   static func save(
     playerNotation: BoardPlainStringNotation,
     notesNotation: BoardPlainNoteStringNotation,
-    scoreToAdd: Int64
+    score: Int64?,
+    duration: Int64?
   ) -> Void {
     let currentSaveGameEntity = self.findCurrent()
     guard let currentSaveGameEntity = currentSaveGameEntity else {
@@ -96,9 +97,13 @@ class SaveGameEntityDataRepository: DataRepository {
     currentSaveGameEntity.updatedAt = now
     currentSaveGameEntity.playerNotation = playerNotation
     currentSaveGameEntity.notesNotation = notesNotation
-    currentSaveGameEntity.score += scoreToAdd
-    if currentSaveGameEntity.score < 0 {
-      currentSaveGameEntity.score = 0
+    
+    if let score = score {
+      currentSaveGameEntity.score = score
+    }
+
+    if let duration = duration {
+      currentSaveGameEntity.durationInSeconds = duration
     }
     
     do {
@@ -113,7 +118,7 @@ class SaveGameEntityDataRepository: DataRepository {
     }
   }
   
-  static func clear() -> Void {
+  static func delete() -> Void {
     let currentGame = self.findCurrent()
     guard let currentGame else {
       return

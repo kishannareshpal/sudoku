@@ -9,20 +9,17 @@ import SwiftUI
 import SpriteKit
 import UIKit
 
-class MobileGameScene: NewGameScene, ObservableObject {
+class MobileGameScene: GameScene {
+  @Published private(set) var cursorState: CursorState = .init()
+  
   private var lastCursorLocation: Location = .zero
   private var cellSelectionVibrator = UIImpactFeedbackGenerator(style: .light)
   
   override init(
     size: CGSize,
-    difficulty: Difficulty,
-    existingGame: SaveGameEntity?
+    difficulty: Difficulty
   ) {
-    super.init(
-      size: size,
-      difficulty: difficulty,
-      existingGame: existingGame
-    )
+    super.init(size: size, difficulty: difficulty)
   }
   
   required init?(coder: NSCoder) {
@@ -54,7 +51,6 @@ class MobileGameScene: NewGameScene, ObservableObject {
       guard Location.validateNotationFormat(nodeName) else { continue }
       
       // Cell nodes have their names as their location in notation format
-      
       let newCursorLocation = Location(notation: nodeName)
       self.game.moveCursor(
         to: newCursorLocation,
@@ -93,6 +89,14 @@ class MobileGameScene: NewGameScene, ObservableObject {
       self.onCursorLocationChanged()
       
       print("Touched node: \(nodeName)")
+    }
+  }
+  
+  func changeOrToggleActivatedNumberCellValueOrNote(with number: Int) {
+    if self.cursorState.mode == .note {
+      self.toggleActivatedNumberCellNoteValue(with: number)
+    } else {
+      self.changeActivatedNumberCellValue(with: number)
     }
   }
   

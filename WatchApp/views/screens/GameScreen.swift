@@ -9,14 +9,7 @@ import SwiftUI
 import SpriteKit
 
 struct GameScreen: View {
-  @State private var cursorState: CursorState = .init(
-    mode: .none,
-    crownRotationValue: 0.0
-  )
-
-  @StateObject private var sessionTracker = GameSessionDurationTracker()
-  @State private var gameOver: Bool = false
-  @State private var exitedGame: Bool = false
+  @StateObject private var gameScene: WatchGameScene
 
   var difficulty: Difficulty
   var existingGame: SaveGameEntity?
@@ -24,69 +17,48 @@ struct GameScreen: View {
   init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
     self.difficulty = difficulty
     self.existingGame = existingGame
+    
+    _gameScene = StateObject(
+      wrappedValue: WatchGameScene(
+        size: .init(width: 10, height: 10), // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
+        difficulty: difficulty
+      )
+    )
   }
   
   var body: some View {
-    if exitedGame == false {
-      GeometryReader { geometry in
-        let gameScene = WatchGameScene(size: geometry.size,
-                                       gameOver: $gameOver,
-                                       difficulty: difficulty,
-                                       existingGame: existingGame,
-                                       cursorState: $cursorState)
+    GeometryReader { geometry in
+      Color.clear.onAppear() {
+        self.gameScene.resize(size: geometry.size)
+      }
 
-        SpriteView(
-          scene: gameScene,
-          preferredFramesPerSecond: 60
-        ).focusable()
-          .digitalCrownRotation($cursorState.crownRotationValue,
-                                from: 0.0,
-                                through: 80.0,
-                                by: 1.0,
-                                sensitivity: .medium,
-                                isContinuous: true,
-                                isHapticFeedbackEnabled: true)
-          .onTapGesture {
-            //let newCursorState =
-            gameScene.toggleCellUnderCursor(mode: .number)
-          }
-          .onLongPressGesture {
-            // Toggle notes mode ON:
-            // - See GameNotesToolbar.swift where the logic for untoggling this lives.
-            gameScene.toggleCellUnderCursor(mode: .note)
-          }
-        
-        GameNotesToolbar(gameScene: gameScene, cursorState: $cursorState)
-        
-        GameMenuToolbar(
-          gameScene: gameScene,
-          cursorState: $cursorState,
-          exitedGame: $exitedGame
-        )
-        .frame(
-          width: geometry.size.width,
-          height: geometry.safeAreaInsets.top,
-          alignment: .leading
-        )
-        .ignoresSafeArea(
-          edges: [.top]
-        )
+      GameSceneView(
+        gameScene: self.gameScene,
+        game: self.gameScene.game,
+        cursorState: self.gameScene.cursorState
+      )
+      
+      GameNotesToolbar(
+        gameScene: self.gameScene,
+        cursorState: self.gameScene.cursorState
+      )
+      
+      GameMenuToolbar(
+        gameScene: self.gameScene,
+        cursorState: self.gameScene.cursorState
+      )
+      .frame(
+        width: geometry.size.width,
+        height: geometry.safeAreaInsets.top,
+        alignment: .leading
+      )
+      .ignoresSafeArea(
+        edges: [.top]
+      )
 
-      }
-      .overlay {
-        if gameOver {
-          GameOverOverlay()
-        }
-      }
-      .onAppear() {
-        self.sessionTracker.startedAt = Date()
-      }
-      .onDisappear() {
-        SaveGameEntityDataService
-          .incrementSessionDuration(
-            durationInSeconds: self.sessionTracker.elapsedDurationInSeconds
-          )
-      }
+    }
+    .overlay {
+      GameOverOverlay(game: self.gameScene.game)
     }
   }
 }
