@@ -2,27 +2,20 @@
 //  GameScene.swift
 //  sudoku
 //
-//  Created by Kishan Jadav on 03/04/2022.
+//  Created by Kishan Jadav on 08/01/2025.
 //
 
 import SwiftUI
 import SpriteKit
+import Combine
 
-class GameScene: SKScene {
-  @Binding var gameOver: Bool
-
-  internal var difficulty: Difficulty
-  internal var game: Game!
+class GameScene: SKScene, ObservableObject {
+  @Published var game: Game
 
   public init(
     size: CGSize,
-    gameOver: Binding<Bool>,
-    difficulty: Difficulty,
-    existingGame: SaveGameEntity?
+    difficulty: Difficulty
   ) {
-    self.difficulty = difficulty
-    self._gameOver = gameOver
-
     self.game = Game(
       sceneSize: size,
       difficulty: difficulty
@@ -31,9 +24,8 @@ class GameScene: SKScene {
     super.init(size: size)
     
     self.name = "GameScene"
-    self.anchorPoint.x = 0
-    self.anchorPoint.y = 0
-    
+    self.anchorPoint = .zero
+
     self.scaleMode = .aspectFill
     self.isUserInteractionEnabled = true
     
@@ -46,34 +38,65 @@ class GameScene: SKScene {
   }
   
   override func sceneDidLoad() {
-//    self.game.load(on: self)
+    super.sceneDidLoad()
+
+    self.game.load(on: self)
   }
   
   override func update(_ currentTime: TimeInterval) {
     super.update(currentTime)
+    
+    if (self.game.isGamePaused) {
+      self.gameDidPause()
+    } else {
+      self.gameDidResume()
+    }
+    
+    if (self.game.isGameOver) {
+      self.gameDidOver()
+    }
+  }
+  
+  func resize(size: CGSize) {
+    // Cleanup previous elements from the scene
+    self.removeAllActions()
+    self.removeAllChildren()
+    
+    // Resize the scene
+    self.size = size
+    
+    // Redraw all the elements to the scene
+    self.game = Game(sceneSize: size, difficulty: self.game.difficulty)
+    
+    self.sceneDidLoad()
   }
 
   func clearActivatedNumberCellNotes() -> Void {
     self.game.clearActivatedNumberCellNotes()
   }
   
-  func clearActivatedNumberCellValue() -> Void {
+  func clearActivatedNumberCellValueOrNotes() -> Void {
     self.game.clearActivatedNumberValue()
     self.game.clearActivatedNumberCellNotes()
   }
   
-  func changeActivatedNumberCellValue(to value: Int) -> Void {
-    self.game.changeActivatedNumberCellValue(to: value)
+  func changeActivatedNumberCellValue(with value: Int) -> Void {
+    self.game.changeActivatedNumberCellValue(with: value)
   }
   
-  func applyActivatedNumberCellNoteValue(to value: Int) -> Void {
-    self.game.applyActivatedNumberCellNoteValue(to: value)
+  func toggleActivatedNumberCellNoteValue(with value: Int) -> Void {
+    self.game.toggleActivatedNumberCellNoteValue(with: value)
   }
   
-  func didGameOver() {
-    self.isPaused = true
+  private func gameDidPause() {
     self.isUserInteractionEnabled = false
-
-    self.gameOver = true
+  }
+  
+  private func gameDidOver() {
+    self.gameDidPause()
+  }
+  
+  private func gameDidResume() {
+    self.isUserInteractionEnabled = true
   }
 }

@@ -11,111 +11,51 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct GameScreen: View {
-  @Environment(\.dismiss) var dismissScreen: DismissAction
-
-//  @StateObject private var sessionTracker = GameSessionDurationTracker()
-  @State private var cursorState: CursorState = .init(mode: .number)
+  @StateObject private var gameScene: MobileGameScene
   
   var difficulty: Difficulty
   var existingGame: SaveGameEntity?
-
-  @State private var gameScene: MobileGameScene
   
   init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
     self.difficulty = difficulty
     self.existingGame = existingGame
     
-    gameScene = MobileGameScene(
-      size: .init(width: 10, height: 10),
-      difficulty: difficulty,
-      existingGame: existingGame
+    _gameScene = StateObject(
+      wrappedValue: MobileGameScene(
+        size: .init(width: 10, height: 10), // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
+        difficulty: difficulty
+      )
     )
   }
   
   var body: some View {
     ZStack {
-      Color.black
-        .ignoresSafeArea()
+      Color.black.ignoresSafeArea()
 
       GeometryReader { geometry in
         Color.clear.onAppear() {
-          gameScene.resize(size: geometry.size)
+          self.gameScene.resize(size: geometry.size)
         }
 
         VStack {
-          Text("Hello")
-            .foregroundStyle(.white)
-          
-          Button("Increment") {
-            
-          }
-          
-          HStack(alignment: .center) {
-            Button {
-              self.dismissScreen()
-            } label: {
-              Image(systemName: "chevron.left")
-                .font(.system(size: 24))
-                .foregroundStyle(.white)
-            }
-            .padding(12)
-            
-            Spacer()
-            
-            VStack {
-              Text("01:43:23")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(.white)
-              
-              Text("\(difficulty.rawValue) • 10 Points")
-                .font(.system(size: 14, weight: .regular))
-                .foregroundStyle(.white)
-            }
-            
-            Spacer()
-            
-            Button {
-              gameScene.isPaused.toggle()
-            } label: {
-              Image(systemName: "pause.fill")
-                .font(.system(size: 24))
-                .foregroundStyle(.white)
-            }
-            .padding(12)
-          }
+          GameHeader(gameScene: self.gameScene)
 
           Spacer()
         
-          SpriteView(
-            scene: gameScene,
-            preferredFramesPerSecond: 60
-          )
-          .scaledToFit()
+          GameSceneView(gameScene: self.gameScene, game: self.gameScene.game)
           
           Spacer()
           
           VStack(spacing: 12) {
-            HStack(spacing: 12) {
-              ControlButton(
-                title: "Notes mode",
-                subtitle: self.cursorState.mode == .note ? "On" : "Off",
-                imageSystemName: self.cursorState.mode == .note ? "pencil.circle.fill" : "pencil.circle"
-              ) {
-                self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
-              }
-            }
+            NotesModeToggleButton(
+              game: self.gameScene.game,
+              cursorState: self.gameScene.cursorState
+            )
             
-            NumberPad (
-              onNumberKeyPress: { number in
-                if self.cursorState.mode == .note {
-                  gameScene.applyActivatedNumberCellNoteValue(to: number)
-                } else {
-                  gameScene.changeActivatedNumberCellValue(to: number)
-                }
-              },
-              onClearKeyPress: {
-                gameScene.clearActivatedNumberCellValueOrNotes()
-              }
+            NumbersPad (
+              gameScene: self.gameScene,
+              game: self.gameScene.game,
+              puzzle: self.gameScene.game.board.puzzle
             )
           }
 
@@ -123,9 +63,9 @@ struct GameScreen: View {
         }
       }
       .padding()
-//      .overlay {
-//        GameOverOverlay()
-//      }
+      .overlay {
+        GameOverOverlay(game: self.gameScene.game)
+      }
     }
   }
 }

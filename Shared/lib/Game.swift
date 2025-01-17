@@ -8,18 +8,22 @@
 import Foundation
 import SpriteKit
 
-class Game {
+class Game: ObservableObject {
   private static let VALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = 10
   private static let INVALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = -5
   
-  var difficulty: Difficulty!
-
-  var board: Board
-  var graphics: GameGraphics
+  private(set) var difficulty: Difficulty
+  private(set) var board: Board
+  private(set) var graphics: GameGraphics
   
-  var cursorCell: CursorCellSprite!
-  var numberCells: Array<NumberCellSprite> = []
-  var activatedNumberCell: NumberCellSprite?
+  private(set) var cursorCell: CursorCellSprite!
+  private(set) var numberCells: Array<NumberCellSprite> = []
+  @Published private(set) var activatedNumberCell: NumberCellSprite?
+  
+  @Published private(set) var isGameOver: Bool = false
+  @Published private(set) var isGamePaused: Bool = false
+  @Published private(set) var durationInSeconds: Int64 = 0
+  @Published private(set) var score: Int64 = 0
   
   var cursorLocation: Location {
     get {
@@ -44,12 +48,6 @@ class Game {
     )!
   }
   
-  var isGameOver: Bool {
-    return self.numberCells.allSatisfy { cell in
-      return cell.value == self.board.puzzle.solution[cell.location.row][cell.location.col]
-    }
-  }
-  
   init(
     sceneSize: CGSize,
     difficulty: Difficulty
@@ -64,9 +62,13 @@ class Game {
     if existingGame == nil {
       SaveGameEntityDataService.createNewSaveGame(difficulty: difficulty, puzzle: self.board.puzzle)
     }
+    
+    self.durationInSeconds = existingGame?.durationInSeconds ?? 0
+    self.score = existingGame?.score ?? 0
+    self.isGameOver = self.checkGameOver()
   }
 
-  func load(on scene: NewGameScene) {
+  func load(on scene: GameScene) {
     // Draw the board
     guard let boardDrawing = self.graphics.createBoard() else { return }
     scene.addChild(boardDrawing)
@@ -90,7 +92,35 @@ class Game {
     self.highlightNumberCellsRelatedToCursor()
   }
   
-  func applyActivatedNumberCellNoteValue(to value: Int) -> Void {
+  func incrementDuration() -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
+    self.durationInSeconds += 1
+  }
+  
+  func saveCurrentGameDuration() -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    SaveGameEntityDataService.saveDuration(seconds: self.durationInSeconds)
+  }
+  
+  func toggleActivatedNumberCellNoteValue(with value: Int) -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
     guard let activatedNumberCell = self.activatedNumberCell else { return }
     guard activatedNumberCell.isChangeable && activatedNumberCell.isNotable else {
       return
@@ -100,10 +130,21 @@ class Game {
     self.board.puzzle.updateNote(value: value, at: activatedNumberCell.location)
     
     // Auto-save
-    SaveGameEntityDataService.autoSave(puzzle: self.board.puzzle)
+    SaveGameEntityDataService.autoSave(
+      puzzle: self.board.puzzle,
+      duration: self.durationInSeconds
+    )
   }
   
   func clearActivatedNumberCellNotes() -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
     guard let activatedNumberCell = self.activatedNumberCell else { return }
     guard activatedNumberCell.isChangeable else { return }
     
@@ -111,10 +152,23 @@ class Game {
     activatedNumberCell.clearNotes()
     
     // Auto-save
-    SaveGameEntityDataService.autoSave(puzzle: self.board.puzzle, scoreToAdd: 0)
+    SaveGameEntityDataService
+      .autoSave(
+        puzzle: self.board.puzzle,
+        duration: self.durationInSeconds,
+        score: self.score
+      )
   }
   
   func changeActivatedNumberCellValue(cursorMode: CursorMode, direction: Direction) -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
     guard let activatedNumberCell = self.activatedNumberCell else { return }
     guard activatedNumberCell.isChangeable else { return }
 
@@ -125,7 +179,15 @@ class Game {
     }
   }
   
-  func changeActivatedNumberCellValue(to value: Int) -> Void {
+  func changeActivatedNumberCellValue(with value: Int) -> Void {
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
     guard let activatedNumberCell = self.activatedNumberCell else { return }
     guard activatedNumberCell.isChangeable else { return }
     
@@ -134,10 +196,26 @@ class Game {
   }
   
   func clearActivatedNumberValue() -> Void {
-    self.changeActivatedNumberCellValue(to: 0)
+    guard !self.isGameOver else {
+      return
+    }
+    
+    guard !self.isGamePaused else {
+      return
+    }
+    
+    self.changeActivatedNumberCellValue(with: 0)
   }
   
   func toggleNumberCellUnderCursor(mode: CursorMode, cancelled: Bool) -> Bool {
+    guard !self.isGameOver else {
+      return false
+    }
+    
+    guard !self.isGamePaused else {
+      return false
+    }
+    
     let willActivate = !self.isNumberCellActive
     
     let activated: Bool
@@ -155,7 +233,7 @@ class Game {
     self.cursorLocation = location
     self.highlightNumberCellsRelatedToCursor()
     
-    if activateCellImmediately {
+    if activateCellImmediately && !(self.isGameOver || self.isGamePaused) {
       self.activatedNumberCell = numberCellUnderCursor
     }
     
@@ -171,6 +249,14 @@ class Game {
     }
     
     self.moveCursor(to: self.cursorLocation)
+  }
+  
+  func togglePause() -> Void {
+    self.isGamePaused.toggle()
+  }
+  
+  func delete() -> Void {
+    SaveGameEntityDataService.delete()
   }
   
   private func highlightNumberCellsRelatedToCursor() -> Void {
@@ -204,6 +290,14 @@ class Game {
   }
   
   private func activateNumberCell(_ numberCell: NumberCellSprite, mode: CursorMode) -> Bool {
+    guard !self.isGameOver else {
+      return false
+    }
+    
+    guard !self.isGamePaused else {
+      return false
+    }
+    
     guard !self.isNumberCellActive else {
       return false
     }
@@ -264,7 +358,6 @@ class Game {
     
     let value = activatedNumberCell.numberValueToBeCommitted
     let location = activatedNumberCell.location
-    var scoreToAddForThisMove: Int64 = 0
     
     // Validate comitting changes
     let validChange = self.board.puzzle.validate(value: value, at: location)
@@ -279,26 +372,30 @@ class Game {
       // Clear any previous notes from it
       self.clearActivatedNumberCellNotes()
       
-      scoreToAddForThisMove = Int64(
+      let scoreToAddForThisMove = Int64(
         (
           validChange
           ? Game.VALID_MOVE_SCORE_ADDITIVE_INCREMENT
           : Game.INVALID_MOVE_SCORE_ADDITIVE_INCREMENT
         ) * self.difficulty.scoreMultiplier
       )
+      
+      self.score += scoreToAddForThisMove
+      self.score = max(self.score, 0)
     }
     
     // Auto-save
-    SaveGameEntityDataService
-      .autoSave(puzzle: self.board.puzzle, scoreToAdd: scoreToAddForThisMove)
+    SaveGameEntityDataService.autoSave(
+      puzzle: self.board.puzzle,
+      duration: self.durationInSeconds,
+      score: self.score
+    )
     
     // Check whether all cells have been correctly completed
-    if self.isGameOver {
-      self.gameOver()
-    }
+    self.isGameOver = self.checkGameOver()
   }
   
-  private func gameOver() {
-    SaveGameEntityDataService.clear()
+  private func checkGameOver() -> Bool {
+    return self.board.puzzle.checkGameOver()
   }
 }

@@ -10,79 +10,74 @@ import UIColorHexSwift
 
 struct GameOverOverlay: View {
   @Environment(\.dismiss) var dismissScreen: DismissAction
-  @State private var animateGameOverOverlayBackground: Bool = false
-  
-  @State private var animate: Bool = false
+
+  @ObservedObject var game: Game
   
   var body: some View {
-    LinearGradient(
-      colors: [Color(Theme.Colors.primaryDark), .black],
-      startPoint: .top,
-      endPoint: .bottom
-    )
-      .hueRotation(.degrees(animateGameOverOverlayBackground ? 360 : 0))
-      .onAppear {
-        withAnimation(.easeInOut(duration: 3.0).repeatForever(autoreverses: true)) {
-          animateGameOverOverlayBackground.toggle()
-        }
-      }
-      .blur(radius: 5)
-      .ignoresSafeArea()
-      .onAppear() {
-        animate.toggle()
-      }
-    
-    GeometryReader { geometry in
-      ScrollView(showsIndicators: false) {
-        VStack {
-          Spacer()
-          
-          Image("Trophy")
-            .resizable()
-            .frame(width: 64, height: 64)
-            .tint(.white)
-          
-          Spacer(minLength: 8)
-
-          Text("Well done!")
-            .font(.headline)
-            .fontWeight(.black)
-          
-          Text("You've completed this puzzle.")
-            .font(.system(size: 12))
-            .fontWeight(.regular)
-            .multilineTextAlignment(.center)
-          
-          Text("Up for another challenge?")
-            .font(.system(size: 12))
-            .fontWeight(.regular)
-            .multilineTextAlignment(.center)
-          
-          Spacer(minLength: 12)
-          
-          Button {
-            // Navigate back to home
-            self.dismissScreen()
-          } label: {
-            Image(systemName: "plus")
-            Text("New game")
-          }
-          
-          Spacer()
-        }
-          .frame(width: geometry.size.width)
-          .frame(minHeight: geometry.size.height)
-      }
-      .frame(maxWidth: .infinity, maxHeight:.infinity)
+    if (!self.game.isGameOver) {
+      return AnyView(EmptyView())
     }
+    
+    return AnyView(
+      ZStack {
+        Color(UIColor("#352800"))
+          .opacity(0.95)
+          .ignoresSafeArea()
+        
+        GeometryReader { geometry in
+          ScrollView(showsIndicators: false) {
+            VStack {
+              Spacer()
+              
+              Image("Trophy")
+                .resizable()
+                .frame(width: 64, height: 64)
+                .tint(.white)
+              
+              Spacer(minLength: 8)
+              
+              Text("Well done!")
+                .font(.headline)
+                .fontWeight(.black)
+              
+              Text("You've solved this \(game.difficulty) puzzle in \(GameDurationHelper.format(game.durationInSeconds, pretty: true)). Your final score is \(game.score) points!")
+                .font(.system(size: 12))
+                .fontWeight(.regular)
+                .multilineTextAlignment(.center)
+              
+              Text("Up for another challenge?")
+                .font(.system(size: 12))
+                .fontWeight(.regular)
+                .multilineTextAlignment(.center)
+              
+              Spacer(minLength: 12)
+              
+              Button {
+                self.game.delete()
+                self.dismissScreen()
+              } label: {
+                Image(systemName: "plus")
+                Text("New game")
+              }
+              
+              Spacer()
+            }
+            .frame(width: geometry.size.width)
+            .frame(minHeight: geometry.size.height)
+          }
+          .focusable()
+          .frame(maxWidth: .infinity, maxHeight:.infinity)
+        }
+      }
+    )
   }
 }
 
 
-#Preview {
-  Color.clear
-    .ignoresSafeArea()
-    .overlay(alignment: .center) {
-      GameOverOverlay()
-    }
-}
+//#Preview {
+//  Color.clear
+//    .ignoresSafeArea()
+//    .overlay(alignment: .center) {
+//      GameOverOverlay()
+//    }
+//}

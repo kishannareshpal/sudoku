@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents the current board
-public struct Board {
+public class Board: ObservableObject {
   static let rowSubgridsCount: Int = 3
   static let colSubgridsCount: Int = 3
   static let subgridsCount: Int = rowSubgridsCount * colSubgridsCount
@@ -16,7 +16,7 @@ public struct Board {
   static let colsCount: Int = 9
   static let cellsCount: Int = rowsCount * colsCount
 
-  var puzzle: Puzzle
+  @Published var puzzle: Puzzle
   
   init(difficulty: Difficulty, existingGame: SaveGameEntity?) {
     self.puzzle = Puzzle(difficulty: difficulty, existingGame: existingGame)

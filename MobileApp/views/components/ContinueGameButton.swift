@@ -1,14 +1,21 @@
 //
-//  ExistingGameCard.swift
+//  ContinueGameCard.swift
 //  sudoku
 //
-//  Created by Kishan Jadav on 27/08/2024.
+//  Created by Kishan Jadav on 12/01/2025.
 //
 
 import SwiftUI
 
-struct ResumeGameButton: View {
-  var existingGame: SaveGameEntity?
+struct ContinueGameButton: View {
+  @FetchRequest(
+    sortDescriptors: [],
+    predicate: .all
+  ) private var saveGames: FetchedResults<SaveGameEntity>
+  
+  private var existingGame: SaveGameEntity? {
+    return self.saveGames.last
+  }
 
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
@@ -30,16 +37,17 @@ struct ResumeGameButton: View {
               .font(.system(size: 18, weight: .black))
               .foregroundStyle(.white)
             
-            Spacer()
-              .frame(height: 8)
+            Text("Points: \(existingGame.score)")
+              .foregroundStyle(.white)
+              .font(.system(size: 12, weight: .regular))
             
-            Text("Time spent: \(GameSessionDurationTracker.format(existingGame.durationInSeconds))")
+            Text(
+              "Played for: \(GameDurationHelper.format(existingGame.durationInSeconds, pretty: true))"
+            )
               .font(.system(size: 12, weight: .regular))
               .foregroundStyle(.white)
             
-            Text("Score: \(existingGame.score)")
-              .foregroundStyle(.white)
-              .font(.system(size: 12, weight: .regular))
+            Spacer().frame(height: 8)
             
             Text("Tap to continue")
               .font(.system(size: 14, weight: .medium))
@@ -53,12 +61,12 @@ struct ResumeGameButton: View {
             .foregroundStyle(Color(Theme.Colors.primary))
         }
       }
-      .buttonStyle(ResumeGameButtonStyle())
+      .buttonStyle(ContinueGameButtonStyle())
     )
   }
 }
 
-struct ResumeGameButtonStyle: ButtonStyle {
+struct ContinueGameButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .scaledToFit()

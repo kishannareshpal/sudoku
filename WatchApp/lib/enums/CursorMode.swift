@@ -8,7 +8,7 @@
 import Foundation
 
 public enum CursorMode {
-  case none
+  case none // TODO: rename this to .selection
   case number
   case note
 }

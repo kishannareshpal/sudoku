@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct CursorState {
-  var mode: CursorMode
+class CursorState: ObservableObject {
+  @Published var mode: CursorMode = .number
 }
