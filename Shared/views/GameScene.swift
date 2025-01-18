@@ -75,14 +75,14 @@ class GameScene: SKScene, ObservableObject {
     self.game.clearActivatedNumberCellNotes()
   }
   
-  func clearActivatedNumberCellValueOrNotes() -> Void {
+  func clearActivatedNumberCellValueAndNotes() -> Void {
     self.game.clearActivatedNumberValue()
     self.game.clearActivatedNumberCellNotes()
   }
   
   func changeActivatedNumberCellValue(with value: Int) -> Void {
     self.game.changeActivatedNumberCellValue(with: value)
-  }
+  } 
   
   func toggleActivatedNumberCellNoteValue(with value: Int) -> Void {
     self.game.toggleActivatedNumberCellNoteValue(with: value)

@@ -48,7 +48,7 @@ public class GameGraphics {
         let cellLocation = Location(row: rowIndex, col: colIndex)
 
         let playerValue = self.puzzle.player[rowIndex][colIndex]
-        let usePlayerValue: Bool = givenValue == 0
+        let usePlayerValue: Bool = givenValue.isEmpty
         
         let cell = self.createNumberCell(
           at: cellLocation,
@@ -56,7 +56,7 @@ public class GameGraphics {
           withValue: usePlayerValue ? playerValue : givenValue
         )
         
-        if (usePlayerValue && playerValue != 0) {
+        if (usePlayerValue && playerValue.isNotEmpty) {
           cell.toggleValidation(
             valid: self.puzzle.validate(value: playerValue, at: cellLocation)
           )

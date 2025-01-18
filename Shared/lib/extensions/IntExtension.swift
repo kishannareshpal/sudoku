@@ -8,6 +8,14 @@
 import CoreGraphics
 
 extension Int {
+  var isNotEmpty: Bool {
+    return self != 0
+  }
+  
+  var isEmpty: Bool {
+    return self == 0
+  }
+  
   /// Converts an integer to a Double type
   func toDouble() -> Double {
     return Double(self)

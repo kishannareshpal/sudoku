@@ -50,7 +50,7 @@ class NumberCellSprite: SKSpriteNode {
   }
   
   var isValueEmpty: Bool {
-    return self.value == 0
+    return self.value.isEmpty
   }
   
   var isNotesEmpty: Bool {
@@ -100,7 +100,7 @@ class NumberCellSprite: SKSpriteNode {
     }
     
     // Only show the notes note when changing to a non-empty value
-    self.toggleNotesVisibility(visible: self.draftNumberValue == 0)
+    self.toggleNotesVisibility(visible: self.draftNumberValue.isEmpty)
     
     self.updateLabelText(with: self.numberValueToBeCommitted)
   }
@@ -123,14 +123,9 @@ class NumberCellSprite: SKSpriteNode {
     }
 
     // Only show the notes note when changing to a non-empty value
-    self.toggleNotesVisibility(visible: self.draftNumberValue == 0)
+    self.toggleNotesVisibility(visible: self.draftNumberValue.isEmpty)
 
     self.updateLabelText(with: self.numberValueToBeCommitted)
-  }
-  
-  func clearNotes() -> Void {
-    self.notes.removeAll()
-    self.notesNode.removeAllChildren()
   }
   
   func toggleNotesVisibility(visible: Bool) -> Void {
@@ -141,30 +136,49 @@ class NumberCellSprite: SKSpriteNode {
     }
   }
   
-  func toggleNotes(of values: [Int], animate: Bool = true) -> Void {
+  func clearNotes() -> Void {
+    self.notes.removeAll()
+    self.notesNode.removeAllChildren()
+  }
+  
+  func toggleNotes(values: [Int], forceVisible: Bool = true, animate: Bool = true) -> Void {
     values.forEach { value in
-      self.toggleNote(of: value, animate: animate)
+      self.toggleNote(value: value, forceVisible: forceVisible, animate: animate)
     }
   }
   
-  func toggleNote(of value: Int, animate: Bool = true) -> Void {
+  func toggleNote(value: Int, forceVisible: Bool? = nil, animate: Bool = true) -> Void {
     let existingNote = self.notes.first { record in
       record.value == value
     }
 
     if let existingNote = existingNote {
-      existingNote.toggleVisibility(visible: false, animated: animate)
+      // Already visible...
+
+      if (forceVisible == true) {
+        // And forced to be visible, so no need to do anything.
+        return;
+      }
       
+      // Hide the note
+      existingNote.toggleVisibility(visible: false, animated: animate)
       existingNote.removeFromParent()
       self.notes.removeAll { record in
         record.value == value
       }
 
     } else {
+      // Already hidden...
+
+      if (forceVisible == false) {
+        // And forced to hide, so no need to do anything.
+        return;
+      }
+      
+      // Show the note
       let noteSprite = NumberCellNoteSprite(containerSize: size, value: value)
       self.notes.append(noteSprite)
       self.notesNode.addChild(noteSprite)
-
       noteSprite.toggleVisibility(visible: true, animated: animate)
     }
   }
@@ -192,7 +206,7 @@ class NumberCellSprite: SKSpriteNode {
     self.updateLabelText(with: self.value)
 
     // Only show the notes note when the cell value is empty
-    self.toggleNotesVisibility(visible: self.value == 0)
+    self.toggleNotesVisibility(visible: self.value.isEmpty)
   }
   
   func commitValueChange() -> Void {
@@ -250,7 +264,7 @@ class NumberCellSprite: SKSpriteNode {
   }
   
   private func updateLabelText(with value: Int) {
-    self.label.text = (value != 0) ? value.toString() : ""
+    self.label.text = value.isNotEmpty ? value.toString() : ""
 
     let scale = SKAction.sequence([
       SKAction.scale(to: 1.3, duration: 0.1),
