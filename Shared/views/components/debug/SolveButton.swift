@@ -16,7 +16,7 @@ struct SolveButton: View {
       self.gameScene.game.board.puzzle.solution.enumerated().forEach { (rowIndex, row) in
         row.enumerated().forEach { (colIndex, value) in
           
-          let isGivenCell = self.gameScene.game.board.puzzle.given[rowIndex][colIndex] != 0
+          let isGivenCell = self.gameScene.game.board.puzzle.given[rowIndex][colIndex].isNotEmpty
           if isGivenCell {
             // Skip given cells
             return

@@ -17,11 +17,11 @@ struct NotesModeToggleButton: View {
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
   var iconSystemName: String {
-    if self.cursorState.mode == .note {
-      return "pencil.circle.fill"
-    } else {
-      return "pencil.circle"
-    }
+    return "circle.grid.3x3"
+  }
+  
+  var isNotesModeToggled: Bool {
+    return self.cursorState.mode == .note
   }
   
   var isNotesModeToggleable: Bool {
@@ -31,54 +31,34 @@ struct NotesModeToggleButton: View {
   var body: some View {
     Button(
       action: {
-        self.cursorState.mode = self.cursorState.mode == .note
-          ? .number
-          : .note
+        withAnimation(.snappy(duration: 0.3)) {
+          self.cursorState.mode = (self.cursorState.mode == .note) ? .number : .note
+        }
 
         vibrator.impactOccurred()
       },
       label: {
         HStack(spacing: 8) {
           Image(systemName: iconSystemName)
-            .font(.system(size: 24))
+            .font(.system(size: 14))
             .foregroundStyle(
-              self.cursorState.mode == .note ? .accent : Color.white
+              self.isNotesModeToggled ? .black : .white
             )
           
-          VStack(alignment: .leading) {
-            Text("Notes mode")
-              .fontWeight(.bold)
-              .foregroundStyle(.white)
-            
-            Text(self.cursorState.mode == .note ? "On" : "Off")
-              .foregroundStyle(
-                self.cursorState.mode == .note ? .accent : Color(UIColor("#5A5A5A"))
-              )
-              .font(.system(size: 14, weight: .bold))
-          }
+          Text("Note")
+            .font(.system(size: 12))
+            .foregroundStyle(
+              self.isNotesModeToggled ? .black : .white
+            )
         }
       }
     )
     .disabled(!isNotesModeToggleable)
-    .buttonStyle(NotesModeToggleButtonStyle(disabled: !isNotesModeToggleable))
+    .buttonStyle(
+      GameControlButtonStyle(
+        disabled: !isNotesModeToggleable,
+        toggled: self.isNotesModeToggled
+      )
+    )
   }
-}
-
-struct NotesModeToggleButtonStyle: ButtonStyle {
-  var disabled: Bool = false
-  
-  func makeBody(configuration: Configuration) -> some View {
-    configuration.label
-      .padding(.vertical, 14)
-      .padding(.horizontal, 12)
-      .background(Color(UIColor("#141414")))
-      .opacity(self.disabled ? 0.3 : 1)
-      .clipShape(RoundedRectangle(cornerSize: .init(width: 8, height: 8)))
-      .scaleEffect(configuration.isPressed ? 0.9 : 1)
-      .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
-  }
-}
-
-#Preview {
-    ContentView()
 }

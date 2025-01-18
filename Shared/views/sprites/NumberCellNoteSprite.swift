@@ -131,7 +131,7 @@ class NumberCellNoteSprite: SKShapeNode {
   }
   
   private func updateLabelText(with value: Int) {
-    self.label.text = (value != 0) ? value.toString() : ""
+    self.label.text = value.isNotEmpty ? value.toString() : ""
     
     let scale = SKAction.sequence([
       SKAction.scale(to: 1.3, duration: 0.1),

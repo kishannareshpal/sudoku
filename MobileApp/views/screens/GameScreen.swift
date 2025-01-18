@@ -47,10 +47,14 @@ struct GameScreen: View {
           Spacer()
           
           VStack(spacing: 12) {
-            NotesModeToggleButton(
-              game: self.gameScene.game,
-              cursorState: self.gameScene.cursorState
-            )
+            HStack(spacing: 12) {
+              HintButton(game: self.gameScene.game)
+              
+              NotesModeToggleButton(
+                game: self.gameScene.game,
+                cursorState: self.gameScene.cursorState
+              )
+            }
             
             NumbersPad (
               gameScene: self.gameScene,
@@ -68,8 +72,4 @@ struct GameScreen: View {
       }
     }
   }
-}
-
-#Preview {
-    ContentView()
 }

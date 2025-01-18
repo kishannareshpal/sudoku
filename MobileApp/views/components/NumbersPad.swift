@@ -47,7 +47,7 @@ struct NumbersPad: View {
   private func onClearKeyPress() {
     clearKeyVibrator.impactOccurred()
 
-    self.gameScene.clearActivatedNumberCellValueOrNotes()
+    self.gameScene.clearActivatedNumberCellValueAndNotes()
   }
   
   private func onNumberKeyPress(_ number: Int) {

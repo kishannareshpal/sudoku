@@ -55,10 +55,22 @@ public class Puzzle: ObservableObject {
     self.notes[location.row][location.col].removeAll()
   }
   
-  func updateNote(value: Int, at location: Location) -> Void {
+  func toggleNote(value: Int, at location: Location, forceAdd: Bool? = nil) -> Void {
     if let existingNoteIndex = self.notes[location.row][location.col].firstIndex(of: value) {
+      // A note with this value already exists at this location
+
+      if (forceAdd == true) {
+        return;
+      }
+      
       self.notes[location.row][location.col].remove(at: existingNoteIndex)
     } else {
+      // A note with this value does not exist at this location
+      
+      if (forceAdd == false) {
+        return;
+      }
+      
       self.notes[location.row][location.col].append(value)
     }
   }
@@ -75,7 +87,7 @@ public class Puzzle: ObservableObject {
         // Player input array will have a default valu of 0 on given cells
         // so we need to replace those on this check.
         let givenValue = self.given[rowIndex][colIndex]
-        let value = givenValue != 0 ? givenValue : playerValue
+        let value = givenValue.isEmpty ? playerValue : givenValue
         
         return self.solution[rowIndex][colIndex] == value
       }
@@ -136,7 +148,7 @@ public class Puzzle: ObservableObject {
         // Player input array will have a default valu of 0 on given cells
         // so we need to replace those on this check.
         let givenValue = self.given[rowIndex][colIndex]
-        let value = givenValue != 0 ? givenValue : playerValue
+        let value = givenValue.isEmpty ? playerValue : givenValue
         
         let valid = self.solution[rowIndex][colIndex] == value
         if valid, let count = self.remainingNumbersWithCount[value] {
