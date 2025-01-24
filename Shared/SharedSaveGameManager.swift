@@ -34,18 +34,19 @@ public class SharedSaveGameManager: ObservableObject {
   
   
   func share(entity: OTASaveGameEntity) {
-    currentValue = entity
-    
-    let serializedValue = entity.toJSON()
-    session.transferUserInfo(["saveGameEntity": serializedValue])
-    
-    session
-      .sendMessage(
-        ["saveGameEntity": serializedValue],
-        replyHandler: nil
-      ) { error in
-        print(error.localizedDescription)
-      }
+    // TODO: This works. Revisit this to make a better DX
+//    currentValue = entity
+//    
+//    let serializedValue = entity.toJSON()
+//    session.transferUserInfo(["saveGameEntity": serializedValue])
+//    
+//    session
+//      .sendMessage(
+//        ["saveGameEntity": serializedValue],
+//        replyHandler: nil
+//      ) { error in
+//        print(error.localizedDescription)
+//      }
   }
   
   func sendSample() {

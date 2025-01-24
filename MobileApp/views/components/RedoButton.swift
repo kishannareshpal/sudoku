@@ -10,35 +10,31 @@ import SpriteKit
 import UIKit.UIColor
 import UIColorHexSwift
 
-struct HintButton: View {
+struct RedoButton: View {
   @ObservedObject var game: Game
 
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
-  var isHintable: Bool {
-    return !self.game.isGameOver && !self.game.isGamePaused
-  }
-  
   var body: some View {
     Button(
       action: {
-        self.game.solveActivatedNumberCell()
-        vibrator.impactOccurred()
+        self.game.redoMove()
+        self.vibrator.impactOccurred()
       },
       label: {
         HStack {
-          Image(systemName: "lightbulb")
+          Image(systemName: "arrow.uturn.forward")
             .font(.system(size: 14))
             .foregroundStyle(.white)
           
-          Text("Hint")
+          Text("Redo")
             .font(.system(size: 12))
             .foregroundStyle(.white)
         }
       }
     )
-    .disabled(!isHintable)
-    .buttonStyle(GameControlButtonStyle(disabled: !isHintable))
+    .disabled(!self.game.isMoveRedoable)
+    .buttonStyle(GameControlButtonStyle(disabled: !self.game.isMoveRedoable))
     .onAppear(perform: vibrator.prepare)
   }
 }

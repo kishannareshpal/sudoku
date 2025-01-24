@@ -32,7 +32,7 @@ struct SolveButton: View {
               to: location, activateCellImmediately: true
             )
             
-            self.gameScene.changeActivatedNumberCellValue(with: value)
+            self.gameScene.changeActivatedNumberCellValue(to: value)
           }
         }
       }

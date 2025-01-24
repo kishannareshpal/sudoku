@@ -97,6 +97,10 @@ struct NumbersPad: View {
         )
       }
     }
+    .onAppear() {
+      numberKeyVibrator.prepare()
+      clearKeyVibrator.prepare()
+    }
   }
 }
 

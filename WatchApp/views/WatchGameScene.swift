@@ -49,7 +49,7 @@ class WatchGameScene: GameScene {
         self.cursorState.crownRotationValue > self.cursorState.previousCrownRotationValue
       ) ? .forward : .backward
       
-      self.game.changeActivatedNumberCellValue(
+      self.game.changeActivatedNumberCellDraftValue(
         cursorMode: self.cursorState.mode,
         direction: direction
       )

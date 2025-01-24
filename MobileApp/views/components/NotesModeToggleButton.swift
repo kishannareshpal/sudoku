@@ -17,7 +17,7 @@ struct NotesModeToggleButton: View {
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
   var iconSystemName: String {
-    return "circle.grid.3x3"
+    return self.isNotesModeToggled ? "circle.grid.3x3.fill" : "circle.grid.3x3"
   }
   
   var isNotesModeToggled: Bool {
@@ -60,5 +60,6 @@ struct NotesModeToggleButton: View {
         toggled: self.isNotesModeToggled
       )
     )
+    .onAppear(perform: vibrator.prepare)
   }
 }
