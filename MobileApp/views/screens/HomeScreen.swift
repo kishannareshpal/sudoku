@@ -17,9 +17,6 @@ struct HomeScreen: View {
   
   @State private var currentGame: SaveGameEntity?
   
-  @State private var colorToggle = false
-  @State private var animate = false
-  
   var body: some View {
     ZStack {
       Color(UIColor("#100D01"))
@@ -108,6 +105,7 @@ struct HomeScreen: View {
     .onAppear {
       self.loadLastGame()
     }
+
   }
   
   private func loadLastGame() {

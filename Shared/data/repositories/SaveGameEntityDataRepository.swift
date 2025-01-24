@@ -23,6 +23,7 @@ class SaveGameEntityDataRepository: DataRepository {
     let request = SaveGameEntity.fetchRequest()
     request.predicate = .all
     request.fetchLimit = 1
+    request.relationshipKeyPathsForPrefetching = ["moves"]
     request.sortDescriptors = []
     
     let result = (try? self.context.fetch(request)) ?? []
@@ -38,6 +39,7 @@ class SaveGameEntityDataRepository: DataRepository {
   ) -> Void {
     let saveGameEntity = self.findCurrent() ?? SaveGameEntity(context: self.context)
 
+    saveGameEntity.moveIndex = -1
     saveGameEntity.difficulty = difficulty.rawValue
     saveGameEntity.givenNotation = givenNotation
     saveGameEntity.solutionNotation = solutionNotation
@@ -47,6 +49,7 @@ class SaveGameEntityDataRepository: DataRepository {
     saveGameEntity.notesNotation = notesNotation
     saveGameEntity.createdAt = Date()
     saveGameEntity.updatedAt = Date()
+    saveGameEntity.moves = []
     
     do {
       try self.context.save()
@@ -60,7 +63,7 @@ class SaveGameEntityDataRepository: DataRepository {
     }
   }
   
-  static func saveDuration(seconds: Int64) -> Void {
+  static func updateDuration(seconds: Int64) -> Void {
     let currentSaveGameEntity = self.findCurrent()
     guard let currentSaveGameEntity = currentSaveGameEntity else {
       return
@@ -82,6 +85,28 @@ class SaveGameEntityDataRepository: DataRepository {
     }
   }
   
+  static func updateMoveIndex(_ newPosition: Int32) -> Void {
+    let currentSaveGameEntity = self.findCurrent()
+    guard let currentSaveGameEntity = currentSaveGameEntity else {
+      return
+    }
+    
+    let now = Date()
+    currentSaveGameEntity.updatedAt = now
+    currentSaveGameEntity.moveIndex = newPosition
+    
+    do {
+      try self.context.save()
+      
+      SharedSaveGameManager.instance
+        .share(entity: currentSaveGameEntity.toOTASaveGameEntity())
+      
+    } catch {
+      print("Failed to save the increment for session duration: \(error)")
+      return
+    }
+  }
+
   static func save(
     playerNotation: BoardPlainStringNotation,
     notesNotation: BoardPlainNoteStringNotation,
@@ -89,9 +114,7 @@ class SaveGameEntityDataRepository: DataRepository {
     duration: Int64?
   ) -> Void {
     let currentSaveGameEntity = self.findCurrent()
-    guard let currentSaveGameEntity = currentSaveGameEntity else {
-      return
-    }
+    guard let currentSaveGameEntity = currentSaveGameEntity else { return }
 
     let now = Date()
     currentSaveGameEntity.updatedAt = now
@@ -108,7 +131,7 @@ class SaveGameEntityDataRepository: DataRepository {
     
     do {
       try self.context.save()
-      
+
       SharedSaveGameManager.instance
         .share(entity: currentSaveGameEntity.toOTASaveGameEntity())
 

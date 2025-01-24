@@ -26,6 +26,13 @@ struct GameSceneView: View {
         .onChange(of: self.game.isGamePaused) { _ in
           self.pauseGameBlurRadius = self.game.isGamePaused ? 10 : 0
         }
+        .apply { view in
+          if #available(iOS 17.0, *) {
+            view
+              .focusable()
+              .onKeyPress(phases: .down, action: self.gameScene.keyPressed)
+          }
+        }
       
       if self.game.isGamePaused {
         Text("Paused")
@@ -38,7 +45,8 @@ struct GameSceneView: View {
           )
       }
 
-    }.onDisappear() {
+    }
+    .onDisappear() {
       self.game.saveCurrentGameDuration()
 
     }.onChange(of: self.game.isGamePaused) { _ in

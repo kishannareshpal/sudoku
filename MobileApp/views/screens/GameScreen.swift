@@ -11,7 +11,10 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct GameScreen: View {
+  // TODO: Have an environment object for gameScene and game
   @StateObject private var gameScene: MobileGameScene
+  
+  @State private var showDb: Bool = false
   
   var difficulty: Difficulty
   var existingGame: SaveGameEntity?
@@ -48,6 +51,9 @@ struct GameScreen: View {
           
           VStack(spacing: 12) {
             HStack(spacing: 12) {
+              UndoButton(game: self.gameScene.game)
+              RedoButton(game: self.gameScene.game)
+              
               HintButton(game: self.gameScene.game)
               
               NotesModeToggleButton(
@@ -64,11 +70,17 @@ struct GameScreen: View {
           }
 
           Spacer()
+          
+          Toggle(isOn: $showDb) {
+            Text("Moves")
+          }
         }
       }
       .padding()
       .overlay {
         GameOverOverlay(game: self.gameScene.game)
+      }.sheet(isPresented: $showDb) {
+        DatabaseScreen(game: self.gameScene.game)
       }
     }
   }

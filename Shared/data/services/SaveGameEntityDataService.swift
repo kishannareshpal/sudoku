@@ -28,11 +28,14 @@ class SaveGameEntityDataService {
         playerNotation: serializedPlayerNotation,
         notesNotation: serializedNotesNotation
       )
-    
   }
   
-  static func saveDuration(seconds: Int64) -> Void {
-    SaveGameEntityDataRepository.saveDuration(seconds: seconds)
+  static func updateMoveIndex(_ newPosition: Int32) -> Void {
+    SaveGameEntityDataRepository.updateMoveIndex(newPosition)
+  }
+  
+  static func updateDuration(seconds: Int64) -> Void {
+    SaveGameEntityDataRepository.updateDuration(seconds: seconds)
   }
   
   static func autoSave(
@@ -54,5 +57,29 @@ class SaveGameEntityDataService {
   
   static func delete() -> Void {
     SaveGameEntityDataRepository.delete()
+  }
+  
+  // MARK: -
+  
+  static func saveMove(
+    position: Int32,
+    locationNotation: String,
+    type: MoveType,
+    value: String
+  ) -> MoveEntryEntity? {
+    let currentSaveGame = SaveGameEntityDataRepository.findCurrent()
+    guard let currentSaveGame else { return nil }
+    
+    MoveEntryEntityDataRepository.deleteAllEntriesAfterAndIncluding(position: position)
+    SaveGameEntityDataRepository.updateMoveIndex(position)
+    let moveEntry = MoveEntryEntityDataRepository.create(
+      position: position,
+      locationNotation: locationNotation,
+      type: type,
+      value: value
+    )
+    currentSaveGame.addToMoves(moveEntry!)
+    return moveEntry
+
   }
 }

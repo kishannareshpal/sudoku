@@ -27,5 +27,7 @@ class AppDataProvider: ObservableObject {
         fatalError("Core Data failed to load \(error.localizedDescription)")
       }
     }
+    
+    container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
   }
 }

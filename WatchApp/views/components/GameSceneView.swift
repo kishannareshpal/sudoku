@@ -26,7 +26,6 @@ struct GameSceneView: View {
         SpriteView(scene: self.gameScene, preferredFramesPerSecond: 60)
           .scaledToFit()
           .frame(alignment: .center)
-          .focusable()
           .digitalCrownRotation(
             self.$cursorState.crownRotationValue,
             from: 0.0,
@@ -46,6 +45,13 @@ struct GameSceneView: View {
           }
           .onDisappear() {
             self.gameScene.game.saveCurrentGameDuration()
+          }
+          .apply { view in
+            if #available(watchOS 10.0, *) {
+              view.focusable(interactions: .edit)
+            } else {
+              view.focusable()
+            }
           }
         
         SolveButton(gameScene: self.gameScene)

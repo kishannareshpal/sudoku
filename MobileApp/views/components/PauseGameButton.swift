@@ -28,5 +28,8 @@ struct PauseGameButton: View {
         }
       }
     }
+    .onAppear() {
+      vibrator.prepare()
+    }
   }
 }

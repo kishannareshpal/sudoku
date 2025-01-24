@@ -99,9 +99,9 @@ class NumberCellSprite: SKSpriteNode {
       self.draftNumberValue = 0.0
     }
     
-    // Only show the notes note when changing to a non-empty value
+    // Only show the notes when changing to a non-empty value
     self.toggleNotesVisibility(visible: self.draftNumberValue.isEmpty)
-    
+
     self.updateLabelText(with: self.numberValueToBeCommitted)
   }
 
@@ -122,7 +122,7 @@ class NumberCellSprite: SKSpriteNode {
       self.draftNumberValue = 0.0
     }
 
-    // Only show the notes note when changing to a non-empty value
+    // Only show the notes when changing to a non-empty value
     self.toggleNotesVisibility(visible: self.draftNumberValue.isEmpty)
 
     self.updateLabelText(with: self.numberValueToBeCommitted)
@@ -141,7 +141,7 @@ class NumberCellSprite: SKSpriteNode {
     self.notesNode.removeAllChildren()
   }
   
-  func toggleNotes(values: [Int], forceVisible: Bool = true, animate: Bool = true) -> Void {
+  func toggleNotes(values: [Int], forceVisible: Bool? = nil, animate: Bool = true) -> Void {
     values.forEach { value in
       self.toggleNote(value: value, forceVisible: forceVisible, animate: animate)
     }
@@ -183,6 +183,20 @@ class NumberCellSprite: SKSpriteNode {
     }
   }
   
+  func changeDraftNoteValue(to value: Double) -> Void {
+    guard self.isChangeable else { return }
+    
+    self.draftNoteValue = value
+    
+    // Clamp the note value to 0 through 9:
+    if (self.draftNoteValue > 9) {
+      self.draftNoteValue = 9.0
+      
+    } else if (self.draftNoteValue <= 0) {
+      self.draftNoteValue = 0.0
+    }
+  }
+  
   func changeDraftNoteValue(direction: Direction) {
     guard self.isChangeable else { return }
 
@@ -192,7 +206,7 @@ class NumberCellSprite: SKSpriteNode {
       self.draftNoteValue -= NumberCellSprite.NOTE_VALUE_CHANGING_AMOUNT
     }
     
-    // Clamp the value to 0 through 9:
+    // Clamp the number value to 0 through 9:
     if (self.draftNoteValue > 9) {
       self.draftNoteValue = 9.0
       
@@ -205,7 +219,7 @@ class NumberCellSprite: SKSpriteNode {
     self.draftNumberValue = self.value.toDouble()
     self.updateLabelText(with: self.value)
 
-    // Only show the notes note when the cell value is empty
+    // Only show the notes when the cell value is empty
     self.toggleNotesVisibility(visible: self.value.isEmpty)
   }
   

@@ -55,6 +55,13 @@ public class Puzzle: ObservableObject {
     self.notes[location.row][location.col].removeAll()
   }
   
+  func toggleNotes(values: [Int], at location: Location, forceAdd: Bool? = nil) -> Void {
+    values.forEach { value in
+      self.toggleNote(value: value, at: location, forceAdd: forceAdd)
+    }
+    
+  }
+  
   func toggleNote(value: Int, at location: Location, forceAdd: Bool? = nil) -> Void {
     if let existingNoteIndex = self.notes[location.row][location.col].firstIndex(of: value) {
       // A note with this value already exists at this location

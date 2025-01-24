@@ -62,6 +62,7 @@ struct ContinueGameButton: View {
         }
       }
       .buttonStyle(ContinueGameButtonStyle())
+      .onAppear(perform: vibrator.prepare)
     )
   }
 }
