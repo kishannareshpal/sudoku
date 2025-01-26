@@ -13,8 +13,8 @@ struct DatabaseScreen: View {
   var body: some View {
     VStack {
       Button("Clear all moves") {
-        MoveEntryEntityDataRepository.deleteAll()
-        SaveGameEntityDataService.updateMoveIndex(-1)
+//        MoveEntryEntityDataRepository.deleteAll()
+//        SaveGameEntityDataService.updateMoveIndex(-1)
       }.buttonStyle(.bordered)
       
       List {

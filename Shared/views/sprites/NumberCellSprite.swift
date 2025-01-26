@@ -152,7 +152,7 @@ class NumberCellSprite: SKSpriteNode {
       record.value == value
     }
 
-    if let existingNote = existingNote {
+    if let existingNote {
       // Already visible...
 
       if (forceVisible == true) {

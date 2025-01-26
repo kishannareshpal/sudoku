@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 extension NSPredicate {
   static let all = NSPredicate(format: "TRUEPREDICATE")

@@ -18,6 +18,11 @@
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solutionNotation" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="moves" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MoveEntryEntity" inverseName="saveGame" inverseEntity="MoveEntryEntity"/>
+        <relationship name="moves" toMany="YES" deletionRule="Cascade" destinationEntity="MoveEntryEntity" inverseName="saveGame" inverseEntity="MoveEntryEntity"/>
+        <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity"/>
+    </entity>
+    <entity name="UserEntity" representedClassName="UserEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="device" attributeType="String"/>
+        <relationship name="activeSaveGame" optional="YES" maxCount="1" deletionRule="No Action" destinationEntity="SaveGameEntity"/>
     </entity>
 </model>

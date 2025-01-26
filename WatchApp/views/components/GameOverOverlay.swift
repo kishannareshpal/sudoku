@@ -53,7 +53,7 @@ struct GameOverOverlay: View {
               Spacer(minLength: 12)
               
               Button {
-                self.game.delete()
+                try! DataManager.default.usersService.detachActiveSaveGame()
                 self.dismissScreen()
               } label: {
                 Image(systemName: "plus")
@@ -72,12 +72,3 @@ struct GameOverOverlay: View {
     )
   }
 }
-
-
-//#Preview {
-//  Color.clear
-//    .ignoresSafeArea()
-//    .overlay(alignment: .center) {
-//      GameOverOverlay()
-//    }
-//}

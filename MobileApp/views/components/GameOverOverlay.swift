@@ -51,7 +51,8 @@ struct GameOverOverlay: View {
             
             Button(
               action: {
-                self.game.delete()
+                try! DataManager.default.usersService.detachActiveSaveGame()
+
                 self.dismissScreen()
               },
               label: {

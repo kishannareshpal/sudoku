@@ -1,5 +1,5 @@
 //
-//  DeleteButton.swift
+//  EraseButton.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 26/01/2025.
@@ -10,21 +10,18 @@ import SpriteKit
 import UIKit.UIColor
 import UIColorHexSwift
 
-struct DeleteButton: View {
+struct EraseButton: View {
   var gameScene: MobileGameScene
   @ObservedObject var game: Game
-  @ObservedObject var puzzle: Puzzle
 
   private var eraseKeyVibrator = UIImpactFeedbackGenerator(style: .rigid)
   
   init(
     gameScene: MobileGameScene,
-    game: Game,
-    puzzle: Puzzle
+    game: Game
   ) {
     self.gameScene = gameScene
     self.game = game
-    self.puzzle = puzzle
   }
 
   var isActiveNumberCellEraseable: Bool {
@@ -44,15 +41,9 @@ struct DeleteButton: View {
     Button(
       action: self.onEraseKeyPress,
       label: {
-        HStack {
-          Image(systemName: "arrow.uturn.forward")
-            .font(.system(size: 14))
-            .foregroundStyle(.white)
-          
-          //          Text("Redo")
-          //            .font(.system(size: 12))
-          //            .foregroundStyle(.white)
-        }
+        Image(systemName: "delete.left.fill")
+          .font(.system(size: 16))
+          .foregroundStyle(.white)
       }
     )
     .disabled(!self.isActiveNumberCellEraseable)

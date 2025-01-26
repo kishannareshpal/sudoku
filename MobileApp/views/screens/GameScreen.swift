@@ -51,15 +51,23 @@ struct GameScreen: View {
           
           VStack(spacing: 12) {
             HStack(spacing: 12) {
-              UndoButton(game: self.gameScene.game)
-              RedoButton(game: self.gameScene.game)
-              
-              HintButton(game: self.gameScene.game)
-              
+              HStack {
+                UndoButton(game: self.gameScene.game)
+                RedoButton(game: self.gameScene.game)
+              }
+
               NotesModeToggleButton(
                 game: self.gameScene.game,
                 cursorState: self.gameScene.cursorState
               )
+              
+              HStack {
+                EraseButton(
+                  gameScene: self.gameScene,
+                  game: self.gameScene.game
+                )
+                HintButton(game: self.gameScene.game)
+              }
             }
             
             NumbersPad (
@@ -70,10 +78,6 @@ struct GameScreen: View {
           }
 
           Spacer()
-          
-          Toggle(isOn: $showDb) {
-            Text("Moves")
-          }
         }
       }
       .padding()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum CursorMode {
-  case number
-  case note
+public enum CursorMode: Int {
+  case number = 0
+  case note = 1
 }
