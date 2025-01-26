@@ -15,11 +15,4 @@ public class Board: ObservableObject {
   static let rowsCount: Int = 9
   static let colsCount: Int = 9
   static let cellsCount: Int = rowsCount * colsCount
-
-  @Published var puzzle: Puzzle
-  
-  init(difficulty: Difficulty, existingGame: SaveGameEntity?) {
-    self.puzzle = Puzzle(difficulty: difficulty, existingGame: existingGame)
-    self.puzzle.generate()
-  }
 }

@@ -17,13 +17,10 @@ class MobileGameScene: GameScene {
   
   private var validNumberKeys = "1"..."9"
   
-  override init(
-    size: CGSize,
-    difficulty: Difficulty
-  ) {
-    super.init(size: size, difficulty: difficulty)
+  override init(size: CGSize) {
+    super.init(size: size)
     
-    cellSelectionVibrator.prepare()
+    self.cellSelectionVibrator.prepare()
   }
   
   required init?(coder: NSCoder) {

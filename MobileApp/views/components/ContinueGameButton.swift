@@ -14,7 +14,8 @@ struct ContinueGameSection: View {
       FetchRequestHelper.buildFetchRequestWithRelationship(
         predicate: NSPredicate(format: "SELF == %@", DataManager.default.usersService.currentUserId),
         relationshipKeyPathsForPrefetching: ["activeSaveGame"]
-      )
+      ),
+    animation: .interpolatingSpring
   ) private var users: FetchedResults<UserEntity>
 
   private var activeSaveGame: SaveGameEntity? {
@@ -43,11 +44,7 @@ struct ContinueGameButton: View {
   
   var body: some View {
     NavigationLink(
-      destination:
-        GameScreen(
-          difficulty: difficulty,
-          existingGame: activeSaveGame
-        ).navigationBarBackButtonHidden()
+      destination: GameScreen().navigationBarBackButtonHidden()
     ) {
       HStack(alignment: .top) {
         VStack(alignment: .leading) {
