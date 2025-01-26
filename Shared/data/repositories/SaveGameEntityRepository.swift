@@ -8,7 +8,44 @@
 import CoreData
 import Foundation
 
-class SaveGameEntityDataRepository: DataRepository {
+class SaveGameEntityDataRepository: DataRepository {  
+  func create(
+    difficulty: Difficulty,
+    givenNotation: BoardPlainStringNotation,
+    solutionNotation: BoardPlainStringNotation,
+    playerNotation: BoardPlainStringNotation,
+    notesNotation: BoardPlainNoteStringNotation
+  ) -> Void {
+    let saveGameEntity = self.findCurrent() ?? SaveGameEntity(context: self.context)
+    
+    saveGameEntity.moveIndex = -1
+    saveGameEntity.difficulty = difficulty.rawValue
+    saveGameEntity.givenNotation = givenNotation
+    saveGameEntity.solutionNotation = solutionNotation
+    saveGameEntity.durationInSeconds = 0
+    saveGameEntity.score = 0
+    saveGameEntity.playerNotation = playerNotation
+    saveGameEntity.notesNotation = notesNotation
+    saveGameEntity.createdAt = Date()
+    saveGameEntity.updatedAt = Date()
+    saveGameEntity.moves = []
+    
+    do {
+      try self.context.save()
+      
+      SharedSaveGameManager.instance
+        .share(entity: saveGameEntity.toOTASaveGameEntity())
+      
+    } catch {
+      print("Failed to save the new game: \(error)")
+      return
+    }
+  }
+  
+  
+  
+  
+  
   static func hasAny() -> Bool {
     let request = SaveGameEntity.fetchRequest()
     request.predicate = .all
