@@ -14,23 +14,23 @@ struct HomeScreen: View {
   @State private var newGameConfirmationDifficulty: Difficulty? = nil
   @State private var newGameConfirmed: Bool = false
 
-  @State private var lastGame: SaveGameEntity?
+  @State private var activeSaveGame: SaveGameEntity?
+
+  init() {
+    try! DataManager.default.usersService.ensureCurrentUserExists()
+  }
   
-//  @StateObject private var manager = SharedSaveGameManager.instance
+  private func loadLastGame() {
+    print("Reloaded last game")
+    self.activeSaveGame = DataManager.default.usersService.findActiveSaveGame()
+  }
   
   var body: some View {
     VStack {
       Spacer(minLength: 4)
       
       List {
-//        Text("Data: \(manager.currentValue.updatedAt)")
-//          .font(.caption2)
-//        
-//        Button("Send") {
-//          manager.sendSample()
-//        }
-        
-        if lastGame != nil {
+        if activeSaveGame != nil {
           Section(
             header: VStack(alignment: .leading) {
               Text("Welcome back!").fontWeight(.bold)
@@ -43,7 +43,7 @@ struct HomeScreen: View {
       
         Section(
           header: VStack(alignment: .leading) {
-            if lastGame == nil {
+            if activeSaveGame == nil {
               Text("Welcome!").fontWeight(.bold)
               Text("Start a new game:").font(.system(size: 12))
             } else {
@@ -52,7 +52,7 @@ struct HomeScreen: View {
           }.padding(.vertical)
         ) {
           ForEach(Difficulty.allCases) { difficulty in
-            if lastGame != nil {
+            if activeSaveGame != nil {
               Button {
                 self.newGameConfirmationDifficulty = difficulty
                 self.newGameConfirmationShowing = true
@@ -73,7 +73,8 @@ struct HomeScreen: View {
           ) {
             Button("Cancel", role: .cancel) {}
             Button("New game", role: .destructive) {
-              SaveGameEntityDataService.delete()
+              try! DataManager.default.usersService.detachActiveSaveGame()
+              self.activeSaveGame = nil
               self.newGameConfirmed = true
             }
             
@@ -115,10 +116,6 @@ struct HomeScreen: View {
     .onAppear {
       self.loadLastGame()
     }
-  }
-  
-  private func loadLastGame() {
-    self.lastGame = SaveGameEntityDataService.findCurrentGame()
   }
 }
 

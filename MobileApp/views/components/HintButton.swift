@@ -26,15 +26,9 @@ struct HintButton: View {
         vibrator.impactOccurred()
       },
       label: {
-        HStack {
-          Image(systemName: "lightbulb")
-            .font(.system(size: 14))
-            .foregroundStyle(.white)
-          
-          Text("Hint")
-            .font(.system(size: 12))
-            .foregroundStyle(.white)
-        }
+        Image(systemName: "lightbulb")
+          .font(.system(size: 16))
+          .foregroundStyle(.white)
       }
     )
     .disabled(!isHintable)

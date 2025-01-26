@@ -58,7 +58,7 @@ public struct Location: Equatable {
     self.index = Location.indexFrom(
       col: col,
       row: row,
-      for: orientation
+      forOrientation: orientation
     )
   }
   
@@ -78,7 +78,7 @@ public struct Location: Equatable {
     self.index = Location.indexFrom(
       col: col,
       row: row,
-      for: orientation
+      forOrientation: orientation
     )
   }
   
@@ -100,12 +100,12 @@ public struct Location: Equatable {
     
     let col: Int = Location.colFrom(
       index: index,
-      for: orientation,
+      forOrientation: orientation,
       colsCount: colsCount
     )
     let row: Int = Location.rowFrom(
       index: index,
-      for: orientation,
+      forOrientation: orientation,
       rowsCount: rowsCount
     )
     
@@ -133,12 +133,12 @@ public struct Location: Equatable {
     
     self.col = Location.colFrom(
       index: self.index,
-      for: self.indexOrientation
+      forOrientation: self.indexOrientation
     )
     
     self.row = Location.rowFrom(
       index: self.index,
-      for: self.indexOrientation
+      forOrientation: self.indexOrientation
     )
   }
   
@@ -162,12 +162,12 @@ public struct Location: Equatable {
     
     self.col = Location.colFrom(
       index: self.index,
-      for: self.indexOrientation
+      forOrientation: self.indexOrientation
     )
     
     self.row = Location.rowFrom(
       index: self.index,
-      for: self.indexOrientation
+      forOrientation: self.indexOrientation
     )
   }
   
@@ -209,7 +209,7 @@ public struct Location: Equatable {
     return Location(row: randomRow, col: randomCol)
   }
   
-  static func indexFrom(col: Int, row: Int, for orientation: LocationIndexOrientation) -> Int {
+  static func indexFrom(col: Int, row: Int, forOrientation orientation: LocationIndexOrientation) -> Int {
     switch orientation {
     case .leftToRight:
       return row * Board.colsCount + col
@@ -218,7 +218,7 @@ public struct Location: Equatable {
     }
   }
   
-  static func colFrom(index: Int, for orientation: LocationIndexOrientation, colsCount: Int = Board.colsCount) -> Int {
+  static func colFrom(index: Int, forOrientation orientation: LocationIndexOrientation, colsCount: Int = Board.colsCount) -> Int {
     switch orientation {
     case .leftToRight:
       return index % colsCount
@@ -227,7 +227,7 @@ public struct Location: Equatable {
     }
   }
   
-  static func rowFrom(index: Int, for orientation: LocationIndexOrientation, rowsCount: Int = Board.rowsCount) -> Int {
+  static func rowFrom(index: Int, forOrientation orientation: LocationIndexOrientation, rowsCount: Int = Board.rowsCount) -> Int {
     switch orientation {
     case .leftToRight:
       return index / rowsCount

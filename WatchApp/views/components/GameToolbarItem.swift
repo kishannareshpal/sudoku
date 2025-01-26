@@ -47,7 +47,7 @@ struct GameToolbarItem: View {
     GameToolbarItemContainer(action: action) {
       HStack(alignment: .center) {
         Group {
-          if let symbolName = symbolName {
+          if let symbolName {
             Image(systemName: symbolName)
               .foregroundStyle(symbolColor)
           }
@@ -78,7 +78,7 @@ private struct GameToolbarItemContainer<Content: View>: View {
   }
   
   var body: some View {
-    if let action = action {
+    if let action {
       // If action is provided, wrap the content into a button
       Button(action: action) {
         content

@@ -16,7 +16,6 @@ struct NumbersPad: View {
   @ObservedObject var puzzle: Puzzle
   
   private var numberKeyVibrator = UIImpactFeedbackGenerator(style: .medium)
-  private var clearKeyVibrator = UIImpactFeedbackGenerator(style: .rigid)
 
   init(
     gameScene: MobileGameScene,
@@ -43,13 +42,7 @@ struct NumbersPad: View {
     
     return self.game.activatedNumberCell?.isEraseable ?? false
   }
-  
-  private func onClearKeyPress() {
-    clearKeyVibrator.impactOccurred()
 
-    self.gameScene.clearActivatedNumberCellValueAndNotes()
-  }
-  
   private func onNumberKeyPress(_ number: Int) {
     numberKeyVibrator.impactOccurred()
 
@@ -61,7 +54,7 @@ struct NumbersPad: View {
   var body: some View {
     VStack(spacing: 8) {
       HStack(spacing: 8) {
-        ForEach(1...5, id: \.self) { number in
+        ForEach(1...3, id: \.self) { number in
           let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
           let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
           
@@ -70,9 +63,9 @@ struct NumbersPad: View {
             .buttonStyle(NumberButtonStyle(disabled: unavailable))
         }
       }
-
+      
       HStack(spacing: 8) {
-        ForEach(6...9, id: \.self) { number in
+        ForEach(4...6, id: \.self) { number in
           let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
           let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
           
@@ -80,26 +73,21 @@ struct NumbersPad: View {
             .disabled(unavailable)
             .buttonStyle(NumberButtonStyle(disabled: unavailable))
         }
-        
-        Button(
-          action: {
-            onClearKeyPress()
-          },
-          label: {
-            Image(systemName: "delete.left")
-          }
-        )
-        .disabled(!self.isActiveNumberCellEraseable)
-        .buttonStyle(
-          NumberButtonStyle(
-            disabled: !self.isActiveNumberCellEraseable
-          )
-        )
+      }
+      
+      HStack {
+        ForEach(7...9, id: \.self) { number in
+          let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
+          let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
+          
+          Button("\(number)", action: { onNumberKeyPress(number) })
+            .disabled(unavailable)
+            .buttonStyle(NumberButtonStyle(disabled: unavailable))
+        }
       }
     }
     .onAppear() {
       numberKeyVibrator.prepare()
-      clearKeyVibrator.prepare()
     }
   }
 }
@@ -114,7 +102,7 @@ struct NumberButtonStyle: ButtonStyle {
       .background(Color(UIColor("#141414")))
       .foregroundStyle(.white)
       .opacity(self.disabled ? 0.3 : 1)
-      .clipShape(RoundedRectangle(cornerSize: .init(width: 8, height: 8)))
+      .clipShape(RoundedRectangle(cornerRadius: 8))
       .scaleEffect(configuration.isPressed ? 0.9 : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
   }

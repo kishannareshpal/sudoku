@@ -12,6 +12,7 @@ class Game: ObservableObject {
   private static let VALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = 10
   private static let INVALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = -5
   
+  private(set) var saveGameId: EntityID
   private(set) var difficulty: Difficulty
   private(set) var board: Board
   private(set) var graphics: GameGraphics
@@ -66,21 +67,32 @@ class Game: ObservableObject {
     difficulty: Difficulty
   ) {
     self.difficulty = difficulty
-    let existingGame = SaveGameEntityDataService.findCurrentGame()
+    var saveGame = DataManager.default.usersService.findActiveSaveGame()
     
-    self.board = Board(difficulty: self.difficulty, existingGame: existingGame)
+    self.board = Board(difficulty: self.difficulty, existingGame: saveGame)
     self.graphics = GameGraphics(sceneSize: sceneSize, puzzle: self.board.puzzle)
     
     // New game? Create a new save!
-    if existingGame == nil {
-      SaveGameEntityDataService.createNewSaveGame(difficulty: difficulty, puzzle: self.board.puzzle)
+    if saveGame == nil {
+      print("Started a new game")
+      saveGame = try! DataManager.default.saveGamesService
+        .createNewSaveGame(
+          forUserId: DataManager.default.usersService.currentUserId,
+          difficulty: difficulty,
+          puzzle: self.board.puzzle
+        )
+    } else {
+      print("Continuing an existing game")
     }
     
-    self.durationInSeconds = existingGame?.durationInSeconds ?? 0
-    self.score = existingGame?.score ?? 0
-    self.moveIndex = existingGame?.moveIndex ?? -1
+    self.saveGameId = saveGame!.objectID
+    print("Save game ID: ", saveGameId)
     
-    self.moves = (existingGame?.moves?.allObjects as? [MoveEntryEntity])?.sorted {
+    self.durationInSeconds = saveGame!.durationInSeconds
+    self.score = saveGame!.score
+    self.moveIndex = saveGame!.moveIndex
+    
+    self.moves = (saveGame!.moves?.allObjects as? [MoveEntryEntity])?.sorted {
       $0.position > $1.position
     } ?? []
     
@@ -132,8 +144,9 @@ class Game: ObservableObject {
     guard !self.isGameOver else {
       return
     }
-    
-    SaveGameEntityDataService.updateDuration(seconds: self.durationInSeconds)
+
+    try? DataManager.default.saveGamesService.repository
+      .updateDuration(for: self.saveGameId, seconds: self.durationInSeconds)
   }
   
   func toggleActivatedNumberCellNoteValues(with values: [Int], forceVisible: Bool? = nil, recordMove: Bool = false) -> Void {
@@ -153,9 +166,9 @@ class Game: ObservableObject {
         forceAdd: forceVisible
       )
     
-    // Auto-save
-    SaveGameEntityDataService
+    try? DataManager.default.saveGamesService
       .autoSave(
+        self.saveGameId,
         puzzle: self.board.puzzle,
         duration: self.durationInSeconds
       )
@@ -309,17 +322,13 @@ class Game: ObservableObject {
     self.isGamePaused.toggle()
   }
   
-  func delete() -> Void {
-    SaveGameEntityDataService.delete()
-  }
-  
   func solveActivatedNumberCell() -> Void {
     guard let activatedNumberCell = self.activatedNumberCell else { return }
     
     let location = activatedNumberCell.location
     let cellSolutionValue = self.board.puzzle.solution[location.row][location.col]
     
-    self.changeActivatedNumberCellValue(to: cellSolutionValue)
+    self.changeActivatedNumberCellValue(to: cellSolutionValue, recordMove: true)
   }
   
   @discardableResult
@@ -335,8 +344,9 @@ class Game: ObservableObject {
     activatedNumberCell.clearNotes()
 
     // Auto-save
-    SaveGameEntityDataService
+    try? DataManager.default.saveGamesService
       .autoSave(
+        self.saveGameId,
         puzzle: self.board.puzzle,
         duration: self.durationInSeconds,
         score: self.score
@@ -361,8 +371,9 @@ class Game: ObservableObject {
     }
     
     // Auto-save
-    SaveGameEntityDataService
+    try? DataManager.default.saveGamesService
       .autoSave(
+        self.saveGameId,
         puzzle: self.board.puzzle,
         duration: self.durationInSeconds,
         score: self.score
@@ -375,15 +386,15 @@ class Game: ObservableObject {
     value: String
   ) {
     self.moveIndex += 1
-
-    let moveEntry = SaveGameEntityDataService.saveMove(
+    let moveEntry = try! DataManager.default.saveGamesService.addMove(
+      self.saveGameId,
       position: self.moveIndex,
       locationNotation: locationNotation,
       type: type,
       value: value
     )
     
-    if let moveEntry = moveEntry {
+    if let moveEntry {
       self.moves.removeAll { entry in entry.position >= self.moveIndex }
       self.moves.insert(moveEntry, at: 0)
     }
@@ -394,7 +405,7 @@ class Game: ObservableObject {
     
     // Undo this move
     let move = self.moves.first(where: { $0.position == self.moveIndex })
-    if let move = move {
+    if let move {
       self.moveCursor(
         to: Location(notation: move.locationNotation!),
         activateCellImmediately: true
@@ -407,7 +418,7 @@ class Game: ObservableObject {
           ($0.position < move.position) && ($0.locationNotation == move.locationNotation)
         }
         
-        if let lastMoveOnThisCell = lastMoveOnThisCell {
+        if let lastMoveOnThisCell {
           self.changeActivatedNumberCellValue(
             to: Int(lastMoveOnThisCell.value!)!
           )
@@ -438,7 +449,8 @@ class Game: ObservableObject {
     }
     
     self.moveIndex -= 1
-    SaveGameEntityDataService.updateMoveIndex(self.moveIndex)
+    try! DataManager.default.saveGamesService.repository
+      .update(self.saveGameId, moveIndex: self.moveIndex)
   }
   
   func redoMove() -> Void {
@@ -477,7 +489,8 @@ class Game: ObservableObject {
       }
     }
     
-    SaveGameEntityDataService.updateMoveIndex(self.moveIndex)
+    try! DataManager.default.saveGamesService.repository
+      .update(self.saveGameId, moveIndex: self.moveIndex)
   }
   
   /// Highlights all peer cells related to the number cell currently under the cursor.
@@ -680,11 +693,13 @@ class Game: ObservableObject {
     }
     
     // Auto-save
-    SaveGameEntityDataService.autoSave(
-      puzzle: self.board.puzzle,
-      duration: self.durationInSeconds,
-      score: self.score
-    )
+    try? DataManager.default.saveGamesService
+      .autoSave(
+        self.saveGameId,
+        puzzle: self.board.puzzle,
+        duration: self.durationInSeconds,
+        score: self.score
+      )
     
     self.highlightAllPeerCellsRelatedToCursor()
 
@@ -713,10 +728,13 @@ class Game: ObservableObject {
     }
     
     // Auto-save
-    SaveGameEntityDataService.autoSave(
-      puzzle: self.board.puzzle,
-      duration: self.durationInSeconds
-    )
+    try? DataManager.default.saveGamesService
+      .autoSave(
+        self.saveGameId,
+        puzzle: self.board.puzzle,
+        duration: self.durationInSeconds,
+        score: self.score
+      )
   }
   
   private func checkGameOver() -> Bool {

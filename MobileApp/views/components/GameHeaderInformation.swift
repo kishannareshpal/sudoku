@@ -13,7 +13,7 @@ struct GameHeaderInformation: View {
   var body: some View {
     VStack {      
       Text(GameDurationHelper.format(self.game.durationInSeconds))
-        .font(.system(size: 24, weight: .bold))
+        .font(.system(size: 24, weight: .bold).monospaced())
         .foregroundStyle(.white)
       
       Text("\(self.game.difficulty.rawValue) • \(self.game.score) Points")

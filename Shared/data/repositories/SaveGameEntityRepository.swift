@@ -1,5 +1,5 @@
 //
-//  SaveGameEntityDataRepository.swift
+//  SaveGameEntityRepository.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 27/08/2024.
@@ -8,182 +8,91 @@
 import CoreData
 import Foundation
 
-class SaveGameEntityDataRepository: DataRepository {  
+
+enum SaveGameEntityRepositoryErrors: Error {
+  case saveGameNotFound
+  case userNotFound
+}
+
+class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
   func create(
+    forUser user: UserEntity,
     difficulty: Difficulty,
     givenNotation: BoardPlainStringNotation,
     solutionNotation: BoardPlainStringNotation,
     playerNotation: BoardPlainStringNotation,
     notesNotation: BoardPlainNoteStringNotation
-  ) -> Void {
-    let saveGameEntity = self.findCurrent() ?? SaveGameEntity(context: self.context)
+  ) throws -> SaveGameEntity {
+    let saveGame = SaveGameEntity(context: self.context)
+    saveGame.moveIndex = -1
+    saveGame.difficulty = difficulty.rawValue
+    saveGame.givenNotation = givenNotation
+    saveGame.solutionNotation = solutionNotation
+    saveGame.durationInSeconds = 0
+    saveGame.score = 0
+    saveGame.playerNotation = playerNotation
+    saveGame.notesNotation = notesNotation
+    saveGame.createdAt = Date()
+    saveGame.updatedAt = Date()
+    saveGame.moves = []
     
-    saveGameEntity.moveIndex = -1
-    saveGameEntity.difficulty = difficulty.rawValue
-    saveGameEntity.givenNotation = givenNotation
-    saveGameEntity.solutionNotation = solutionNotation
-    saveGameEntity.durationInSeconds = 0
-    saveGameEntity.score = 0
-    saveGameEntity.playerNotation = playerNotation
-    saveGameEntity.notesNotation = notesNotation
-    saveGameEntity.createdAt = Date()
-    saveGameEntity.updatedAt = Date()
-    saveGameEntity.moves = []
-    
-    do {
-      try self.context.save()
-      
-      SharedSaveGameManager.instance
-        .share(entity: saveGameEntity.toOTASaveGameEntity())
-      
-    } catch {
-      print("Failed to save the new game: \(error)")
-      return
-    }
-  }
-  
-  
-  
-  
-  
-  static func hasAny() -> Bool {
-    let request = SaveGameEntity.fetchRequest()
-    request.predicate = .all
-    request.fetchLimit = 1
-    
-    let count = (try? self.context.count(for: request)) ?? 0
-    return count > 0
-  }
-  
-  /// Find and return the last save game stored if any.
-  static func findCurrent() -> SaveGameEntity? {
-    let request = SaveGameEntity.fetchRequest()
-    request.predicate = .all
-    request.fetchLimit = 1
-    request.relationshipKeyPathsForPrefetching = ["moves"]
-    request.sortDescriptors = []
-    
-    let result = (try? self.context.fetch(request)) ?? []
-    return result.first
-  }
-  
-  static func new(
-    difficulty: Difficulty,
-    givenNotation: BoardPlainStringNotation,
-    solutionNotation: BoardPlainStringNotation,
-    playerNotation: BoardPlainStringNotation,
-    notesNotation: BoardPlainNoteStringNotation
-  ) -> Void {
-    let saveGameEntity = self.findCurrent() ?? SaveGameEntity(context: self.context)
+    saveGame.user = user
+    user.activeSaveGame = saveGame
 
-    saveGameEntity.moveIndex = -1
-    saveGameEntity.difficulty = difficulty.rawValue
-    saveGameEntity.givenNotation = givenNotation
-    saveGameEntity.solutionNotation = solutionNotation
-    saveGameEntity.durationInSeconds = 0
-    saveGameEntity.score = 0
-    saveGameEntity.playerNotation = playerNotation
-    saveGameEntity.notesNotation = notesNotation
-    saveGameEntity.createdAt = Date()
-    saveGameEntity.updatedAt = Date()
-    saveGameEntity.moves = []
-    
-    do {
-      try self.context.save()
-      
-      SharedSaveGameManager.instance
-        .share(entity: saveGameEntity.toOTASaveGameEntity())
-      
-    } catch {
-      print("Failed to save the new game: \(error)")
-      return
-    }
+    try self.persist()
+    return saveGame
   }
-  
-  static func updateDuration(seconds: Int64) -> Void {
-    let currentSaveGameEntity = self.findCurrent()
-    guard let currentSaveGameEntity = currentSaveGameEntity else {
-      return
+
+  func updateDuration(for saveGameId: EntityID, seconds: Int64) throws -> Void {
+    guard let saveGame = self.findById(saveGameId) else {
+      throw SaveGameEntityRepositoryErrors.saveGameNotFound
     }
     
     let now = Date()
-    currentSaveGameEntity.updatedAt = now
-    currentSaveGameEntity.durationInSeconds = seconds
+    saveGame.updatedAt = now
+    saveGame.durationInSeconds = seconds
     
-    do {
-      try self.context.save()
-      
-      SharedSaveGameManager.instance
-        .share(entity: currentSaveGameEntity.toOTASaveGameEntity())
-      
-    } catch {
-      print("Failed to save the increment for session duration: \(error)")
-      return
-    }
+    try self.persist()
   }
-  
-  static func updateMoveIndex(_ newPosition: Int32) -> Void {
-    let currentSaveGameEntity = self.findCurrent()
-    guard let currentSaveGameEntity = currentSaveGameEntity else {
-      return
+
+  @discardableResult
+  func update(
+    _ saveGameId: EntityID,
+    playerNotation: BoardPlainStringNotation? = nil,
+    notesNotation: BoardPlainNoteStringNotation? = nil,
+    score: Int64? = nil,
+    duration: Int64? = nil,
+    moveIndex: Int32? = nil
+  ) throws -> SaveGameEntity {
+    guard let saveGame = self.findById(saveGameId) else {
+      throw SaveGameEntityRepositoryErrors.saveGameNotFound
     }
     
     let now = Date()
-    currentSaveGameEntity.updatedAt = now
-    currentSaveGameEntity.moveIndex = newPosition
-    
-    do {
-      try self.context.save()
-      
-      SharedSaveGameManager.instance
-        .share(entity: currentSaveGameEntity.toOTASaveGameEntity())
-      
-    } catch {
-      print("Failed to save the increment for session duration: \(error)")
-      return
-    }
-  }
+    saveGame.updatedAt = now
 
-  static func save(
-    playerNotation: BoardPlainStringNotation,
-    notesNotation: BoardPlainNoteStringNotation,
-    score: Int64?,
-    duration: Int64?
-  ) -> Void {
-    let currentSaveGameEntity = self.findCurrent()
-    guard let currentSaveGameEntity = currentSaveGameEntity else { return }
-
-    let now = Date()
-    currentSaveGameEntity.updatedAt = now
-    currentSaveGameEntity.playerNotation = playerNotation
-    currentSaveGameEntity.notesNotation = notesNotation
-    
-    if let score = score {
-      currentSaveGameEntity.score = score
-    }
-
-    if let duration = duration {
-      currentSaveGameEntity.durationInSeconds = duration
+    if let playerNotation {
+      saveGame.playerNotation = playerNotation
     }
     
-    do {
-      try self.context.save()
-
-      SharedSaveGameManager.instance
-        .share(entity: currentSaveGameEntity.toOTASaveGameEntity())
-
-    } catch {
-      print("Failed to save game: \(error)")
-      return
-    }
-  }
-  
-  static func delete() -> Void {
-    let currentGame = self.findCurrent()
-    guard let currentGame else {
-      return
+    if let notesNotation {
+      saveGame.notesNotation = notesNotation
     }
     
-    self.context.delete(currentGame)
+    if let score {
+      saveGame.score = score
+    }
+    
+    if let duration {
+      saveGame.durationInSeconds = duration
+    }
+    
+    if let moveIndex {
+      saveGame.moveIndex = moveIndex
+    }
+    
+    try! self.persist()
+
+    return saveGame
   }
 }

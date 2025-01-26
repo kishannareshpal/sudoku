@@ -23,7 +23,7 @@ class AppDataProvider: ObservableObject {
     }
     
     container.loadPersistentStores { storeDescription, error in
-      if let error = error {
+      if let error {
         fatalError("Core Data failed to load \(error.localizedDescription)")
       }
     }

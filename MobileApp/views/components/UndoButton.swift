@@ -22,15 +22,9 @@ struct UndoButton: View {
         self.vibrator.impactOccurred()
       },
       label: {
-        HStack {
-          Image(systemName: "arrow.uturn.backward")
-            .font(.system(size: 14))
-            .foregroundStyle(.white)
-          
-          Text("Undo")
-            .font(.system(size: 12))
-            .foregroundStyle(.white)
-        }
+        Image(systemName: "arrow.uturn.backward")
+          .font(.system(size: 16))
+          .foregroundStyle(.white)
       }
     )
     .disabled(!self.game.isMoveUndoable)

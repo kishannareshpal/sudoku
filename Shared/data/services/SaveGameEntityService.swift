@@ -1,85 +1,102 @@
 //
-//  SaveGameEntityDataService.swift
+//  SaveGameEntityData.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 27/08/2024.
 //
 
-class SaveGameEntityDataService {
-  static func hasSaveGame() -> Bool {
-    return SaveGameEntityDataRepository.hasAny()
+import Foundation
+
+class SaveGameEntityService {
+  let repository: SaveGameEntityRepository
+  let userRepository: UserEntityRepository
+  let moveEntryRepository: MoveEntryEntityRepository
+  
+  init(
+    repository: SaveGameEntityRepository,
+    userRepository: UserEntityRepository,
+    moveEntryRepository: MoveEntryEntityRepository
+  ) {
+    self.repository = repository
+    self.userRepository = userRepository
+    self.moveEntryRepository = moveEntryRepository
   }
   
-  static func findCurrentGame() -> SaveGameEntity? {
-    return SaveGameEntityDataRepository.findCurrent()
-  }
-  
-  static func createNewSaveGame(difficulty: Difficulty, puzzle: Puzzle) -> Void {
+  func createNewSaveGame(forUserId userId: EntityID, difficulty: Difficulty, puzzle: Puzzle) throws -> SaveGameEntity {
     let serializedGivenNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.given)
     let serializedSolutionNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.solution)
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
     
-    SaveGameEntityDataRepository
-      .new(
-        difficulty: difficulty,
-        givenNotation: serializedGivenNotation,
-        solutionNotation: serializedSolutionNotation,
-        playerNotation: serializedPlayerNotation,
-        notesNotation: serializedNotesNotation
-      )
+    let user = self.userRepository.findById(userId)!
+    
+    return try self.repository.create(
+      forUser: user,
+      difficulty: difficulty,
+      givenNotation: serializedGivenNotation,
+      solutionNotation: serializedSolutionNotation,
+      playerNotation: serializedPlayerNotation,
+      notesNotation: serializedNotesNotation
+    )
   }
   
-  static func updateMoveIndex(_ newPosition: Int32) -> Void {
-    SaveGameEntityDataRepository.updateMoveIndex(newPosition)
-  }
-  
-  static func updateDuration(seconds: Int64) -> Void {
-    SaveGameEntityDataRepository.updateDuration(seconds: seconds)
-  }
-  
-  static func autoSave(
+  func autoSave(
+    _ saveGameId: EntityID,
     puzzle: Puzzle,
     duration: Int64? = nil,
     score: Int64? = nil
-  ) -> Void {
+  ) throws -> Void {
     let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
     let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
     
-    SaveGameEntityDataRepository.save(
-      playerNotation: serializedPlayerNotation,
-      notesNotation: serializedNotesNotation,
-      score: score,
-      duration: duration
-    )
+    try self.repository
+      .update(
+        saveGameId,
+        playerNotation: serializedPlayerNotation,
+        notesNotation: serializedNotesNotation,
+        score: score,
+        duration: duration
+      )
+
     print("Auto saved!")
   }
   
-  static func delete() -> Void {
-    SaveGameEntityDataRepository.delete()
-  }
-  
-  // MARK: -
-  
-  static func saveMove(
+  func addMove(
+    _ saveGameId: EntityID,
     position: Int32,
     locationNotation: String,
     type: MoveType,
     value: String
-  ) -> MoveEntryEntity? {
-    let currentSaveGame = SaveGameEntityDataRepository.findCurrent()
-    guard let currentSaveGame else { return nil }
+  ) throws -> MoveEntryEntity? {
+    let saveGame = self.repository.findById(saveGameId)
+    guard let saveGame else {
+      return nil;
+    }
     
-    MoveEntryEntityDataRepository.deleteAllEntriesAfterAndIncluding(position: position)
-    SaveGameEntityDataRepository.updateMoveIndex(position)
-    let moveEntry = MoveEntryEntityDataRepository.create(
+    let movesToDelete = self.moveEntryRepository.findAllBySaveGame(
+      withId: saveGameId,
+      withAdditionalPredicate: NSPredicate(
+        format: "position >= %d AND saveGame == %@",
+        position,
+        saveGameId
+      )
+    )
+    
+    movesToDelete.forEach { move in
+      DataManager.default.context.delete(move)
+    }
+
+    let moveEntry = self.moveEntryRepository.create(
       position: position,
       locationNotation: locationNotation,
       type: type,
       value: value
     )
-    currentSaveGame.addToMoves(moveEntry!)
+    
+    saveGame.moveIndex = position
+    saveGame.addToMoves(moveEntry)
+    try DataManager.default.persist()
+    
     return moveEntry
-
   }
 }

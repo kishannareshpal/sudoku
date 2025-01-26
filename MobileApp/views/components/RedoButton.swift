@@ -22,15 +22,9 @@ struct RedoButton: View {
         self.vibrator.impactOccurred()
       },
       label: {
-        HStack {
-          Image(systemName: "arrow.uturn.forward")
-            .font(.system(size: 14))
-            .foregroundStyle(.white)
-          
-          Text("Redo")
-            .font(.system(size: 12))
-            .foregroundStyle(.white)
-        }
+        Image(systemName: "arrow.uturn.forward")
+          .font(.system(size: 16))
+          .foregroundStyle(.white)
       }
     )
     .disabled(!self.game.isMoveRedoable)

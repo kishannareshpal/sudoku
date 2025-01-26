@@ -15,7 +15,16 @@ struct HomeScreen: View {
   @State private var newGameConfirmationDifficulty: Difficulty? = nil
   @State private var newGameConfirmed: Bool = false
   
-  @State private var currentGame: SaveGameEntity?
+  @State private var activeSaveGame: SaveGameEntity?
+  
+  init() {
+    try! DataManager.default.usersService.ensureCurrentUserExists()
+  }
+  
+  private func loadLastGame() {
+    print("Reloaded last game")
+    self.activeSaveGame = DataManager.default.usersService.findActiveSaveGame()
+  }
   
   var body: some View {
     ZStack {
@@ -37,7 +46,7 @@ struct HomeScreen: View {
               .foregroundStyle(.accent)
           }
           
-          ContinueGameButton()
+          ContinueGameSection()
           
           VStack(spacing: 12) {
             Text("Start a new game:")
@@ -46,7 +55,7 @@ struct HomeScreen: View {
             
             VStack(spacing: 8) {
               ForEach(Difficulty.allCases) { difficulty in
-                if currentGame != nil {
+                if activeSaveGame != nil {
                   Button {
                     self.newGameConfirmationDifficulty = difficulty
                     self.newGameConfirmationShowing = true
@@ -69,8 +78,9 @@ struct HomeScreen: View {
               ) {
                 Button("Cancel", role: .cancel) {}
                 Button("New game", role: .destructive) {
-                  SaveGameEntityDataService.delete()
-                  self.currentGame = nil
+                  try! DataManager.default.usersService.detachActiveSaveGame()
+
+                  self.activeSaveGame = nil
                   self.newGameConfirmed = true
                 }
     
@@ -105,11 +115,6 @@ struct HomeScreen: View {
     .onAppear {
       self.loadLastGame()
     }
-
-  }
-  
-  private func loadLastGame() {
-    self.currentGame = SaveGameEntityDataService.findCurrentGame()
   }
 }
 

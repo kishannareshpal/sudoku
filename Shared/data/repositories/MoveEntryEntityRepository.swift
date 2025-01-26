@@ -1,5 +1,5 @@
 //
-//  SaveGameEntityDataRepository.swift
+//  SaveGameEntityRepository.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 27/08/2024.
@@ -21,53 +21,34 @@ import Foundation
 //   - Then makes a move, clears everything after the index
 //     Inserts a move, updates to next index
 
-class MoveEntryEntityDataRepository: DataRepository<MoveEntryEntity> {
+class MoveEntryEntityRepository: BaseRepository<MoveEntryEntity> {
   @discardableResult
   func create(
     position: Int32,
     locationNotation: String,
     type: MoveType,
     value: String
-  ) -> MoveEntryEntity? {
+  ) -> MoveEntryEntity {
     let moveEntry = MoveEntryEntity(context: self.context)
     moveEntry.locationNotation = locationNotation
     moveEntry.type = type.rawValue
     moveEntry.position = position
     moveEntry.value = value
-    
+
     return moveEntry;
   }
 
-  func findAllBySaveGame(withId saveGameId: NSManagedObjectID) -> [MoveEntryEntity] {
-    let fetchRequest: NSFetchRequest<MoveEntryEntity> = MoveEntryEntity.fetchRequest()
-    fetchRequest.predicate = NSPredicate(format: "saveGame == %@", saveGameId)
-    fetchRequest.sortDescriptors = [NSSortDescriptor(key: "position", ascending: true)]
-    
-    do {
-      return try self.context.fetch(fetchRequest)
-    } catch {
-      return []
+  func findAllBySaveGame(withId saveGameId: EntityID, withAdditionalPredicate additionalPredicate: NSPredicate? = nil) -> [MoveEntryEntity] {
+    let findBySaveGamePredicate = NSPredicate(format: "saveGame == %@", saveGameId)
+    let predicate = if (additionalPredicate == nil) {
+      findBySaveGamePredicate
+    } else {
+      NSCompoundPredicate(andPredicateWithSubpredicates: [
+        findBySaveGamePredicate,
+        additionalPredicate ?? .none
+      ])
     }
-  }
-  
-  func deleteAllMoves(fromPosition: Int32, forSaveGameId: NSManagedObjectID) {
-    let fetchRequest: NSFetchRequest<MoveEntryEntity> = MoveEntryEntity.fetchRequest()
-    fetchRequest.predicate = NSPredicate(
-      format: "position >= %d AND saveGameId == %d",
-      fromPosition,
-      forSaveGameId
-    )
-    
-    do {
-      // Fetch objects matching the predicate
-      let objectsToDelete = try self.context.fetch(fetchRequest)
 
-      // Delete each object from the context
-      for object in objectsToDelete {
-        self.context.delete(object)
-      }
-    } catch {
-      print("Failed to delete moves: \(error)")
-    }
+    return self.findManyBy(predicate: predicate, sortDescriptors: [NSSortDescriptor(key: "position", ascending: true)])
   }
 }
