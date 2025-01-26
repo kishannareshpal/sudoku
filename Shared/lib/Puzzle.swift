@@ -8,10 +8,7 @@
 import Foundation
 
 public class Puzzle: ObservableObject {
-  // TODO: Improve processor performance
-  private let processor: QQWing;
-  private let difficulty: Difficulty
-  private let existingGame: SaveGameEntity?
+  private let saveGame: SaveGameEntity
   
   private(set) var player: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var given: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
@@ -30,19 +27,10 @@ public class Puzzle: ObservableObject {
     9: 9,
   ]
   
-  init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
-    self.processor = QQWing()
-    self.difficulty = difficulty
-    self.existingGame = existingGame
-  }
-  
-  func generate() -> Void {
-    if (existingGame != nil) {
-      generateFromExistingGame()
-    } else {
-      generateNewUsingProcessor()
-    }
-    
+  init(saveGame: SaveGameEntity) {
+    self.saveGame = saveGame
+
+    self.loadPuzzleFromSaveGame()
     self.calculateAndUpdateRemainingNumbersWithCount()
   }
   
@@ -101,39 +89,18 @@ public class Puzzle: ObservableObject {
     }
   }
   
-  private func generateFromExistingGame() {
-    guard let existingGame = existingGame else {
-      precondition(existingGame != nil, "No existing game to generate the puzzle from.")
-      return
-    }
-    
+  private func loadPuzzleFromSaveGame() {
     self.given = BoardNotationHelper
-      .toGridNotation(from: existingGame.givenNotation!)
+      .toGridNotation(from: saveGame.givenNotation!)
 
     self.solution = BoardNotationHelper
-      .toGridNotation(from: existingGame.solutionNotation!)
+      .toGridNotation(from: saveGame.solutionNotation!)
 
     self.player = BoardNotationHelper
-      .toGridNotation(from: existingGame.playerNotation!)
+      .toGridNotation(from: saveGame.playerNotation!)
     
     self.notes = BoardNotationHelper
-      .toGridNoteNotation(from: existingGame.notesNotation!)
-  }
-  
-  private func generateNewUsingProcessor() {
-    if (!self.processor.generatePuzzle()) {
-      print("TODO: Failed to generate puzzle! Do something")
-    }
-    self.given = BoardNotationHelper.toGridNotation(from: self.processor.getPuzzle())
-    
-    if (!self.processor.solve()) {
-      print("Failed to solve! TODO: regenerate")
-    }
-    self.solution = BoardNotationHelper.toGridNotation(from: self.processor.getSolution())
-    
-    // The processor doesn't support notes generation, so we're just instatiating as empty.
-    // - In the future, you may consider fetching the notes generated using the processor.
-    self.notes = BoardNotationHelper.emptyGridNoteNotation()
+      .toGridNoteNotation(from: saveGame.notesNotation!)
   }
   
   private func calculateAndUpdateRemainingNumbersWithCount() -> Void {

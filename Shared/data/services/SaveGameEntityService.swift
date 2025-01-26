@@ -22,14 +22,19 @@ class SaveGameEntityService {
     self.moveEntryRepository = moveEntryRepository
   }
   
-  func createNewSaveGame(forUserId userId: EntityID, difficulty: Difficulty, puzzle: Puzzle) throws -> SaveGameEntity {
-    let serializedGivenNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.given)
-    let serializedSolutionNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.solution)
-    let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzle.player)
-    let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzle.notes)
+  func createNewSaveGame(
+    forUserId userId: EntityID = DataManager.default.usersService.currentUserId,
+    difficulty: Difficulty
+  ) throws -> SaveGameEntity {    
+    let puzzleGenerator = PuzzleGenerator()
+    puzzleGenerator.generate()
+    
+    let serializedGivenNotation = BoardNotationHelper.toPlainStringNotation(from: puzzleGenerator.given)
+    let serializedSolutionNotation = BoardNotationHelper.toPlainStringNotation(from: puzzleGenerator.solution)
+    let serializedPlayerNotation = BoardNotationHelper.toPlainStringNotation(from: puzzleGenerator.player)
+    let serializedNotesNotation = BoardNotationHelper.toPlainNoteStringNotation(from: puzzleGenerator.notes)
     
     let user = self.userRepository.findById(userId)!
-    
     return try self.repository.create(
       forUser: user,
       difficulty: difficulty,

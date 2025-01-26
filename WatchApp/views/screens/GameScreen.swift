@@ -20,8 +20,7 @@ struct GameScreen: View {
     
     _gameScene = StateObject(
       wrappedValue: WatchGameScene(
-        size: .init(width: 10, height: 10), // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
-        difficulty: difficulty
+        size: .init(width: 10, height: 10) // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized
       )
     )
   }

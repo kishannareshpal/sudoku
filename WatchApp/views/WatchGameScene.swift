@@ -11,11 +11,8 @@ import SpriteKit
 class WatchGameScene: GameScene {
   @Published private(set) var cursorState: CursorState = .init()
 
-  override init(
-    size: CGSize,
-    difficulty: Difficulty
-  ) {
-    super.init(size: size, difficulty: difficulty)
+  override init(size: CGSize) {
+    super.init(size: size)
   }
 
   required init?(coder: NSCoder) {

@@ -13,10 +13,10 @@ struct SolveButton: View {
   
   var body: some View {
     Button("Solve") {
-      self.gameScene.game.board.puzzle.solution.enumerated().forEach { (rowIndex, row) in
+      self.gameScene.game.puzzle.solution.enumerated().forEach { (rowIndex, row) in
         row.enumerated().forEach { (colIndex, value) in
           
-          let isGivenCell = self.gameScene.game.board.puzzle.given[rowIndex][colIndex].isNotEmpty
+          let isGivenCell = self.gameScene.game.puzzle.given[rowIndex][colIndex].isNotEmpty
           if isGivenCell {
             // Skip given cells
             return

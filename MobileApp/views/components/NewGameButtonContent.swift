@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewGameButtonContent: View {
   var difficulty: Difficulty
+  var loading: Bool = false
   
   var body: some View {
     return (
@@ -18,8 +19,13 @@ struct NewGameButtonContent: View {
 
         Spacer()
 
-        Image(systemName: "plus")
-          .foregroundStyle(difficulty.color)
+        if loading {
+          ProgressView()
+        } else {
+          Image(systemName: "plus")
+            .foregroundStyle(difficulty.color)
+        }
+        
       }
     )
   }

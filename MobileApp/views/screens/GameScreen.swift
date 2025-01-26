@@ -14,19 +14,12 @@ struct GameScreen: View {
   // TODO: Have an environment object for gameScene and game
   @StateObject private var gameScene: MobileGameScene
   
-  @State private var showDb: Bool = false
-  
-  var difficulty: Difficulty
-  var existingGame: SaveGameEntity?
-  
-  init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
-    self.difficulty = difficulty
-    self.existingGame = existingGame
-    
+  @State private var showDb: Bool = false // TODO: remove
+
+  init(existingGame: SaveGameEntity? = nil) {
     _gameScene = StateObject(
       wrappedValue: MobileGameScene(
-        size: .init(width: 10, height: 10), // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
-        difficulty: difficulty
+        size: .init(width: 10, height: 10) // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
       )
     )
   }
@@ -73,7 +66,7 @@ struct GameScreen: View {
             NumbersPad (
               gameScene: self.gameScene,
               game: self.gameScene.game,
-              puzzle: self.gameScene.game.board.puzzle
+              puzzle: self.gameScene.game.puzzle
             )
           }
 

@@ -12,14 +12,8 @@ import Combine
 class GameScene: SKScene, ObservableObject {
   @Published var game: Game
 
-  public init(
-    size: CGSize,
-    difficulty: Difficulty
-  ) {
-    self.game = Game(
-      sceneSize: size,
-      difficulty: difficulty
-    )
+  public override init(size: CGSize) {
+    self.game = try! Game(sceneSize: size)
     
     super.init(size: size)
     
@@ -66,7 +60,7 @@ class GameScene: SKScene, ObservableObject {
     self.size = size
     
     // Redraw all the elements to the scene
-    self.game = Game(sceneSize: size, difficulty: self.game.difficulty)
+    self.game = try! Game(sceneSize: size)
     
     self.sceneDidLoad()
   }
