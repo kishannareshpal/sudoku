@@ -6,13 +6,17 @@
 //
 
 import Foundation
+import CoreData
 
 final class DataManager {
-  /// The shared entity service manager object for the process.
-  static let `default` = DataManager()
-  
-  let context = AppDataProvider.shared.container.viewContext
-  
+  /// The shared entity service manager object for use in the app.
+  static let `default` = DataManager(
+    context: AppDataProvider.shared.container.viewContext
+  )
+
+  // View context
+  let context: NSManagedObjectContext
+
   let saveGamesService: SaveGameEntityService
   let usersService: UserEntityService
   let moveEntriesService: MoveEntryEntityService
@@ -22,10 +26,11 @@ final class DataManager {
   private let moveEntryEntityRepository: MoveEntryEntityRepository
   
   // Private initializer to prevent direct instantiation
-  private init() {
-    self.userEntityRepository = UserEntityRepository(context: self.context)
-    self.saveGameEntityRepository = SaveGameEntityRepository(context: self.context)
-    self.moveEntryEntityRepository = MoveEntryEntityRepository(context: self.context)
+  private init(context: NSManagedObjectContext) {
+    self.context = context
+    self.userEntityRepository = UserEntityRepository(context: context)
+    self.saveGameEntityRepository = SaveGameEntityRepository(context: context)
+    self.moveEntryEntityRepository = MoveEntryEntityRepository(context: context)
     
     // Initializes the save game entity service
     self.saveGamesService = SaveGameEntityService(

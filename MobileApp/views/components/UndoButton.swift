@@ -28,7 +28,7 @@ struct UndoButton: View {
       }
     )
     .disabled(!self.game.isMoveUndoable)
-    .buttonStyle(GameControlButtonStyle(disabled: !self.game.isMoveUndoable))
+    .buttonStyle(GameControlButtonStyle(isEnabled: self.game.isMoveUndoable))
     .onAppear(perform: vibrator.prepare)
   }
 }

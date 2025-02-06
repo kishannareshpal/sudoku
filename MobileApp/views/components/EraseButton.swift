@@ -47,7 +47,7 @@ struct EraseButton: View {
       }
     )
     .disabled(!self.isActiveNumberCellEraseable)
-    .buttonStyle(GameControlButtonStyle(disabled: !self.isActiveNumberCellEraseable))
+    .buttonStyle(GameControlButtonStyle(isEnabled: self.isActiveNumberCellEraseable))
     .onAppear(perform: eraseKeyVibrator.prepare)
   }
 }

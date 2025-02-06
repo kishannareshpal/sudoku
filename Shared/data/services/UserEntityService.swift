@@ -19,21 +19,11 @@ class UserEntityService {
     self.saveGameRepository = saveGameRepository
   }
   
-  var currentUserId: EntityID {
-    let serializedUserId = UserDefaults.standard.string(forKey: UserDefaultKey.userId.rawValue)!
-    
-    return AppDataProvider.shared.container
-      .persistentStoreCoordinator
-      .managedObjectID(
-        forURIRepresentation: URL(string: serializedUserId)!
-      )!
-  }
-  
   func findCurrentUser(prefetchRelationships: [String]? = nil) -> UserEntity {
     let user = self.repository.findOneBy(
       predicate: NSPredicate(
         format: "SELF == %@ AND device == %@",
-        self.currentUserId,
+        self.repository.currentUserId,
         currentDevice.rawValue
       ),
       prefetchRelationships: prefetchRelationships
@@ -55,6 +45,6 @@ class UserEntityService {
   }
   
   func detachActiveSaveGame() throws -> Void {
-    self.repository.unsetActiveGame(fromUserId: self.currentUserId)
+    self.repository.unsetActiveGame(fromUserId: self.repository.currentUserId)
   }
 }

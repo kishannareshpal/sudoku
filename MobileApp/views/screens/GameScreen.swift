@@ -11,12 +11,13 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct GameScreen: View {
-  // TODO: Have an environment object for gameScene and game
+  // TODO: Have an environment object for gameScene?
   @StateObject private var gameScene: MobileGameScene
   
-  @State private var showDb: Bool = false // TODO: remove
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
 
-  init(existingGame: SaveGameEntity? = nil) {
+  init() {
+    // TODO: Show a loading indicator on the game scene
     _gameScene = StateObject(
       wrappedValue: MobileGameScene(
         size: .init(width: 10, height: 10) // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized.
@@ -26,7 +27,8 @@ struct GameScreen: View {
   
   var body: some View {
     ZStack {
-      Color.black.ignoresSafeArea()
+      Color(currentColorScheme.ui.game.background)
+        .ignoresSafeArea()
 
       GeometryReader { geometry in
         Color.clear.onAppear() {
@@ -46,7 +48,7 @@ struct GameScreen: View {
             HStack(spacing: 12) {
               HStack {
                 UndoButton(game: self.gameScene.game)
-                RedoButton(game: self.gameScene.game)
+//                RedoButton(game: self.gameScene.game)
               }
 
               NotesModeToggleButton(
@@ -59,14 +61,15 @@ struct GameScreen: View {
                   gameScene: self.gameScene,
                   game: self.gameScene.game
                 )
-                HintButton(game: self.gameScene.game)
+//                HintButton(game: self.gameScene.game)
               }
             }
             
             NumbersPad (
               gameScene: self.gameScene,
               game: self.gameScene.game,
-              puzzle: self.gameScene.game.puzzle
+              puzzle: self.gameScene.game.puzzle,
+              cursorState: self.gameScene.cursorState
             )
           }
 
@@ -76,9 +79,46 @@ struct GameScreen: View {
       .padding()
       .overlay {
         GameOverOverlay(game: self.gameScene.game)
-      }.sheet(isPresented: $showDb) {
-        DatabaseScreen(game: self.gameScene.game)
       }
     }
+  }
+}
+
+struct GameScreenPreview: PreviewProvider {
+  struct Content: View {
+    private let sceneSize = CGSize(width: 250, height: 250)
+    private let currentColorScheme = StyleManager.current.colorScheme
+    
+    @StateObject var dataProvider = AppDataProvider.shared
+    @State var ready: Bool = false
+    
+    init() {
+      StyleManager.current.switchColorScheme(to: .lightBlue)
+    }
+    
+    var body: some View {
+      ZStack {
+        Color(currentColorScheme.ui.game.background).onAppear {
+          let dataManager = DataManager.default
+          try! dataManager.usersService.ensureCurrentUserExists()
+          try! dataManager.saveGamesService.createNewSaveGame(
+            difficulty: .easy
+          )
+          
+          self.ready = true
+        }.ignoresSafeArea()
+        
+        if ready {
+          GameScreen()
+        } else {
+          Text("Scene not ready!")
+        }
+      }
+      .environment(\.managedObjectContext, dataProvider.container.viewContext)
+    }
+  }
+  
+  static var previews: some View {
+    return Content()
   }
 }

@@ -22,10 +22,10 @@ class SaveGameEntityService {
     self.moveEntryRepository = moveEntryRepository
   }
   
-  func createNewSaveGame(
-    forUserId userId: EntityID = DataManager.default.usersService.currentUserId,
-    difficulty: Difficulty
-  ) throws -> SaveGameEntity {    
+  @discardableResult
+  func createNewSaveGame(difficulty: Difficulty) throws -> SaveGameEntity {
+    let userId = self.userRepository.currentUserId
+    
     let puzzleGenerator = PuzzleGenerator()
     puzzleGenerator.generate()
     

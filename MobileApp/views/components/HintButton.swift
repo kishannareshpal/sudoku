@@ -32,7 +32,7 @@ struct HintButton: View {
       }
     )
     .disabled(!isHintable)
-    .buttonStyle(GameControlButtonStyle(disabled: !isHintable))
+    .buttonStyle(GameControlButtonStyle(isEnabled: isHintable))
     .onAppear(perform: vibrator.prepare)
   }
 }

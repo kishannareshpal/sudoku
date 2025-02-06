@@ -22,15 +22,15 @@ extension Difficulty {
   var color: Color {
     switch self {
     case .easy:
-      return Color(Theme.Difficulty.easy)
+      return Color(TheTheme.Difficulty.easy)
     case .medium:
-      return Color(Theme.Difficulty.medium)
+      return Color(TheTheme.Difficulty.medium)
     case .hard:
-      return Color(Theme.Difficulty.hard)
+      return Color(TheTheme.Difficulty.hard)
     case .veryHard:
-      return Color(Theme.Difficulty.veryHard)
+      return Color(TheTheme.Difficulty.veryHard)
     case .extreme:
-      return Color(Theme.Difficulty.extreme)
+      return Color(TheTheme.Difficulty.extreme)
     }
   }
   

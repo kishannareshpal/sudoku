@@ -49,16 +49,16 @@ struct ContinueGameButton: View {
             
             Text("Tap to continue")
               .font(.system(size: 14, weight: .medium))
-              .foregroundStyle(Color(Theme.Colors.primary))
+              .foregroundStyle(Color(TheTheme.Colors.primary))
           }.scaledToFit()
           
           Spacer().frame(width: 24)
           
           Image(systemName: "play.circle.fill")
             .font(.system(size: 28))
-            .foregroundStyle(Color(Theme.Colors.primary))
+            .foregroundStyle(Color(TheTheme.Colors.primary))
         }
-      }.listItemTint(Color(Theme.Colors.primary).opacity(0.3))
+      }.listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
     )
   }
 }

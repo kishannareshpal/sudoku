@@ -79,6 +79,8 @@ struct HomeScreen: View {
               .foregroundStyle(.accent)
           }
           
+          ThemePicker()
+          
           if loadingNewGameForDifficulty == nil {
             ContinueGameSection()
           }
@@ -154,5 +156,5 @@ struct HomeScreen: View {
 }
 
 #Preview {
-  ContentView()
+  HomeScreen()
 }
