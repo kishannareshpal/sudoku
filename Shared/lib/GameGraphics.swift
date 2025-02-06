@@ -26,7 +26,11 @@ public class GameGraphics {
   
   func createBoard() -> BoardSprite? {
     // Draw the board sprite
-    let boardSprite = BoardSprite(boardSize: self.boardSize, cellSize: self.cellSize)
+    let boardSprite = BoardSprite(
+      boardSize: self.boardSize,
+      cellSize: self.cellSize
+    )
+
     guard let boardSprite = boardSprite else {
       return nil
     }
@@ -122,7 +126,7 @@ public class GameGraphics {
     
     // This allows for the cursor cell to not cut-off its outline at the edges of the canvas
     // by giving a little more room.
-    let padding = Theme.Cell.Cursor.outlineWidth / 2.0
+    let padding = TheTheme.Cell.Cursor.outlineWidth / 2.0
     
     let boardSize = CGSize(
       width: sizeThatFits - padding,

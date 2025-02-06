@@ -10,6 +10,8 @@ import SpriteKit
 
 class BoardSprite: SKSpriteNode {
   convenience init?(boardSize: CGSize, cellSize: CGSize) {
+    let currentColorScheme = StyleManager.current.colorScheme
+    
     UIGraphicsBeginImageContext(boardSize)
     
     guard let context = UIGraphicsGetCurrentContext() else {
@@ -22,7 +24,7 @@ class BoardSprite: SKSpriteNode {
     
     // Draw the grid vertical and horizontal lines
     context.setLineWidth(1.0)
-    context.setStrokeColor(Theme.Board.innerLines.cgColor)
+    context.setStrokeColor(currentColorScheme.board.stroke.inner.cgColor)
     
     for i in 1..<Board.rowsCount {
       if (i % 3 == 0) {
@@ -43,7 +45,7 @@ class BoardSprite: SKSpriteNode {
     
     // Draw the 3x3 grid division lines a bit thicker
     context.setLineWidth(2.0)
-    context.setStrokeColor(Theme.Board.outerLines.cgColor)
+    context.setStrokeColor(currentColorScheme.board.stroke.outer.cgColor)
     for i in [3, 6] {
       // Horizontal
       let y = CGFloat(i) * cellSize.height
@@ -73,7 +75,7 @@ class BoardSprite: SKSpriteNode {
       
       // And apply the texture
       let boardTexture = SKTexture(image: image)
-      boardTexture.filteringMode = .nearest
+      boardTexture.filteringMode = currentDevice == .iphone ? .linear : .nearest
 
       self.init(texture: boardTexture, color: .clear, size: boardSize)
       return

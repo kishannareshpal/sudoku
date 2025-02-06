@@ -9,8 +9,7 @@ import CoreData
 import Foundation
 
 class AppDataProvider: ObservableObject {
-  static let shared = AppDataProvider()
-  static let sharedForPreview = AppDataProvider(inMemory: true)
+  static let shared = AppDataProvider(inMemory: ProcessInfo().isXcodePreview)
   
   let container = NSPersistentContainer(name: "AppDataModel")
   

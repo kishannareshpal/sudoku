@@ -122,6 +122,9 @@ struct HomeScreen: View {
 #Preview {
   NavigationView {
     HomeScreen()
-      .environment(\.managedObjectContext, AppDataProvider.sharedForPreview.container.viewContext)
+      .environment(
+        \.managedObjectContext,
+         AppDataProvider.shared.container.viewContext
+      )
   }
 }

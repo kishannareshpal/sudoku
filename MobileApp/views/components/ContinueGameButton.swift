@@ -12,7 +12,10 @@ struct ContinueGameSection: View {
   @FetchRequest(
     fetchRequest:
       FetchRequestHelper.buildFetchRequestWithRelationship(
-        predicate: NSPredicate(format: "SELF == %@", DataManager.default.usersService.currentUserId),
+        predicate: NSPredicate(
+          format: "SELF == %@",
+          DataManager.default.usersService.repository.currentUserId
+        ),
         relationshipKeyPathsForPrefetching: ["activeSaveGame"]
       ),
     animation: .interpolatingSpring
@@ -66,14 +69,14 @@ struct ContinueGameButton: View {
           
           Text("Tap to continue")
             .font(.system(size: 14, weight: .medium))
-            .foregroundStyle(Color(Theme.Colors.primary))
+            .foregroundStyle(Color(TheTheme.Colors.primary))
         }.scaledToFit()
         
         Spacer().frame(width: 24)
         
         Image(systemName: "play.circle.fill")
           .font(.system(size: 28))
-          .foregroundStyle(Color(Theme.Colors.primary))
+          .foregroundStyle(Color(TheTheme.Colors.primary))
       }
     }
     .buttonStyle(ContinueGameButtonStyle())
@@ -86,7 +89,7 @@ struct ContinueGameButtonStyle: ButtonStyle {
     configuration.label
       .scaledToFit()
       .padding(12)
-      .background(Color(Theme.Colors.primary).opacity(0.3))
+      .background(Color(TheTheme.Colors.primary).opacity(0.3))
       .clipShape(RoundedRectangle(cornerRadius: 14))
       .scaleEffect(configuration.isPressed ? 0.9 : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)

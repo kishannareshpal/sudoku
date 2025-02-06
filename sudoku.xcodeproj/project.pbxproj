@@ -57,9 +57,29 @@
 		DAFC1C2D2C7A083E0003D1A1 /* WatchAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WatchAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DAF9586E2D46FB1500836A8C /* Exceptions for "MobileApp" folder in "MobileApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DAD6FD5B2D2955CC006F8D37 /* MobileApp */;
+		};
+		DAFA999F2D4849E50047AD35 /* Exceptions for "Shared" folder in "WatchApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				views/components/ThemePicker.swift,
+			);
+			target = DAE536BF2C71368F00F6386F /* WatchApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DAD6FD5D2D2955CC006F8D37 /* MobileApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DAF9586E2D46FB1500836A8C /* Exceptions for "MobileApp" folder in "MobileApp" target */,
+			);
 			path = MobileApp;
 			sourceTree = "<group>";
 		};
@@ -70,6 +90,9 @@
 		};
 		DAD6FD862D295BEF006F8D37 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DAFA999F2D4849E50047AD35 /* Exceptions for "Shared" folder in "WatchApp" target */,
+			);
 			path = Shared;
 			sourceTree = "<group>";
 		};
@@ -615,7 +638,6 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "sudoku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = MiniSudoku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.kishannareshpal.sudoku;
@@ -651,7 +673,6 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "sudoku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = MiniSudoku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.kishannareshpal.sudoku;

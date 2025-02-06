@@ -10,6 +10,8 @@ import SpriteKit
 import Combine
 
 class GameScene: SKScene, ObservableObject {
+  private let currentColorScheme = StyleManager.current.colorScheme
+
   @Published var game: Game
 
   public override init(size: CGSize) {
@@ -24,11 +26,11 @@ class GameScene: SKScene, ObservableObject {
     self.isUserInteractionEnabled = true
     
     // Setup the scene's background color
-    self.backgroundColor = UIColor.clear
+    self.backgroundColor = self.currentColorScheme.board.background
   }
   
   required init?(coder: NSCoder) {
-    fatalError("init(coder:) is not supported on this application")
+    fatalError("init(coder:) is not supported by this application")
   }
   
   override func sceneDidLoad() {

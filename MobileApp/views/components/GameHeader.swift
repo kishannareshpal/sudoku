@@ -7,24 +7,13 @@
 
 import SwiftUI
 
-struct GameHeader: View {
-  @Environment(\.dismiss) var dismissScreen: DismissAction
-  
+struct GameHeader: View {  
   @ObservedObject var gameScene: MobileGameScene
   
   var body: some View {
     ZStack {
       HStack(alignment: .center) {
-        Button(
-          action: {
-            self.dismissScreen()
-          },
-          label: {
-            Image(systemName: "chevron.left")
-              .font(.system(size: 24))
-              .foregroundStyle(.white)
-          }
-        )
+        BackButton()
         
         Spacer()
         
@@ -32,9 +21,31 @@ struct GameHeader: View {
       }
       
       VStack(alignment: .center) {
-        GameHeaderInformation(game: self.gameScene.game)
+        Content(game: self.gameScene.game)
       }
     }
     .padding(12)
   }
 }
+
+struct Content: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
+  @ObservedObject var game: Game
+  
+  var body: some View {
+    VStack {
+      Text(GameDurationHelper.format(self.game.durationInSeconds))
+        .font(.system(size: 24, weight: .bold).monospaced())
+        .foregroundStyle(Color(currentColorScheme.ui.game.nav.text))
+      
+      Text("\(self.game.difficulty.rawValue) • \(self.game.score) Points")
+        .font(
+          .system(size: 14, weight: .regular)
+        )
+        .foregroundStyle(
+          Color(currentColorScheme.ui.game.nav.text.cgColor)
+        )
+    }
+  }
+}
+

@@ -8,6 +8,8 @@
 import SpriteKit
 
 class CursorCellSprite: SKShapeNode {
+  private let styleManager = StyleManager.current
+  
   private(set) var size: CGSize
   private(set) var location: Location
   private(set) var active: Bool = false
@@ -67,9 +69,9 @@ class CursorCellSprite: SKShapeNode {
     ).cgPath
                              
     self.name = "Cursor"
-    self.lineWidth = Theme.Cell.Cursor.outlineWidth
-    self.fillColor = Theme.Cell.Cursor.bg
-    self.strokeColor = Theme.Cell.Cursor.outline
+    self.lineWidth = styleManager.shapeStyle.board.cell.cursor.strokeWidth
+    self.fillColor = styleManager.colorScheme.board.cell.background.cursor
+    self.strokeColor = styleManager.colorScheme.board.cell.stroke.cursor
     self.zPosition = ZIndex.Cell.cursor
   }
   

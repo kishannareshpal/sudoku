@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PauseGameButton: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
   @ObservedObject var game: Game
 
   private let vibrator = UIImpactFeedbackGenerator(style: .medium)
@@ -21,7 +22,9 @@ struct PauseGameButton: View {
         systemName: self.game.isGamePaused ? "play.fill" : "pause.fill"
       )
       .font(.system(size: 24))
-      .foregroundStyle(.white)
+      .foregroundStyle(
+        Color(currentColorScheme.ui.game.nav.text)
+      )
       .apply { view in
         if #available(iOS 17.0, *) {
           view.symbolEffect(.bounce.wholeSymbol, value: self.game.isGamePaused)

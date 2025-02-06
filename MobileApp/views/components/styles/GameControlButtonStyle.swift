@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct GameControlButtonStyle: ButtonStyle {
-  var disabled: Bool = false
-  var toggled: Bool = false
+  var isChecked: Bool = false
+  var isEnabled: Bool = false
   
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(toggled ? .accent : Color(UIColor("#141414")))
-      .opacity(self.disabled ? 0.3 : 1)
+      .background(self.isChecked ? .accent : Color(UIColor("#141414")))
+      .opacity(self.isEnabled ? 1 : 0.3)
       .clipShape(.capsule)
       .scaleEffect(configuration.isPressed ? 0.9 : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)

@@ -32,7 +32,7 @@ struct DatabaseScreen: View {
 
               Text("Move position: \(move.position)")
               Spacer()
-              Text("Value: \(move.value)")
+//              Text("Value: \(move.value)")
             }
             
             Text("Location: \(move.locationNotation ?? "No value")")

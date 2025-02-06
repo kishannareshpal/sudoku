@@ -69,6 +69,10 @@ public class Puzzle: ObservableObject {
       self.notes[location.row][location.col].append(value)
     }
   }
+  
+  func isNoteToggled(value: Int, at location: Location) -> Bool {
+    return self.notes[location.row][location.col].contains(value)
+  }
 
   /// Returns whether or not a value at a given location is correct for the current puzzle
   func validate(value: Int, at location: Location) -> Bool {

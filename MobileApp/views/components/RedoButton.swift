@@ -28,7 +28,7 @@ struct RedoButton: View {
       }
     )
     .disabled(!self.game.isMoveRedoable)
-    .buttonStyle(GameControlButtonStyle(disabled: !self.game.isMoveRedoable))
+    .buttonStyle(GameControlButtonStyle(isEnabled: self.game.isMoveRedoable))
     .onAppear(perform: vibrator.prepare)
   }
 }

@@ -9,7 +9,7 @@ import SwiftUICore
 import UIKit.UIColor
 import UIColorHexSwift
 
-struct Theme {
+struct TheTheme {
   struct Colors {
     static let primary = UIColor("#F0B719")
     static let primaryDark = UIColor("#604806")
@@ -21,12 +21,12 @@ struct Theme {
   }
   
   struct Difficulty {
-    static let easy = Theme.Colors.primary
-    static let medium = Theme.Colors.primary
-    static let hard = Theme.Colors.primary
-    static let veryHard = Theme.Colors.primary
-    static let extreme = Theme.Colors.primary
-    static let unknown = Theme.Colors.primary
+    static let easy = TheTheme.Colors.primary
+    static let medium = TheTheme.Colors.primary
+    static let hard = TheTheme.Colors.primary
+    static let veryHard = TheTheme.Colors.primary
+    static let extreme = TheTheme.Colors.primary
+    static let unknown = TheTheme.Colors.primary
   }
   
   struct Game {
@@ -71,7 +71,7 @@ struct Theme {
     }
     
     struct Cursor {
-      static let outline = Theme.Colors.primary
+      static let outline = TheTheme.Colors.primary
       static let outlineWidth = 2.0
       static let bg = UIColor.clear
     }

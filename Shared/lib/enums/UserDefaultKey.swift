@@ -10,4 +10,10 @@ enum UserDefaultKey: String {
   
   /// Stores the current session's User ID on app startup.
   case userId
+  
+  /// Stores the current ColorSchemeName
+  case colorSchemeName
+  
+  /// Stores the encoded ShapeStyle
+  case shapeStyle
 }

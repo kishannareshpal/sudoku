@@ -104,7 +104,7 @@ private struct GameToolbarItemContainer<Content: View>: View {
       
       GameToolbarItem(
         label: "Label with colored icon",
-        symbolColor: Color(Theme.Colors.primary),
+        symbolColor: Color(TheTheme.Colors.primary),
         symbolName: "pencil.circle.fill"
       )
       

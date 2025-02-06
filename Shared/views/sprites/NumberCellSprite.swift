@@ -9,12 +9,15 @@ import SpriteKit
 import UIColorHexSwift
 
 class NumberCellSprite: SKSpriteNode {
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   static let NUMBER_VALUE_CHANGING_AMOUNT = 0.1
   static let NOTE_VALUE_CHANGING_AMOUNT = 0.1
   
-  private(set) var label: SKLabelNode = SKLabelNode(fontNamed: Theme.Fonts.mono)
+  private let numberLabelNode = SKLabelNode(fontNamed: TheTheme.Fonts.mono)
+  private(set) var notesNode = SKNode()
+  private let invalidNumberShapeNode = SKShapeNode()
 
-  private var notesNode: SKNode = SKNode()
   private(set) var notes: [NumberCellNoteSprite] = []
 
   private(set) var isStatic: Bool
@@ -71,7 +74,11 @@ class NumberCellSprite: SKSpriteNode {
       self.draftNumberValue = value.toDouble()
     }
 
-    super.init(texture: nil, color: Theme.Cell.Number.bg, size: size)
+    super.init(
+      texture: nil,
+      color: self.currentColorScheme.board.cell.background.number.normal,
+      size: size
+    )
     
     // Use the cell's location notation as the name for easy identification
     self.name = location.notation
@@ -233,57 +240,94 @@ class NumberCellSprite: SKSpriteNode {
     self.toggleValidation(valid: true)
   }
   
-  func toggleValidation(valid: Bool) {
+  func toggleValidation(valid: Bool, valueCleared: Bool = false) {
     guard self.isChangeable else { return }
     
     if (valid) {
-      self.label.fontColor = Theme.Cell.Number.Dynamic.text
+      self.numberLabelNode.fontColor = self.currentColorScheme.board.cell.text.player.valid
     } else {
-      self.label.fontColor = Theme.Cell.Number.Dynamic.invalidText
+      self.numberLabelNode.fontColor = self.currentColorScheme.board.cell.text.player.invalid
     }
     
+    self.invalidNumberShapeNode.isHidden = valueCleared || valid
     self.valid = valid
+  }
+  
+  func toggleHighlighForNotes(with value: Int) {
+    self.notes.forEach {
+      if $0.value == value {
+        $0.highlight()
+      } else {
+        $0.unhighlight()
+      }
+    }
   }
   
   func highlight() {
     guard !self.highlighted else { return }
     
-    self.color = Theme.Cell.Number.Highlight.bg
+    self.color = self.currentColorScheme.board.cell.background.number.highlighted
     self.highlighted = true;
   }
   
   func unhighlight() {
     guard self.highlighted else { return }
     
-    self.color = Theme.Cell.Number.bg
+    self.color = self.currentColorScheme.board.cell.background.number.normal
     self.highlighted = false
   }
 
   private func draw() {
     self.updateLabelText(with: self.value)
 
-    self.label.fontColor = self.isStatic
-      ? Theme.Cell.Number.Static.text
-      : Theme.Cell.Number.Dynamic.text
+    // Draw the number label
+    self.numberLabelNode.fontColor = self.isStatic
+      ? self.currentColorScheme.board.cell.text.given
+      : self.currentColorScheme.board.cell.text.player.valid
 
-    self.label.fontSize = self.size.width * 0.65
-    self.label.numberOfLines = 1
-    self.label.verticalAlignmentMode = .center
-    self.label.horizontalAlignmentMode = .center
-    self.label.zPosition = ZIndex.Cell.label
-    self.addChild(self.label)
+    self.numberLabelNode.fontSize = self.size.width * 0.65
+    self.numberLabelNode.numberOfLines = 1
+    self.numberLabelNode.verticalAlignmentMode = .center
+    self.numberLabelNode.horizontalAlignmentMode = .center
+    self.numberLabelNode.zPosition = ZIndex.Cell.numberText
+    self.addChild(self.numberLabelNode)
     
-    self.notesNode.zPosition = ZIndex.Cell.label
+    // Create a path from the bottom-left to the top-right corner
+    let forwardDiagonalLinePath = CGMutablePath()
+    let invalidNumberShapePadding: CGFloat = 6.0
+    let bottomLeftPoint = CGPoint(
+      x: -self.size.width.half() + invalidNumberShapePadding,
+      y: -self.size.height.half() + invalidNumberShapePadding
+    )
+    let topRightPoint = CGPoint(
+      x: self.size.width.half() - invalidNumberShapePadding,
+      y: self.size.height.half() - invalidNumberShapePadding
+    )
+    forwardDiagonalLinePath.move(to: bottomLeftPoint)
+    forwardDiagonalLinePath.addLine(to: topRightPoint)
+
+    self.invalidNumberShapeNode.path = forwardDiagonalLinePath
+    self.invalidNumberShapeNode.isUserInteractionEnabled = false
+    self.invalidNumberShapeNode.lineWidth = 4.0
+    self.invalidNumberShapeNode.strokeColor = self.currentColorScheme.board.cell.text.player.invalid
+    self.invalidNumberShapeNode.alpha = 0.2
+    self.invalidNumberShapeNode.zPosition = ZIndex.Cell.invalidNumberShape
+    self.invalidNumberShapeNode.isHidden = true
+    self.invalidNumberShapeNode.isAntialiased = true
+    self.addChild(invalidNumberShapeNode)
+    
+    // Draw the notes holding node
+    self.notesNode.zPosition = ZIndex.Cell.noteText
     self.addChild(self.notesNode)
   }
   
   private func updateLabelText(with value: Int) {
-    self.label.text = value.isNotEmpty ? value.toString() : ""
+    self.numberLabelNode.text = value.isNotEmpty ? value.toString() : ""
 
     let scale = SKAction.sequence([
       SKAction.scale(to: 1.3, duration: 0.1),
       SKAction.scale(to: 1.0, duration: 0.1)
     ])
-    self.label.run(scale)
+    self.numberLabelNode.run(scale)
   }
 }

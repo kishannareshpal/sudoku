@@ -10,6 +10,8 @@ import SwiftUI
 import SpriteKit
 
 struct GameNotesToolbarNumberButton: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   var number: Int
   var selected: Bool
   var onPress: () -> Void
@@ -22,21 +24,21 @@ struct GameNotesToolbarNumberButton: View {
           Circle()
             .frame(width: 8, height: 8)
             .foregroundStyle(
-              // self.selectedNumber == number
               self.selected
-                ? Color(NumberCellNoteSprite.color(for: number))
-                : Color(NumberCellNoteSprite.color(for: number)).opacity(0.3)
+                ? Color(NumberCellNoteSprite.color(for: number, with: currentColorScheme))
+                : Color(NumberCellNoteSprite.color(for: number, with: currentColorScheme))
+                  .opacity(0.3)
             )
           
           Text(number.toString())
-            .font(.custom(Theme.Fonts.mono, size: 12))
+            .font(.custom(TheTheme.Fonts.mono, size: 12))
         }
       }
     )
     .buttonStyle(.plain)
     .foregroundStyle(
       self.selected
-        ? Color(NumberCellNoteSprite.color(for: number))
+        ? Color(NumberCellNoteSprite.color(for: number, with: currentColorScheme))
         : .white.opacity(0.3)
     )
   }

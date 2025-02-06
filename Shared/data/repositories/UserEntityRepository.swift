@@ -9,6 +9,15 @@ import CoreData
 import Foundation
 
 class UserEntityRepository: BaseRepository<UserEntity> {
+  var currentUserId: EntityID {
+    let serializedUserId = UserDefaults.standard.string(forKey: UserDefaultKey.userId.rawValue)!
+    
+    return AppDataProvider.shared.container.persistentStoreCoordinator
+      .managedObjectID(
+      forURIRepresentation: URL(string: serializedUserId)!
+    )!
+  }
+  
   func findOrCreate(forDevice device: Device, prefetchRelationships: [String]? = nil) throws -> UserEntity {
     let existingUser = self.findOneBy(
       predicate: NSPredicate(format: "device == %@", device.rawValue),

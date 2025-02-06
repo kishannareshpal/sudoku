@@ -346,7 +346,7 @@ class Game: ObservableObject {
     let cursorValue = numberCellUnderCursor.value
     let cursorLocation = numberCellUnderCursor.location
     
-    self.processEachPeerAndNonPeerNumberCells(for: (cursorValue, cursorLocation)) { peerNumberCell in
+    self.processEachPeerAndNonPeerNumberCells(for: (cursorValue, cursorLocation)) { (peerNumberCell, _) in
       self.puzzle
         .toggleNote(
           value: cursorValue,
@@ -496,11 +496,19 @@ class Game: ObservableObject {
     
     self.processEachPeerAndNonPeerNumberCells(
       for: (cursorValue, cursorLocation),
-      peerFoundCallback: { peerNumberCell in
-        peerNumberCell.highlight()
+      peerFoundCallback: { (peerNumberCell, peerType) in
+        if (peerType == .number ) || (peerType == .both) {
+          peerNumberCell.highlight()
+        } else if peerType == .note {
+          // Don't highlight the entire cell, because only the note on this cell is the peer
+          peerNumberCell.unhighlight()
+        }
+
+        peerNumberCell.toggleHighlighForNotes(with: cursorValue)
       },
       nonPeerFoundCallback: { nonPeerNumberCell in
         nonPeerNumberCell.unhighlight()
+        nonPeerNumberCell.toggleHighlighForNotes(with: cursorValue)
       }
     )
   }
@@ -516,6 +524,7 @@ class Game: ObservableObject {
   ///   - allowColumnPeers: A boolean flag to allow peers from the same column (default is `true`).
   ///   - allowGridPeers: A boolean flag to allow peers from the same grid (default is `true`).
   ///   - allowSameValuePeers: A boolean flag to allow peers that have the same value as the current cell (default is `true`).
+  ///   - allowNotePeers: A boolean flag to allow peers that have a note with the same value as the current cell (default is `true`)
   ///   - peerFoundCallback: A closure that gets called for each peer cell  its number cell reference object from the `numberCells` collection.
   ///   - nonPeerFoundCallback: An optional closure that gets called for each non-peer cell with its number cell object reference from the `numberCells` collection.
   ///     - If provided, it will be triggered for each non-peer cell found. If no non-peer cells are found, this callback will not be called.
@@ -526,14 +535,22 @@ class Game: ObservableObject {
     allowColumnPeers: Bool = true,
     allowGridPeers: Bool = true,
     allowSameValuePeers: Bool = true,
-    peerFoundCallback: (_ peerNumberCell: NumberCellSprite) -> Void,
+    allowNotePeers: Bool = true,
+    peerFoundCallback: (_ peerNumberCell: NumberCellSprite, _ peerType: PeerType) -> Void,
     nonPeerFoundCallback: ((_ nonPeerNumberCell: NumberCellSprite) -> Void)? = nil
   ) -> Void {
     for numberCell in self.numberCells {
+      // Check note peer condition
+      let hasNotePeer: Bool = if allowNotePeers && numberCell.isValueEmpty && !numberCell.isNotesEmpty {
+        numberCell.notes.contains(where: { $0.value == cell.value })
+      } else {
+        false
+      }
+
       let isSelf = numberCell.location == cell.location
       if isSelf {
         if allowSelfAsPeer {
-          peerFoundCallback(numberCell)
+          peerFoundCallback(numberCell, hasNotePeer ? .both : .number)
         } else {
           nonPeerFoundCallback?(numberCell)
         }
@@ -544,19 +561,19 @@ class Game: ObservableObject {
       // Check row, column, and grid peer conditions
       let sameRow = allowRowPeers && numberCell.location.row == cell.location.row
       if (sameRow) {
-        peerFoundCallback(numberCell)
+        peerFoundCallback(numberCell, hasNotePeer ? .both : .number)
         continue
       }
       
       let sameColumn = allowColumnPeers && numberCell.location.col == cell.location.col
       if (sameColumn) {
-        peerFoundCallback(numberCell)
+        peerFoundCallback(numberCell, hasNotePeer ? .both : .number)
         continue
       }
       
       let sameGrid = allowGridPeers && numberCell.location.grid == cell.location.grid
       if (sameGrid) {
-        peerFoundCallback(numberCell)
+        peerFoundCallback(numberCell, hasNotePeer ? .both : .number)
         continue
       }
       
@@ -565,7 +582,13 @@ class Game: ObservableObject {
         !numberCell.isValueEmpty && (numberCell.value == cell.value)
       )
       if (sameValue) {
-        peerFoundCallback(numberCell)
+        peerFoundCallback(numberCell, hasNotePeer ? .both : .number)
+        continue
+      }
+      
+      // Only has a peer note
+      if hasNotePeer {
+        peerFoundCallback(numberCell, .note)
         continue
       }
       
@@ -646,7 +669,8 @@ class Game: ObservableObject {
     
     // Validate comitting changes
     let validChange = self.puzzle.validate(value: value, at: location)
-    activatedNumberCell.toggleValidation(valid: validChange)
+    activatedNumberCell
+      .toggleValidation(valid: validChange, valueCleared: value.isEmpty)
     
     // Commit changes
     self.puzzle.updatePlayer(value: value, at: location)
