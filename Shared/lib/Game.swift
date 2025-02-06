@@ -652,7 +652,7 @@ class Game: ObservableObject {
     
     // Re-validate cell as it was reset during cell activation
     activatedNumberCell.toggleValidation(
-      valid: self.puzzle.validate(
+      valid: activatedNumberCell.isValueEmpty || self.puzzle.validate(
         value: activatedNumberCell.value,
         at: activatedNumberCell.location
       )

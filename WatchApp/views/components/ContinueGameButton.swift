@@ -7,58 +7,81 @@
 
 import SwiftUI
 
-struct ContinueGameButton: View {
+struct ContinueGameSection: View {
   @FetchRequest(
-    sortDescriptors: [],
-    predicate: .all
-  ) private var saveGames: FetchedResults<SaveGameEntity>
+    fetchRequest:
+      FetchRequestHelper.buildFetchRequestWithRelationship(
+        predicate: NSPredicate(
+          format: "SELF == %@",
+          DataManager.default.usersService.repository.currentUserId
+        ),
+        relationshipKeyPathsForPrefetching: ["activeSaveGame"]
+      ),
+    animation: .interpolatingSpring
+  ) private var users: FetchedResults<UserEntity>
   
-  private var existingGame: SaveGameEntity? {
-    return self.saveGames.last
+  private var activeSaveGame: SaveGameEntity? {
+    return self.users.first?.activeSaveGame
   }
   
   var body: some View {
-    guard let existingGame = existingGame else {
+    guard let activeSaveGame else {
       return AnyView(EmptyView())
     }
 
     return AnyView(
-      NavigationLink(
-        destination: GameScreen(
-          difficulty: Difficulty(rawValue: existingGame.difficulty!)!,
-          existingGame: existingGame
-        ).navigationBarBackButtonHidden()
-      ) {
-        HStack(alignment: .top) {
-          VStack(alignment: .leading) {
-            Text(existingGame.difficulty ?? "Unknown difficulty")
-              .font(.system(size: 18, weight: .black))
-              .foregroundStyle(.white)
-            
-            Text("Points: \(existingGame.score)")
-              .foregroundStyle(.white)
-              .font(.system(size: 12, weight: .regular))
-            
-            Text(
-              "Played for: \(GameDurationHelper.format(existingGame.durationInSeconds, pretty: true))"
-            )
-            .font(.system(size: 12, weight: .regular))
-            .foregroundStyle(.white)
-            
-            Spacer().frame(height: 8)
-            
-            Text("Tap to continue")
-              .font(.system(size: 14, weight: .medium))
-              .foregroundStyle(Color(TheTheme.Colors.primary))
-          }.scaledToFit()
-          
-          Spacer().frame(width: 24)
-          
-          Image(systemName: "play.circle.fill")
-            .font(.system(size: 28))
-            .foregroundStyle(Color(TheTheme.Colors.primary))
+      Section(
+        header: VStack(alignment: .leading) {
+          Text("Welcome back!").fontWeight(.bold)
+          Text("Continue where you left off:").font(.system(size: 12))
         }
-      }.listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
+      ) {
+        ContinueGameButton(
+          difficulty: Difficulty(rawValue: activeSaveGame.difficulty!)!,
+          activeSaveGame: activeSaveGame
+        )
+      }.padding(.vertical)
     )
+  }
+}
+
+struct ContinueGameButton: View {
+  var difficulty: Difficulty
+  @ObservedObject var activeSaveGame: SaveGameEntity
+  
+  var body: some View {
+    NavigationLink(
+      destination: GameScreen().navigationBarBackButtonHidden()
+    ) {
+      HStack(alignment: .top) {
+        VStack(alignment: .leading) {
+          Text(activeSaveGame.difficulty ?? "Unknown difficulty")
+            .font(.system(size: 18, weight: .black))
+            .foregroundStyle(.white)
+          
+          Text("Points: \(activeSaveGame.score)")
+            .foregroundStyle(.white)
+            .font(.system(size: 12, weight: .regular))
+          
+          Text(
+            "Played for: \(GameDurationHelper.format(activeSaveGame.durationInSeconds, pretty: true))"
+          )
+          .font(.system(size: 12, weight: .regular))
+          .foregroundStyle(.white)
+          
+          Spacer().frame(height: 8)
+          
+          Text("Tap to continue")
+            .font(.system(size: 14, weight: .medium))
+            .foregroundStyle(Color(TheTheme.Colors.primary))
+        }.scaledToFit()
+        
+        Spacer().frame(width: 24)
+        
+        Image(systemName: "play.circle.fill")
+          .font(.system(size: 28))
+          .foregroundStyle(Color(TheTheme.Colors.primary))
+      }
+    }.listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
   }
 }

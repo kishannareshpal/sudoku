@@ -13,7 +13,7 @@ struct NewGameButtonContent: View {
   
   var body: some View {
     return (
-      HStack {
+      HStack(alignment: .center) {
         Text(difficulty.rawValue)
           .fontWeight(.medium)
 
@@ -21,11 +21,11 @@ struct NewGameButtonContent: View {
 
         if loading {
           ProgressView()
+            .frame(width: 18, height: 18)
         } else {
           Image(systemName: "plus")
             .foregroundStyle(difficulty.color)
         }
-        
       }
     )
   }

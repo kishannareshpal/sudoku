@@ -65,7 +65,7 @@ struct GameOverOverlay: View {
             .frame(width: geometry.size.width)
             .frame(minHeight: geometry.size.height)
           }
-          .focusable()
+          .focusable(self.game.isGameOver)
           .frame(maxWidth: .infinity, maxHeight:.infinity)
         }
       }
