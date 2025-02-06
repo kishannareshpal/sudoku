@@ -10,14 +10,8 @@ import SpriteKit
 
 struct GameScreen: View {
   @StateObject private var gameScene: WatchGameScene
-
-  var difficulty: Difficulty
-  var existingGame: SaveGameEntity?
   
-  init(difficulty: Difficulty, existingGame: SaveGameEntity? = nil) {
-    self.difficulty = difficulty
-    self.existingGame = existingGame
-    
+  init() {
     _gameScene = StateObject(
       wrappedValue: WatchGameScene(
         size: .init(width: 10, height: 10) // initial size. when the view is rendered and the screen geometry is known, the scene is automatically resized

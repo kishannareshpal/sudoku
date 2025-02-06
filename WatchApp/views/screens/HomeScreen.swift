@@ -15,6 +15,7 @@ struct HomeScreen: View {
   @State private var newGameConfirmed: Bool = false
 
   @State private var activeSaveGame: SaveGameEntity?
+  @State private var loadingNewGameForDifficulty: Difficulty? = nil
 
   init() {
     try! DataManager.default.usersService.ensureCurrentUserExists()
@@ -25,20 +26,45 @@ struct HomeScreen: View {
     self.activeSaveGame = DataManager.default.usersService.findActiveSaveGame()
   }
   
+  private func startNewGame(difficulty: Difficulty, confirmed: Bool = false) -> Void {
+    if (self.activeSaveGame != nil && !confirmed) {
+      // Attempting to start a new game, but there already is one in progress.
+      // - Confirm:
+      self.newGameConfirmationDifficulty = difficulty
+      self.newGameConfirmationShowing = true
+      return
+    }
+    
+    withAnimation(.interpolatingSpring) {
+      self.loadingNewGameForDifficulty = difficulty
+    }
+    
+    self.activeSaveGame = nil
+    self.newGameConfirmationDifficulty = nil
+    
+    // Run the whole process on the MainActor context
+    Task.detached {
+      try! DataManager.default.usersService.detachActiveSaveGame()
+      let newSaveGame = try! DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
+      
+      await MainActor.run {
+        self.activeSaveGame = newSaveGame
+        
+        withAnimation(.interpolatingSpring) {
+          self.loadingNewGameForDifficulty = nil
+          self.newGameConfirmed = true
+        }
+      }
+    }
+  }
+  
   var body: some View {
     VStack {
       Spacer(minLength: 4)
       
       List {
-        if activeSaveGame != nil {
-          Section(
-            header: VStack(alignment: .leading) {
-              Text("Welcome back!").fontWeight(.bold)
-              Text("Continue where you left off:").font(.system(size: 12))
-            }
-          ) {
-            ContinueGameButton()
-          }.padding(.vertical)
+        if loadingNewGameForDifficulty == nil {
+          ContinueGameSection()
         }
       
         Section(
@@ -52,34 +78,53 @@ struct HomeScreen: View {
           }.padding(.vertical)
         ) {
           ForEach(Difficulty.allCases) { difficulty in
-            if activeSaveGame != nil {
-              Button {
-                self.newGameConfirmationDifficulty = difficulty
-                self.newGameConfirmationShowing = true
-              } label: {
-                NewGameCard(difficulty: difficulty)
+            Button(
+              action: {
+                self.startNewGame(difficulty: difficulty)
+              },
+              label: {
+                NewGameButtonContent(
+                  difficulty: difficulty,
+                  loading:
+                    self.loadingNewGameForDifficulty == difficulty
+                )
               }
-            } else {
-              NavigationLink(
-                destination: GameScreen(difficulty: difficulty)
-                  .navigationBarBackButtonHidden()
-              ) {
-                NewGameCard(difficulty: difficulty)
-              }
-            }
+            )
+            .disabled(self.loadingNewGameForDifficulty != nil)
+            
+//            if activeSaveGame != nil {
+//              Button {
+//                self.newGameConfirmationDifficulty = difficulty
+//                self.newGameConfirmationShowing = true
+//              } label: {
+//                NewGameCard(difficulty: difficulty)
+//              }
+//            } else {
+//              NavigationLink(
+//                destination: GameScreen(difficulty: difficulty)
+//                  .navigationBarBackButtonHidden()
+//              ) {
+//                NewGameCard(difficulty: difficulty)
+//              }
+//            }
           }.confirmationDialog(
             Text("New game?"),
             isPresented: $newGameConfirmationShowing
           ) {
-            Button("Cancel", role: .cancel) {}
+            Button("Cancel", role: .cancel) {
+              self.newGameConfirmationDifficulty = nil
+            }
             Button("New game", role: .destructive) {
-              try! DataManager.default.usersService.detachActiveSaveGame()
-              self.activeSaveGame = nil
-              self.newGameConfirmed = true
+              self.startNewGame(
+                difficulty: newGameConfirmationDifficulty!,
+                confirmed: true
+              )
             }
             
           } message: {
-            Text("Your existing game progress will be discarded when you start a new game.")
+            Text(
+              "Starting a new game will discard your current progress in the existing game. You will be playing on \(newGameConfirmationDifficulty?.rawValue ?? "Normal") difficulty.\nAre you sure you want to proceed?"
+            )
           }
         }
         
@@ -108,8 +153,7 @@ struct HomeScreen: View {
       // - When we navigate back, the isActive: bound value is toggled back to false! So this works out great.
       // - We are hiding this view as we're only using it for navigating.
       NavigationLink(
-        destination: GameScreen(difficulty: self.newGameConfirmationDifficulty ?? .easy)
-          .navigationBarBackButtonHidden(),
+        destination: GameScreen().navigationBarBackButtonHidden(),
         isActive: $newGameConfirmed
       ) {}.hidden()
     }
