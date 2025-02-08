@@ -18,34 +18,30 @@ final class DataManager {
   let context: NSManagedObjectContext
 
   let saveGamesService: SaveGameEntityService
-  let usersService: UserEntityService
   let moveEntriesService: MoveEntryEntityService
-  
-  private let userEntityRepository: UserEntityRepository
+
+  private let cloudSaveGameRepository: CloudSaveGameRepository
   private let saveGameEntityRepository: SaveGameEntityRepository
   private let moveEntryEntityRepository: MoveEntryEntityRepository
   
   // Private initializer to prevent direct instantiation
   private init(context: NSManagedObjectContext) {
     self.context = context
-    self.userEntityRepository = UserEntityRepository(context: context)
+    
+    // Repositories
     self.saveGameEntityRepository = SaveGameEntityRepository(context: context)
     self.moveEntryEntityRepository = MoveEntryEntityRepository(context: context)
+    self.cloudSaveGameRepository = CloudSaveGameRepository()
     
-    // Initializes the save game entity service
+    // Services
     self.saveGamesService = SaveGameEntityService(
       repository: self.saveGameEntityRepository,
-      userRepository: self.userEntityRepository,
-      moveEntryRepository: self.moveEntryEntityRepository
+      moveEntryRepository: self.moveEntryEntityRepository,
+      cloudSaveGameRepository: self.cloudSaveGameRepository
     )
 
     self.moveEntriesService = MoveEntryEntityService(
       repository: self.moveEntryEntityRepository
-    )
-    
-    self.usersService = UserEntityService(
-      repository: self.userEntityRepository,
-      saveGameRepository: saveGameEntityRepository
     )
   }
   

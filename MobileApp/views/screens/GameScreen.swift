@@ -37,46 +37,46 @@ struct GameScreen: View {
 
         VStack {
           GameHeader(gameScene: self.gameScene)
+            .padding(.horizontal)
 
           Spacer()
         
-          GameSceneView(gameScene: self.gameScene, game: self.gameScene.game)
-          
-          Spacer()
-          
-          VStack(spacing: 12) {
-            HStack(spacing: 12) {
-              HStack {
-                UndoButton(game: self.gameScene.game)
-//                RedoButton(game: self.gameScene.game)
+          VStack {
+            GameSceneView(gameScene: self.gameScene, game: self.gameScene.game)
+            
+            Spacer()
+            
+            VStack(spacing: 12) {
+              HStack(spacing: 12) {
+                HStack {
+                  UndoButton(game: self.gameScene.game)
+                  //                RedoButton(game: self.gameScene.game)
+                }
+                
+                NotesModeToggleButton(
+                  game: self.gameScene.game,
+                  cursorState: self.gameScene.cursorState
+                )
+                
+                HStack {
+                  EraseButton(
+                    gameScene: self.gameScene,
+                    game: self.gameScene.game
+                  )
+                  //                HintButton(game: self.gameScene.game)
+                }
               }
-
-              NotesModeToggleButton(
+              
+              NumbersPad (
+                gameScene: self.gameScene,
                 game: self.gameScene.game,
+                puzzle: self.gameScene.game.puzzle,
                 cursorState: self.gameScene.cursorState
               )
-              
-              HStack {
-                EraseButton(
-                  gameScene: self.gameScene,
-                  game: self.gameScene.game
-                )
-//                HintButton(game: self.gameScene.game)
-              }
             }
-            
-            NumbersPad (
-              gameScene: self.gameScene,
-              game: self.gameScene.game,
-              puzzle: self.gameScene.game.puzzle,
-              cursorState: self.gameScene.cursorState
-            )
-          }
-
-          Spacer()
+          }.padding()
         }
       }
-      .padding()
       .overlay {
         GameOverOverlay(game: self.gameScene.game)
       }
@@ -99,13 +99,13 @@ struct GameScreenPreview: PreviewProvider {
     var body: some View {
       ZStack {
         Color(currentColorScheme.ui.game.background).onAppear {
-          let dataManager = DataManager.default
-          try! dataManager.usersService.ensureCurrentUserExists()
-          try! dataManager.saveGamesService.createNewSaveGame(
-            difficulty: .easy
-          )
-          
-          self.ready = true
+          Task {
+            try! await DataManager.default.saveGamesService.createNewSaveGame(
+              difficulty: .easy
+            )
+            
+            self.ready = true
+          }
         }.ignoresSafeArea()
         
         if ready {

@@ -65,7 +65,7 @@ class Game: ObservableObject {
   }
   
   init(sceneSize: CGSize) throws {
-    guard let saveGame = DataManager.default.usersService.findActiveSaveGame() else {
+    guard let saveGame = DataManager.default.saveGamesService.findActiveLocalSaveGame() else {
       fatalError("Attempted to load a game with no active save game")
     }
     
@@ -153,7 +153,7 @@ class Game: ObservableObject {
         forceAdd: forceVisible
       )
     
-    try? DataManager.default.saveGamesService
+    try! DataManager.default.saveGamesService
       .autoSave(
         self.saveGameId,
         puzzle: self.puzzle,
@@ -331,7 +331,7 @@ class Game: ObservableObject {
     activatedNumberCell.clearNotes()
 
     // Auto-save
-    try? DataManager.default.saveGamesService
+    try! DataManager.default.saveGamesService
       .autoSave(
         self.saveGameId,
         puzzle: self.puzzle,
@@ -356,15 +356,6 @@ class Game: ObservableObject {
 
       peerNumberCell.toggleNote(value: cursorValue, forceVisible: false)
     }
-    
-    // Auto-save
-    try? DataManager.default.saveGamesService
-      .autoSave(
-        self.saveGameId,
-        puzzle: self.puzzle,
-        duration: self.durationInSeconds,
-        score: self.score
-      )
   }
   
   func recordMoveToHistory(
@@ -372,19 +363,20 @@ class Game: ObservableObject {
     type: MoveType,
     value: String
   ) {
-    self.moveIndex += 1
-    let moveEntry = try! DataManager.default.saveGamesService.addMove(
-      self.saveGameId,
-      position: self.moveIndex,
-      locationNotation: locationNotation,
-      type: type,
-      value: value
-    )
-    
-    if let moveEntry {
-      self.moves.removeAll { entry in entry.position >= self.moveIndex }
-      self.moves.insert(moveEntry, at: 0)
-    }
+    // TODO: - Fix given cloud syncing changes
+//    self.moveIndex += 1
+//    let moveEntry = try! DataManager.default.saveGamesService.addMove(
+//      self.saveGameId,
+//      position: self.moveIndex,
+//      locationNotation: locationNotation,
+//      type: type,
+//      value: value
+//    )
+//    
+//    if let moveEntry {
+//      self.moves.removeAll { entry in entry.position >= self.moveIndex }
+//      self.moves.insert(moveEntry, at: 0)
+//    }
   }
   
   func undoMove() -> Void {
@@ -704,13 +696,12 @@ class Game: ObservableObject {
     }
     
     // Auto-save
-    try? DataManager.default.saveGamesService
-      .autoSave(
-        self.saveGameId,
-        puzzle: self.puzzle,
-        duration: self.durationInSeconds,
-        score: self.score
-      )
+    try! DataManager.default.saveGamesService.autoSave(
+      self.saveGameId,
+      puzzle: self.puzzle,
+      duration: self.durationInSeconds,
+      score: self.score
+    )
     
     self.highlightAllPeerCellsRelatedToCursor()
 
@@ -739,13 +730,12 @@ class Game: ObservableObject {
     }
     
     // Auto-save
-    try? DataManager.default.saveGamesService
-      .autoSave(
-        self.saveGameId,
-        puzzle: self.puzzle,
-        duration: self.durationInSeconds,
-        score: self.score
-      )
+    try! DataManager.default.saveGamesService.autoSave(
+      self.saveGameId,
+      puzzle: self.puzzle,
+      duration: self.durationInSeconds,
+      score: self.score
+    )
   }
   
   private func checkGameOver() -> Bool {

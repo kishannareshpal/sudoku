@@ -5,7 +5,9 @@
 //  Created by Kishan Jadav on 05/02/2025.
 //
 
-enum ColorSchemeName: String {
+enum ColorSchemeName: String, CaseIterable, Identifiable {
+  var id: String { rawValue }
+
   case darkYellow = "dark.yellow"
   case darkBlue = "dark.blue"
   case darkGreen = "dark.green"

@@ -16,14 +16,14 @@ struct HomeScreen: View {
 
   @State private var activeSaveGame: SaveGameEntity?
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
-
-  init() {
-    try! DataManager.default.usersService.ensureCurrentUserExists()
-  }
   
   private func loadLastGame() {
-    print("Reloaded last game")
-    self.activeSaveGame = DataManager.default.usersService.findActiveSaveGame()
+    Task {
+      await DataManager.default.saveGamesService.sync()
+
+      self.activeSaveGame = DataManager.default.saveGamesService
+        .findActiveLocalSaveGame()
+    }
   }
   
   private func startNewGame(difficulty: Difficulty, confirmed: Bool = false) -> Void {
@@ -44,8 +44,8 @@ struct HomeScreen: View {
     
     // Run the whole process on the MainActor context
     Task.detached {
-      try! DataManager.default.usersService.detachActiveSaveGame()
-      let newSaveGame = try! DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
+      await DataManager.default.saveGamesService.detachActiveSaveGame()
+      let newSaveGame = try! await DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
       
       await MainActor.run {
         self.activeSaveGame = newSaveGame
@@ -91,22 +91,6 @@ struct HomeScreen: View {
               }
             )
             .disabled(self.loadingNewGameForDifficulty != nil)
-            
-//            if activeSaveGame != nil {
-//              Button {
-//                self.newGameConfirmationDifficulty = difficulty
-//                self.newGameConfirmationShowing = true
-//              } label: {
-//                NewGameCard(difficulty: difficulty)
-//              }
-//            } else {
-//              NavigationLink(
-//                destination: GameScreen(difficulty: difficulty)
-//                  .navigationBarBackButtonHidden()
-//              ) {
-//                NewGameCard(difficulty: difficulty)
-//              }
-//            }
           }.confirmationDialog(
             Text("New game?"),
             isPresented: $newGameConfirmationShowing

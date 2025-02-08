@@ -77,13 +77,13 @@ struct GameSceneViewPreview: PreviewProvider {
     var body: some View {
       ZStack {
         Color(currentColorScheme.ui.game.background).onAppear {
-          let dataManager = DataManager.default
-          try! dataManager.usersService.ensureCurrentUserExists()
-          try! dataManager.saveGamesService.createNewSaveGame(
-            difficulty: .easy
-          )
-          
-          self.ready = true
+          Task {
+            try! await DataManager.default.saveGamesService.createNewSaveGame(
+              difficulty: .easy
+            )
+            
+            self.ready = true
+          }
         }.ignoresSafeArea()
         
         if ready {

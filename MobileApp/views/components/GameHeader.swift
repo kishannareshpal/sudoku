@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GameHeader: View {  
+struct GameHeader: View {
   @ObservedObject var gameScene: MobileGameScene
   
   var body: some View {
@@ -30,13 +30,20 @@ struct GameHeader: View {
 
 struct Content: View {
   private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
+  
   @ObservedObject var game: Game
+  
+  @AppStorage(
+    UserDefaultKey.showTimer.rawValue
+  ) private var showTimer: Bool = true
   
   var body: some View {
     VStack {
-      Text(GameDurationHelper.format(self.game.durationInSeconds))
-        .font(.system(size: 24, weight: .bold).monospaced())
-        .foregroundStyle(Color(currentColorScheme.ui.game.nav.text))
+      if showTimer {
+        Text(GameDurationHelper.format(self.game.durationInSeconds))
+          .font(.system(size: 24, weight: .bold).monospaced())
+          .foregroundStyle(Color(currentColorScheme.ui.game.nav.text))
+      }
       
       Text("\(self.game.difficulty.rawValue) • \(self.game.score) Points")
         .font(

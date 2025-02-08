@@ -51,7 +51,9 @@ struct GameOverOverlay: View {
             
             Button(
               action: {
-                try! DataManager.default.usersService.detachActiveSaveGame()
+                Task {
+                  await DataManager.default.saveGamesService.detachActiveSaveGame()                  
+                }
 
                 self.dismissScreen()
               },

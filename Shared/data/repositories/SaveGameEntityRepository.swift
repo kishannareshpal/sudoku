@@ -15,15 +15,62 @@ enum SaveGameEntityRepositoryErrors: Error {
 }
 
 class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
+  func hasActiveSaveGame() -> Bool {
+    return self.findOneBy(
+      predicate: NSPredicate(format: "active == %d", true)
+    ) != nil ? true : false
+  }
+  
+  func setActiveSaveGame(_ saveGame: SaveGameEntity) -> Void {
+    saveGame.active = true
+    try! self.persist()
+  }
+  
+  func unsetActiveGame() -> Void {
+    let activeSaveGame = self.findActiveSaveGame()
+    if let activeSaveGame {
+      activeSaveGame.active = false
+    }
+    
+    try! self.persist()
+  }
+  
+  func findActiveSaveGame() -> SaveGameEntity? {
+    return self.findOneBy(
+      predicate: NSPredicate(format: "active == %d", true)
+    )
+  }
+  
+  @discardableResult
+  func create(from saveGameStruct: SaveGame) -> SaveGameEntity {
+    let entity = SaveGameEntity(context: self.context)
+
+    entity.difficulty = saveGameStruct.difficulty
+    entity.givenNotation = saveGameStruct.givenNotation
+    entity.solutionNotation = saveGameStruct.solutionNotation
+    entity.durationInSeconds = saveGameStruct.durationInSeconds
+    entity.score = saveGameStruct.score
+    entity.playerNotation = saveGameStruct.playerNotation
+    entity.notesNotation = saveGameStruct.notesNotation
+    entity.createdAt = saveGameStruct.createdAt
+    entity.updatedAt = saveGameStruct.updatedAt
+    entity.updatedAt = saveGameStruct.updatedAt
+    entity.moveIndex = saveGameStruct.moveIndex
+
+    try! self.persist()
+    return entity
+  }
+  
   func create(
-    forUser user: UserEntity,
     difficulty: Difficulty,
     givenNotation: BoardPlainStringNotation,
     solutionNotation: BoardPlainStringNotation,
     playerNotation: BoardPlainStringNotation,
-    notesNotation: BoardPlainNoteStringNotation
+    notesNotation: BoardPlainNoteStringNotation,
+    persist: Bool = true
   ) throws -> SaveGameEntity {
     let saveGame = SaveGameEntity(context: self.context)
+
     saveGame.moveIndex = -1
     saveGame.difficulty = difficulty.rawValue
     saveGame.givenNotation = givenNotation
@@ -36,10 +83,13 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     saveGame.updatedAt = Date()
     saveGame.moves = []
     
-    saveGame.user = user
-    user.activeSaveGame = saveGame
+    // New games are automatically marked as active
+    saveGame.active = true
 
-    try self.persist()
+    if persist {
+      try self.persist()
+    }
+
     return saveGame
   }
 

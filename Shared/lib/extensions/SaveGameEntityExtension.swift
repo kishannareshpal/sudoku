@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreData
+import CloudKit.CKRecord
 
 extension SaveGameEntity {
   func toOTASaveGameEntity() -> OTASaveGameEntity {

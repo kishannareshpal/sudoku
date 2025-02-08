@@ -21,15 +21,18 @@ class StyleManager: ObservableObject {
     let rememberedColorSchemeName = UserDefaults.standard.string(
       forKey: UserDefaultKey.colorSchemeName.rawValue
     )
+    
     let colorSchemeName = ColorSchemeName(
       rawValue: rememberedColorSchemeName ?? ColorSchemeName.darkYellow.rawValue
     )!
+
     self.colorScheme = ColorScheme.with(name: colorSchemeName)
 
     // Load current shape style, or use a default value
     let rememberedShapeStyle = UserDefaults.standard.data(
       forKey: UserDefaultKey.shapeStyle.rawValue
     )
+
     if let rememberedShapeStyle {
       self.shapeStyle = (
         try? JSONDecoder().decode(
