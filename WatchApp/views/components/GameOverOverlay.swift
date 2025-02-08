@@ -53,7 +53,10 @@ struct GameOverOverlay: View {
               Spacer(minLength: 12)
               
               Button {
-                try! DataManager.default.usersService.detachActiveSaveGame()
+                Task {
+                  await DataManager.default.saveGamesService.detachActiveSaveGame()                  
+                }
+
                 self.dismissScreen()
               } label: {
                 Image(systemName: "plus")

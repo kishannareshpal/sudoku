@@ -17,14 +17,16 @@ struct HomeScreen: View {
 
   @State private var activeSaveGame: SaveGameEntity?
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
-  
-  init() {
-    try! DataManager.default.usersService.ensureCurrentUserExists()
-  }
-  
-  private func loadLastGame() {
-    print("Reloaded last game")
-    self.activeSaveGame = DataManager.default.usersService.findActiveSaveGame()
+
+  private func loadActiveSaveGame() {
+    Task {
+      await DataManager.default.saveGamesService.sync()
+      
+      self.activeSaveGame = DataManager.default.saveGamesService
+        .findActiveLocalSaveGame()
+
+      print("Loaded local active save game!")
+    }
   }
   
   private func startNewGame(difficulty: Difficulty, confirmed: Bool = false) -> Void {
@@ -44,9 +46,10 @@ struct HomeScreen: View {
     self.newGameConfirmationDifficulty = nil
     
     // Run the whole process on the MainActor context
-    Task.detached {
-      try! DataManager.default.usersService.detachActiveSaveGame()
-      let newSaveGame = try! DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
+    Task {
+      // TODO: Run this in some sort of a transaction, and handle failure gracefully
+      await DataManager.default.saveGamesService.detachActiveSaveGame()
+      let newSaveGame = try! await DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
       
       await MainActor.run {
         self.activeSaveGame = newSaveGame
@@ -78,6 +81,8 @@ struct HomeScreen: View {
               .font(.system(size: 48, weight: .medium))
               .foregroundStyle(.accent)
           }
+          
+          CloudSaveGameSection()
           
           if loadingNewGameForDifficulty == nil {
             ContinueGameSection()
@@ -130,6 +135,13 @@ struct HomeScreen: View {
               }
             }
           }
+          
+          NavigationLink(destination: SettingsScreen()) {
+            HStack {
+              Image(systemName: "gear")
+              Text("Settings")
+            }
+          }
         }
         .padding()
       }
@@ -148,8 +160,52 @@ struct HomeScreen: View {
       ) {}.hidden()
     }
     .onAppear {
-      self.loadLastGame()
+      self.loadActiveSaveGame()
     }
+  }
+}
+
+struct CloudSaveGameSection: View {
+  @State private var loading: Bool = true
+  @State private var message = ""
+  
+  private func loadActiveCloudSaveGame() {
+//    let cloudService = CloudService()
+    
+    Task {
+      self.loading = true
+      
+//      do {
+//        if let saveGameRecord = try await cloudService.findActiveSaveGame() {
+//          print("Fetched record:", saveGameRecord)
+//          message = "Found!"
+//          // Add your logic to process the record here
+//        } else {
+//          print("No save games found.")
+//          message = "No cloud games found!"
+//        }
+//      } catch {
+//        print("Error fetching SaveGames:", error)
+//        message = "Failed to fetch cloud game!"
+//      }
+      
+      self.loading = false
+    }
+  }
+  
+  var body: some View {
+    VStack {
+      if loading {
+        ProgressView()
+      } else {
+        Text(message)
+      }
+      
+    }.onAppear() {
+      self.loadActiveCloudSaveGame()
+    }
+    .padding()
+    .background(.gray)
   }
 }
 

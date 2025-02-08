@@ -11,18 +11,17 @@ import CoreData
 struct ContinueGameSection: View {
   @FetchRequest(
     fetchRequest:
-      FetchRequestHelper.buildFetchRequestWithRelationship(
+      FetchRequestHelper.buildFetchRequest(
         predicate: NSPredicate(
-          format: "SELF == %@",
-          DataManager.default.usersService.repository.currentUserId
-        ),
-        relationshipKeyPathsForPrefetching: ["activeSaveGame"]
+          format: "active == %d",
+          true
+        )
       ),
     animation: .interpolatingSpring
-  ) private var users: FetchedResults<UserEntity>
+  ) private var activeSaveGames: FetchedResults<SaveGameEntity>
 
   private var activeSaveGame: SaveGameEntity? {
-    return self.users.first?.activeSaveGame
+    return self.activeSaveGames.first
   }
   
   var body: some View {

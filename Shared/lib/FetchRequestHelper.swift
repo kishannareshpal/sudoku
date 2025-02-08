@@ -8,17 +8,21 @@
 import CoreData
 
 class FetchRequestHelper {
-  static func buildFetchRequestWithRelationship<TEntity: NSManagedObject>(
+  static func buildFetchRequest<TEntity: NSManagedObject>(
     entityName: String? = nil,
     predicate: NSPredicate,
-    relationshipKeyPathsForPrefetching: [String]?,
+    relationshipKeyPathsForPrefetching: [String]? = nil,
     sortDescriptors: [NSSortDescriptor] = []
   ) -> NSFetchRequest<TEntity> {
     // Use the provided entity name or infer from the generic type.
     let finalEntityName = entityName ?? String(describing: TEntity.self)
     let fetchRequest = NSFetchRequest<TEntity>(entityName: finalEntityName)
     fetchRequest.predicate = predicate
-    fetchRequest.relationshipKeyPathsForPrefetching = relationshipKeyPathsForPrefetching
+    
+    if let relationshipKeyPathsForPrefetching {
+      fetchRequest.relationshipKeyPathsForPrefetching = relationshipKeyPathsForPrefetching
+    }
+
     fetchRequest.sortDescriptors = sortDescriptors
     return fetchRequest
   }
