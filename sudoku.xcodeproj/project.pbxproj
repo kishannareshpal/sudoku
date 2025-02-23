@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DAB90A802D5F6BE000604484 /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = DAB90A7F2D5F6BE000604484 /* SwiftDate */; };
+		DAB90A822D5F6BF100604484 /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = DAB90A812D5F6BF100604484 /* SwiftDate */; };
 		DAC7CCC82D298C1600704C81 /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = DAE536C02C71368F00F6386F /* WatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DAC7CCF52D2A067300704C81 /* UIColorHexSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DAC7CCF42D2A067300704C81 /* UIColorHexSwift */; };
 		DAE537212C713A5D00F6386F /* UIColorHexSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DAE537202C713A5D00F6386F /* UIColorHexSwift */; };
@@ -58,6 +60,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DA60782B2D58E9D8004392CD /* Exceptions for "MobileApp" folder in "WatchApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				views/components/DurationText.swift,
+			);
+			target = DAE536BF2C71368F00F6386F /* WatchApp */;
+		};
+		DA6078352D59978B004392CD /* Exceptions for "Shared" folder in "WatchApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				lib/extensions/UINavigationControllerExtension.swift,
+			);
+			target = DAE536BF2C71368F00F6386F /* WatchApp */;
+		};
 		DAF9586E2D46FB1500836A8C /* Exceptions for "MobileApp" folder in "MobileApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -65,19 +81,13 @@
 			);
 			target = DAD6FD5B2D2955CC006F8D37 /* MobileApp */;
 		};
-		DAFA999F2D4849E50047AD35 /* Exceptions for "Shared" folder in "WatchApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				views/components/ThemePicker.swift,
-			);
-			target = DAE536BF2C71368F00F6386F /* WatchApp */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DAD6FD5D2D2955CC006F8D37 /* MobileApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				DA60782B2D58E9D8004392CD /* Exceptions for "MobileApp" folder in "WatchApp" target */,
 				DAF9586E2D46FB1500836A8C /* Exceptions for "MobileApp" folder in "MobileApp" target */,
 			);
 			path = MobileApp;
@@ -91,7 +101,7 @@
 		DAD6FD862D295BEF006F8D37 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DAFA999F2D4849E50047AD35 /* Exceptions for "Shared" folder in "WatchApp" target */,
+				DA6078352D59978B004392CD /* Exceptions for "Shared" folder in "WatchApp" target */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -113,6 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAB90A802D5F6BE000604484 /* SwiftDate in Frameworks */,
 				DAC7CCF52D2A067300704C81 /* UIColorHexSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -128,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAB90A822D5F6BF100604484 /* SwiftDate in Frameworks */,
 				DAE537212C713A5D00F6386F /* UIColorHexSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,6 +201,7 @@
 			name = MobileApp;
 			packageProductDependencies = (
 				DAC7CCF42D2A067300704C81 /* UIColorHexSwift */,
+				DAB90A7F2D5F6BE000604484 /* SwiftDate */,
 			);
 			productName = MobileApp;
 			productReference = DAD6FD5C2D2955CC006F8D37 /* MobileApp.app */;
@@ -236,6 +249,7 @@
 			name = WatchApp;
 			packageProductDependencies = (
 				DAE537202C713A5D00F6386F /* UIColorHexSwift */,
+				DAB90A812D5F6BF100604484 /* SwiftDate */,
 			);
 			productName = "sudoku Watch App";
 			productReference = DAE536C02C71368F00F6386F /* WatchApp.app */;
@@ -302,6 +316,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */,
+				DAB90A7E2D5F6BE000604484 /* XCRemoteSwiftPackageReference "SwiftDate" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DAE536BB2C71368F00F6386F /* Products */;
@@ -800,6 +815,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DAB90A7E2D5F6BE000604484 /* XCRemoteSwiftPackageReference "SwiftDate" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/malcommac/SwiftDate.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/yeahdongcn/UIColor-Hex-Swift";
@@ -811,6 +834,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DAB90A7F2D5F6BE000604484 /* SwiftDate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DAB90A7E2D5F6BE000604484 /* XCRemoteSwiftPackageReference "SwiftDate" */;
+			productName = SwiftDate;
+		};
+		DAB90A812D5F6BF100604484 /* SwiftDate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DAB90A7E2D5F6BE000604484 /* XCRemoteSwiftPackageReference "SwiftDate" */;
+			productName = SwiftDate;
+		};
 		DAC7CCF42D2A067300704C81 /* UIColorHexSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DAE5371F2C713A5D00F6386F /* XCRemoteSwiftPackageReference "UIColor-Hex-Swift" */;

@@ -96,10 +96,11 @@ class BaseRepository<TEntity: NSManagedObject> {
     
     try! self.persist()
   }
-  
-  /// NEEDS TO BE CALLED AFTER ANY SAVING / DELETING OPERATION
+
   func persist() throws {
-    try self.context.save()
+    DispatchQueue.main.async {
+      try! self.context.save()
+    }
   }
   
   

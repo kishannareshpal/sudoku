@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D60" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="MoveEntryEntity" representedClassName="MoveEntryEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="locationNotation" attributeType="String"/>
-        <attribute name="position" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="type" attributeType="String"/>
-        <attribute name="value" attributeType="String"/>
-        <relationship name="saveGame" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SaveGameEntity" inverseName="moves" inverseEntity="SaveGameEntity"/>
-    </entity>
     <entity name="SaveGameEntity" representedClassName="SaveGameEntity" syncable="YES" codeGenerationType="class">
         <attribute name="active" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="difficulty" attributeType="String"/>
         <attribute name="durationInSeconds" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="givenNotation" attributeType="String"/>
-        <attribute name="moveIndex" attributeType="Integer 32" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="moveIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="movesNotation" attributeType="String"/>
         <attribute name="notesNotation" optional="YES" attributeType="String"/>
         <attribute name="playerNotation" attributeType="String"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solutionNotation" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="moves" toMany="YES" deletionRule="Cascade" destinationEntity="MoveEntryEntity" inverseName="saveGame" inverseEntity="MoveEntryEntity"/>
     </entity>
 </model>

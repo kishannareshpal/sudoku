@@ -9,7 +9,5 @@ public enum MoveType: String {
   case setNumber
   case setNote
   case removeNumber
-  case removeNote
-  case clearNumber
-  case clearNote
+  case removeNotes
 }

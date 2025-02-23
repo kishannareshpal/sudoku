@@ -26,13 +26,16 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     try! self.persist()
   }
   
-  func unsetActiveGame() -> Void {
+  @discardableResult
+  func unsetActiveGame() -> SaveGameEntity? {
     let activeSaveGame = self.findActiveSaveGame()
     if let activeSaveGame {
+      activeSaveGame.updatedAt = Date()
       activeSaveGame.active = false
+      try! self.persist()
     }
     
-    try! self.persist()
+    return activeSaveGame
   }
   
   func findActiveSaveGame() -> SaveGameEntity? {
@@ -52,10 +55,14 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     entity.score = saveGameStruct.score
     entity.playerNotation = saveGameStruct.playerNotation
     entity.notesNotation = saveGameStruct.notesNotation
+    entity.movesNotation = saveGameStruct.movesNotation
     entity.createdAt = saveGameStruct.createdAt
     entity.updatedAt = saveGameStruct.updatedAt
     entity.updatedAt = saveGameStruct.updatedAt
     entity.moveIndex = saveGameStruct.moveIndex
+    
+    // New games are automatically marked as active
+    entity.active = true
 
     try! self.persist()
     return entity
@@ -67,6 +74,7 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     solutionNotation: BoardPlainStringNotation,
     playerNotation: BoardPlainStringNotation,
     notesNotation: BoardPlainNoteStringNotation,
+    movesNotation: BoardPlainMoveStringNotation,
     persist: Bool = true
   ) throws -> SaveGameEntity {
     let saveGame = SaveGameEntity(context: self.context)
@@ -79,9 +87,9 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     saveGame.score = 0
     saveGame.playerNotation = playerNotation
     saveGame.notesNotation = notesNotation
+    saveGame.movesNotation = movesNotation
     saveGame.createdAt = Date()
     saveGame.updatedAt = Date()
-    saveGame.moves = []
     
     // New games are automatically marked as active
     saveGame.active = true
@@ -93,26 +101,15 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     return saveGame
   }
 
-  func updateDuration(for saveGameId: EntityID, seconds: Int64) throws -> Void {
-    guard let saveGame = self.findById(saveGameId) else {
-      throw SaveGameEntityRepositoryErrors.saveGameNotFound
-    }
-    
-    let now = Date()
-    saveGame.updatedAt = now
-    saveGame.durationInSeconds = seconds
-    
-    try self.persist()
-  }
-
   @discardableResult
   func update(
     _ saveGameId: EntityID,
     playerNotation: BoardPlainStringNotation? = nil,
     notesNotation: BoardPlainNoteStringNotation? = nil,
+    movesNotation: BoardPlainMoveStringNotation? = nil,
     score: Int64? = nil,
     duration: Int64? = nil,
-    moveIndex: Int32? = nil
+    moveIndex: Int64? = nil
   ) throws -> SaveGameEntity {
     guard let saveGame = self.findById(saveGameId) else {
       throw SaveGameEntityRepositoryErrors.saveGameNotFound
@@ -127,6 +124,10 @@ class SaveGameEntityRepository: BaseRepository<SaveGameEntity> {
     
     if let notesNotation {
       saveGame.notesNotation = notesNotation
+    }
+    
+    if let movesNotation {
+      saveGame.movesNotation = movesNotation
     }
     
     if let score {

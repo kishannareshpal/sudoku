@@ -14,45 +14,41 @@ struct GameHeader: View {
     ZStack {
       HStack(alignment: .center) {
         BackButton()
-        
+
         Spacer()
-        
-        PauseGameButton(game: self.gameScene.game)
+
+        PauseGameButton(gameScene: self.gameScene)
       }
-      
-      VStack(alignment: .center) {
-        Content(game: self.gameScene.game)
-      }
+  
+      CenteredInformation(gameScene: self.gameScene)
     }
     .padding(12)
   }
 }
 
-struct Content: View {
+struct CenteredInformation: View {
+  var gameScene: MobileGameScene
+
   private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
-  
-  @ObservedObject var game: Game
-  
-  @AppStorage(
-    UserDefaultKey.showTimer.rawValue
-  ) private var showTimer: Bool = true
+  @AppStorage(UserDefaultKey.showTimer.rawValue) private var showTimer: Bool = true
   
   var body: some View {
-    VStack {
+    VStack(alignment: .center) {      
       if showTimer {
-        Text(GameDurationHelper.format(self.game.durationInSeconds))
-          .font(.system(size: 24, weight: .bold).monospaced())
-          .foregroundStyle(Color(currentColorScheme.ui.game.nav.text))
+        DurationText(gameDuration: self.gameScene.game.state.duration)
+          .overlay {
+            GameDurationTracker(gameState: self.gameScene.game.state)
+          }
       }
       
-      Text("\(self.game.difficulty.rawValue) • \(self.game.score) Points")
-        .font(
-          .system(size: 14, weight: .regular)
-        )
-        .foregroundStyle(
-          Color(currentColorScheme.ui.game.nav.text.cgColor)
-        )
+      Text(
+        "\(self.gameScene.game.difficulty.rawValue) • \(self.gameScene.game.score) Points"
+      )
+        .font(.system(size: 14, weight: .regular))
+        .foregroundStyle(Color(self.currentColorScheme.ui.game.nav.text.cgColor))
     }
   }
 }
+
+
 

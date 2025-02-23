@@ -11,10 +11,11 @@ import UIColorHexSwift
 struct GameOverOverlay: View {
   @Environment(\.dismiss) var dismissScreen: DismissAction
 
-  @ObservedObject var game: Game
+  var game: Game
+  @ObservedObject var gameState: GameState
   
   var body: some View {
-    if (!self.game.isGameOver) {
+    if (!self.gameState.isGameOver) {
       return AnyView(EmptyView())
     }
     
@@ -40,7 +41,9 @@ struct GameOverOverlay: View {
                 .font(.headline)
                 .fontWeight(.black)
               
-              Text("You've solved this \(game.difficulty) puzzle in \(GameDurationHelper.format(game.durationInSeconds, pretty: true)). Your final score is \(game.score) points!")
+              Text(
+                "You've solved this \(self.game.difficulty) puzzle in \(GameDurationHelper.format(self.gameState.duration.seconds, pretty: true)). Your final score is \(self.game.score) points!"
+              )
                 .font(.system(size: 12))
                 .fontWeight(.regular)
                 .multilineTextAlignment(.center)
@@ -53,9 +56,9 @@ struct GameOverOverlay: View {
               Spacer(minLength: 12)
               
               Button {
-                Task {
-                  await DataManager.default.saveGamesService.detachActiveSaveGame()                  
-                }
+//                Task {
+//                  await DataManager.default.saveGamesService.detachActiveSaveGame()                  
+//                }
 
                 self.dismissScreen()
               } label: {
@@ -68,7 +71,7 @@ struct GameOverOverlay: View {
             .frame(width: geometry.size.width)
             .frame(minHeight: geometry.size.height)
           }
-          .focusable(self.game.isGameOver)
+          .focusable(self.gameState.isGameOver)
           .frame(maxWidth: .infinity, maxHeight:.infinity)
         }
       }

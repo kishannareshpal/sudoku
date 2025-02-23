@@ -12,121 +12,71 @@ import UIColorHexSwift
 
 struct NumbersPad: View {
   var gameScene: MobileGameScene
+  
+  var body: some View {
+    NumbersPadContent(
+      gameScene: self.gameScene,
+      cursorState: self.gameScene.cursorState,
+      gameState: self.gameScene.game.state,
+      activeCursorState: self.gameScene.game.activeCursorState
+    )
+  }
+}
 
-  @ObservedObject var game: Game
-  @ObservedObject var puzzle: Puzzle
+private struct NumbersPadContent: View {
+  private let numberKeyVibrator = UIImpactFeedbackGenerator(style: .medium)
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
+  var gameScene: MobileGameScene
   @ObservedObject var cursorState: CursorState
+  @ObservedObject var gameState: GameState
+  @ObservedObject var activeCursorState: ActiveCursorState
   
-  private var currentColorScheme = StyleManager.current.colorScheme
-  private var numberKeyVibrator = UIImpactFeedbackGenerator(style: .medium)
-
-  init(
-    gameScene: MobileGameScene,
-    game: Game,
-    puzzle: Puzzle,
-    cursorState: CursorState
-  ) {
-    self.gameScene = gameScene
-    self.game = game
-    self.puzzle = puzzle
-    self.cursorState = cursorState
-  }
+  @AppStorage(
+    UserDefaultKey.useGridNumberPadStyle.rawValue
+  ) private var useGridNumberPadStyle: Bool = true
   
-  var canInsertNumbersOrNotes: Bool {
-    if self.game.isGamePaused || self.game.isGameOver {
-      return false
-    }
-    
-    if (cursorState.mode == .note) {
-      return self.game.activatedNumberCell?.isNotable ?? false
-    } else {
-      return self.game.activatedNumberCell?.isChangeable ?? false
-    }
-  }
-  
-  var isActiveNumberCellEraseable: Bool {
-    if self.game.isGamePaused || self.game.isGameOver {
-      return false
-    }
-    
-    return self.game.activatedNumberCell?.isEraseable ?? false
-  }
-
   private func onNumberKeyPress(_ number: Int) {
-    numberKeyVibrator.impactOccurred()
-
+    self.numberKeyVibrator.impactOccurred()
     self.gameScene.changeOrToggleActivatedNumberCellValueOrNote(
       with: number
     )
   }
   
+  var isPressable: Bool {
+    if self.gameState.isGamePaused || self.gameState.isGameOver {
+      return false
+    }
+    
+    if (self.cursorState.mode == .note) {
+      return self.activeCursorState.numberCell?.isNotable ?? false
+    } else {
+      return self.activeCursorState.numberCell?.isChangeable ?? false
+    }
+  }
+  
   var body: some View {
-    VStack(spacing: 8) {
-      HStack(spacing: 8) {
-        ForEach(1...3, id: \.self) { number in
-          let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
-          let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
-          let isNoteToggled = self.cursorState.mode == .note && self.puzzle.isNoteToggled(
-            value: number,
-            at: self.game.cursorLocation
-          )
-          
-          Button("\(number)", action: { onNumberKeyPress(number) })
-            .disabled(unavailable)
-            .buttonStyle(
-              NumbersPadButtonStyle(
-                isEnabled: !unavailable,
-                isChecked: isNoteToggled
-              )
-            )
-        }
-      }
-      
-      HStack(spacing: 8) {
-        ForEach(4...6, id: \.self) { number in
-          let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
-          let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
-          let isNoteToggled = self.cursorState.mode == .note && self.puzzle.isNoteToggled(
-            value: number,
-            at: self.game.cursorLocation
-          )
-          
-          Button("\(number)", action: { onNumberKeyPress(number) })
-            .disabled(unavailable)
-            .buttonStyle(
-              NumbersPadButtonStyle(
-                isEnabled: !unavailable,
-                isChecked: isNoteToggled
-              )
-            )
-        }
-      }
-      
-      HStack {
-        ForEach(7...9, id: \.self) { number in
-          let isNumberUsedUp = (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
-          let unavailable = !self.canInsertNumbersOrNotes || isNumberUsedUp
-          let isNoteToggled = self.cursorState.mode == .note && self.puzzle.isNoteToggled(
-            value: number,
-            at: self.game.cursorLocation
-          )
-          
-          Button("\(number)", action: { onNumberKeyPress(number) })
-            .disabled(unavailable)
-            .buttonStyle(
-              NumbersPadButtonStyle(
-                isEnabled: !unavailable,
-                isChecked: isNoteToggled
-              )
-            )
-        }
+    Group {    
+      if (useGridNumberPadStyle) {
+        ThreeByThreeNumberPadGrid(
+          isPressable: self.isPressable,
+          cursorState: self.cursorState,
+          gameScene: self.gameScene,
+          onNumberKeyPress: self.onNumberKeyPress
+        )
+      } else {
+        FiveByTwoNumberPadGrid(
+          isPressable: self.isPressable,
+          cursorState: self.cursorState,
+          gameScene: self.gameScene,
+          onNumberKeyPress: self.onNumberKeyPress
+        )
       }
     }
-    .padding(8)
     .background {
       if self.cursorState.mode == .note {
         Color(
-          currentColorScheme.ui.game.control.numpad.button.normal.background
+          self.currentColorScheme.ui.game.control.numpad.button.normal.background
         ).clipShape(
           RoundedRectangle(cornerRadius: 12)
         )
@@ -138,7 +88,111 @@ struct NumbersPad: View {
   }
 }
 
-struct NumbersPadButtonStyle: ButtonStyle {
+// Build a 9x9 grid of numbers:
+// - Starting from 123 at the top,
+//   then 456 in the middle,
+//   and lastly 789 at the bottom.
+private struct ThreeByThreeNumberPadGrid: View {
+  var isPressable: Bool
+  var cursorState: CursorState
+  var gameScene: MobileGameScene
+  var onNumberKeyPress: (Int) -> Void
+  
+  var body: some View {
+    VStack(spacing: 8) {
+      ForEach(0..<3) { row in
+        HStack(spacing: 8) {
+          ForEach(1...3, id: \.self) { column in
+            let number = column + row * 3
+            
+            NumberPadButton(
+              number: number,
+              isPressable: self.isPressable,
+              cursorStateMode: self.cursorState.mode,
+              game: self.gameScene.game,
+              puzzle: self.gameScene.game.puzzle
+            ) {
+              self.onNumberKeyPress(number)
+            }
+          }
+        }
+      }
+    }
+    .padding(8)
+  }
+}
+
+private struct FiveByTwoNumberPadGrid: View {
+  var isPressable: Bool
+  var cursorState: CursorState
+  var gameScene: MobileGameScene
+  var onNumberKeyPress: (Int) -> Void
+  
+  var body: some View {
+    VStack {
+      ForEach(0..<2) { row in
+        HStack(spacing: 8) {
+          ForEach(0..<5) { column in
+            let index = row * 5 + column
+            
+            if index < 9 {
+              let number = index + 1
+              NumberPadButton(
+                number: number,
+                isPressable: self.isPressable,
+                cursorStateMode: self.cursorState.mode,
+                game: self.gameScene.game,
+                puzzle: self.gameScene.game.puzzle
+              ) {
+                self.onNumberKeyPress(number)
+              }
+            }
+            //          else if index == 9 {
+            //            // "Clear" button
+            //          }
+          }
+        }
+      }
+    }
+    .padding(8)
+  }
+}
+
+private struct NumberPadButton: View {
+  var number: Int
+  var isPressable: Bool
+  var cursorStateMode: CursorMode
+  var game: Game
+  @ObservedObject var puzzle: Puzzle
+
+  var onPress: () -> Void
+
+  var isNumberUsedUp: Bool {
+    (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
+  }
+  
+  var isNoteForNumberToggled: Bool {
+    guard self.cursorStateMode == .note else {
+      return false
+    }
+    
+    return self.puzzle.isNoteToggled(value: self.number, at: self.game.cursorLocation)
+  }
+  
+  var body: some View {
+    Button("\(self.number)", action: self.onPress)
+      .disabled(!self.isPressable || self.isNumberUsedUp)
+      .buttonStyle(
+        NumbersPadButtonStyle(
+          isEnabled: self.isPressable && !self.isNumberUsedUp,
+          isChecked: self.isNoteForNumberToggled
+        )
+      )
+  }
+}
+
+
+private struct NumbersPadButtonStyle: ButtonStyle {
   var isEnabled: Bool = true
   var isChecked: Bool = false
   
@@ -175,56 +229,57 @@ struct NumbersPadButtonStyle: ButtonStyle {
 }
 
 
-struct NumbersPadPreview: PreviewProvider {
-  struct Content: View {
-    private let sceneSize = CGSize(width: 250, height: 250)
-    private let currentColorScheme = StyleManager.current.colorScheme
-    
-    @StateObject var dataProvider = AppDataProvider.shared
-    @State var ready: Bool = false
-    
-    init() {
-      StyleManager.current.switchColorScheme(to: .darkGreen)
-    }
-    
-    var body: some View {
-      ZStack {
-        Color(currentColorScheme.ui.game.background).onAppear {
-          Task {
-            try! await DataManager.default.saveGamesService.createNewSaveGame(
-              difficulty: .easy
-            )
-            
-            self.ready = true
-          }
-        }.ignoresSafeArea()
-        
-        if ready {
-          VStack {
-            let gameScene = MobileGameScene(size: sceneSize)
-
-            NotesModeToggleButton(
-              game: gameScene.game,
-              cursorState: gameScene.cursorState
-            )
-            
-            NumbersPad(
-              gameScene: gameScene,
-              game: gameScene.game,
-              puzzle: gameScene.game.puzzle,
-              cursorState: gameScene.cursorState
-            )
-          }.padding()
-        } else {
-          Text("Scene not ready!")
-        }
-      }
-      .environment(\.managedObjectContext, dataProvider.container.viewContext)
-    }
-  }
-  
-  static var previews: some View {
-    return Content()
-  }
-}
+//struct NumbersPadPreview: PreviewProvider {
+//  struct Content: View {
+//    private let sceneSize = CGSize(width: 250, height: 250)
+//    private let currentColorScheme = StyleManager.current.colorScheme
+//    
+//    @StateObject var dataProvider = AppDataProvider.shared
+//    @State var ready: Bool = false
+//    
+//    init() {
+//      StyleManager.current.switchColorScheme(to: .darkGreen)
+//    }
+//    
+//    var body: some View {
+//      ZStack {
+//        Color(currentColorScheme.ui.game.background).onAppear {
+//          Task {
+//            try! await DataManager.default.saveGamesService.createNewSaveGame(
+//              difficulty: .easy
+//            )
+//            
+//            self.ready = true
+//          }
+//        }.ignoresSafeArea()
+//        
+//        if ready {
+//          VStack {
+//            let gameScene = MobileGameScene(size: sceneSize)
+//
+//            NotesModeToggleButton(
+//              gameState: gameScene.game.state,
+//              cursorState: gameScene.cursorState
+//            )
+//            
+//            NumbersPad(
+//              gameScene: gameScene,
+//              game: gameScene.game,
+//              gameState: gameScene.game.state,
+//              puzzle: gameScene.game.puzzle,
+//              cursorState: gameScene.cursorState
+//            )
+//          }.padding()
+//        } else {
+//          Text("Scene not ready!")
+//        }
+//      }
+//      .environment(\.managedObjectContext, dataProvider.container.viewContext)
+//    }
+//  }
+//  
+//  static var previews: some View {
+//    return Content()
+//  }
+//}
 

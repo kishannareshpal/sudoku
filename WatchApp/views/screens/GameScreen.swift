@@ -51,7 +51,10 @@ struct GameScreen: View {
 
     }
     .overlay {
-      GameOverOverlay(game: self.gameScene.game)
+      GameOverOverlay(
+        game: self.gameScene.game,
+        gameState: self.gameScene.game.state
+      )
     }
   }
 }

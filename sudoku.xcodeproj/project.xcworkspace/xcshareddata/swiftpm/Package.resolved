@@ -1,6 +1,15 @@
 {
-  "originHash" : "fb6c36758d10af9b95ff2d426beaf521cf7bbfacf091b2a08d64134ad6b6de49",
+  "originHash" : "c4d5c60de46866a461dc447973b4cb92d7b879ccb60634a745885cb579230a58",
   "pins" : [
+    {
+      "identity" : "swiftdate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/malcommac/SwiftDate.git",
+      "state" : {
+        "revision" : "5d943224c3bb173e6ecf27295611615eba90c80e",
+        "version" : "7.0.0"
+      }
+    },
     {
       "identity" : "uicolor-hex-swift",
       "kind" : "remoteSourceControl",

@@ -5,10 +5,11 @@
 //  Created by Kishan Jadav on 08/01/2023.
 //
 
+import SwiftUICore
 import SpriteKit
 import UIColorHexSwift
 
-class NumberCellSprite: SKSpriteNode {
+class NumberCellSprite: SKSpriteNode, ObservableObject {
   private let currentColorScheme = StyleManager.current.colorScheme
   
   static let NUMBER_VALUE_CHANGING_AMOUNT = 0.1
@@ -47,15 +48,15 @@ class NumberCellSprite: SKSpriteNode {
   var isNotable: Bool {
     return self.isValueEmpty
   }
-  
+
   var isEraseable: Bool {
     return !self.isStatic && !(self.isValueEmpty && self.isNotesEmpty)
   }
-  
+
   var isValueEmpty: Bool {
     return self.value.isEmpty
   }
-  
+
   var isNotesEmpty: Bool {
     return self.notes.isEmpty
   }
@@ -170,6 +171,7 @@ class NumberCellSprite: SKSpriteNode {
       // Hide the note
       existingNote.toggleVisibility(visible: false, animated: animate)
       existingNote.removeFromParent()
+      
       self.notes.removeAll { record in
         record.value == value
       }
@@ -310,7 +312,7 @@ class NumberCellSprite: SKSpriteNode {
     self.invalidNumberShapeNode.isUserInteractionEnabled = false
     self.invalidNumberShapeNode.lineWidth = 4.0
     self.invalidNumberShapeNode.strokeColor = self.currentColorScheme.board.cell.text.player.invalid
-    self.invalidNumberShapeNode.alpha = 0.2
+    self.invalidNumberShapeNode.alpha = 0.3
     self.invalidNumberShapeNode.zPosition = ZIndex.Cell.invalidNumberShape
     self.invalidNumberShapeNode.isHidden = true
     self.invalidNumberShapeNode.isAntialiased = true

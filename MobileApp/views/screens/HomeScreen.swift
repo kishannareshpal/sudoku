@@ -11,26 +11,31 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct HomeScreen: View {
+  @ObservedObject var syncManager: SyncManager
+  
   @State private var newGameConfirmationShowing: Bool = false
   @State private var newGameConfirmationDifficulty: Difficulty? = nil
   @State private var newGameConfirmed: Bool = false
-
-  @State private var activeSaveGame: SaveGameEntity?
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
+  
+  @FetchRequest(
+    fetchRequest:
+      FetchRequestHelper.buildFetchRequest(
+        predicate: NSPredicate(
+          format: "active == %d",
+          true
+        ),
+        limit: 1
+      ),
+    animation: .interpolatingSpring
+  ) private var activeSaveGames: FetchedResults<SaveGameEntity>
 
-  private func loadActiveSaveGame() {
-    Task {
-      await DataManager.default.saveGamesService.sync()
-      
-      self.activeSaveGame = DataManager.default.saveGamesService
-        .findActiveLocalSaveGame()
-
-      print("Loaded local active save game!")
-    }
+  private var activeSaveGame: SaveGameEntity? {
+    return self.activeSaveGames.first
   }
   
   private func startNewGame(difficulty: Difficulty, confirmed: Bool = false) -> Void {
-    if (self.activeSaveGame != nil && !confirmed) {
+    if ((self.activeSaveGame != nil) && !confirmed) {
       // Attempting to start a new game, but there already is one in progress.
       // - Confirm:
       self.newGameConfirmationDifficulty = difficulty
@@ -40,20 +45,16 @@ struct HomeScreen: View {
     
     withAnimation(.interpolatingSpring) {
       self.loadingNewGameForDifficulty = difficulty
+      self.newGameConfirmationDifficulty = nil
     }
     
-    self.activeSaveGame = nil
-    self.newGameConfirmationDifficulty = nil
-    
-    // Run the whole process on the MainActor context
-    Task {
-      // TODO: Run this in some sort of a transaction, and handle failure gracefully
-      await DataManager.default.saveGamesService.detachActiveSaveGame()
-      let newSaveGame = try! await DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
+    DispatchQueue.global(qos: .userInteractive).async {
+      try! DataManager.default.saveGamesService.createNewSaveGame(
+        difficulty: difficulty
+      )
       
-      await MainActor.run {
-        self.activeSaveGame = newSaveGame
-        
+      // Update the UI on the main thread
+      DispatchQueue.main.async {
         withAnimation(.interpolatingSpring) {
           self.loadingNewGameForDifficulty = nil
           self.newGameConfirmed = true
@@ -69,8 +70,6 @@ struct HomeScreen: View {
 
       ScrollView {
         VStack(spacing: 48) {
-          Spacer().frame(height: 48)
-          
           VStack(spacing: 8) {
             Image("Softly rounded logo")
               .resizable()
@@ -82,10 +81,10 @@ struct HomeScreen: View {
               .foregroundStyle(.accent)
           }
           
-          CloudSaveGameSection()
-          
           if loadingNewGameForDifficulty == nil {
-            ContinueGameSection()
+            ContinueGameSection(
+              syncManager: self.syncManager
+            )
           }
           
           VStack(spacing: 12) {
@@ -144,6 +143,7 @@ struct HomeScreen: View {
           }
         }
         .padding()
+        .padding(.vertical, 32)
       }
     }
     .overlay {
@@ -155,60 +155,20 @@ struct HomeScreen: View {
       // - When we navigate back, the isActive: bound value is toggled back to false! So this works out great.
       // - We are hiding this view as we're only using it for navigating.
       NavigationLink(
-        destination: GameScreen().navigationBarBackButtonHidden(),
+        destination: GameScreen(),
         isActive: $newGameConfirmed
       ) {}.hidden()
     }
-    .onAppear {
-      self.loadActiveSaveGame()
+    .task {
+      await self.syncManager.sync()
     }
-  }
-}
-
-struct CloudSaveGameSection: View {
-  @State private var loading: Bool = true
-  @State private var message = ""
-  
-  private func loadActiveCloudSaveGame() {
-//    let cloudService = CloudService()
-    
-    Task {
-      self.loading = true
-      
-//      do {
-//        if let saveGameRecord = try await cloudService.findActiveSaveGame() {
-//          print("Fetched record:", saveGameRecord)
-//          message = "Found!"
-//          // Add your logic to process the record here
-//        } else {
-//          print("No save games found.")
-//          message = "No cloud games found!"
-//        }
-//      } catch {
-//        print("Error fetching SaveGames:", error)
-//        message = "Failed to fetch cloud game!"
-//      }
-      
-      self.loading = false
+    .onAppear() {
+      UIRefreshControl.appearance().tintColor = .accent
     }
-  }
-  
-  var body: some View {
-    VStack {
-      if loading {
-        ProgressView()
-      } else {
-        Text(message)
-      }
-      
-    }.onAppear() {
-      self.loadActiveCloudSaveGame()
+    .refreshable {
+      await self.syncManager.sync()
     }
-    .padding()
-    .background(.gray)
+    .navigationBarHidden(true)
+    .preferredColorScheme(.dark)
   }
-}
-
-#Preview {
-  HomeScreen()
 }

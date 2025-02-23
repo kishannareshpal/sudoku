@@ -5,19 +5,33 @@
 //  Created by Kishan Jadav on 15/02/2025.
 //
 
+import Foundation
+import SwiftUICore
 
 class SyncManager: ObservableObject {
-  enum SyncStatus {
+  enum SyncStatus: Equatable {
     case idle, syncing, completed(result: SyncResult)
   }
 
   @Published var status: SyncStatus = .idle
-  
-  
+
   func sync() async {
-    self.status = .syncing
+    guard self.status != .syncing else {
+      return
+    }
     
+    await MainActor.run {
+      withAnimation(.interactiveSpring) {
+        self.status = .syncing
+      }
+    }
+
     let syncResult = await DataManager.default.saveGamesService.sync()
-    self.status = .completed(result: syncResult)
+    
+    await MainActor.run {
+      withAnimation(.interactiveSpring) {
+        self.status = .completed(result: syncResult)
+      }
+    }
   }
 }

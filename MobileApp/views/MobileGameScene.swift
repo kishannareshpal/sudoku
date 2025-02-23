@@ -10,10 +10,12 @@ import SpriteKit
 import UIKit
 
 class MobileGameScene: GameScene {
+  var id = UUID()
+  
   @Published private(set) var cursorState: CursorState = .init()
   
   private var lastCursorLocation: Location = .zero
-  private var cellSelectionVibrator = UIImpactFeedbackGenerator(style: .light)
+  private let cellSelectionVibrator = UIImpactFeedbackGenerator(style: .light)
   
   private var validNumberKeys = "1"..."9"
   
@@ -51,6 +53,10 @@ class MobileGameScene: GameScene {
       
       // Cell nodes have their names as their location in notation format
       let newCursorLocation = Location(notation: nodeName)
+      guard newCursorLocation != self.lastCursorLocation else {
+        continue
+      }
+      
       self.game.moveCursor(
         to: newCursorLocation,
         activateCellImmediately: true
@@ -61,8 +67,6 @@ class MobileGameScene: GameScene {
         self.lastCursorLocation = newCursorLocation
         self.onCursorLocationChanged()
       }
-      
-      print("Touched node: \(nodeName)")
     }
   }
   
@@ -86,8 +90,6 @@ class MobileGameScene: GameScene {
       )
       
       self.onCursorLocationChanged()
-      
-      print("Touched node: \(nodeName)")
     }
   }
   
@@ -101,6 +103,7 @@ class MobileGameScene: GameScene {
     
     if keyPress.key == .delete || keyPress.key == .delete || keyPress.key == .clear || keyPress.characters == "0" {
       self.clearActivatedNumberCellValueAndNotes()
+      return .handled
     }
     
     return .ignored

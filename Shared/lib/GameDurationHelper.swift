@@ -6,31 +6,24 @@
 //
 
 import Foundation
+import SwiftDate
 
 public class GameDurationHelper {
-  static func format(_ seconds: Int64, pretty: Bool = false) -> String {
-    let hours = seconds / 3600
-    let minutes = (seconds % 3600) / 60
-    let secs = seconds % 60
-    
+  static func format(_ seconds: Int, pretty: Bool = false) -> String {
     if pretty {
       // Formats as: "1h 12m 12s"
       // - Only shows h / m / s if they are applicable.
 
-      var components: [String] = []
-      if hours > 0 {
-        components.append("\(hours)h")
+      return seconds.seconds.timeInterval.toString {
+        $0.unitsStyle = .abbreviated
       }
-      if minutes > 0 || hours > 0 { // Show minutes if there are hours
-        components.append("\(minutes)m")
-      }
-      components.append("\(secs)s") // Always shows seconds
-      
-      return components.joined(separator: " ")
     } else {
-      // Formats as: "00:00:00"
+      // Formats as: "hh:mm:ss"
+      
+      let hours = seconds / 3600
+      let minutes = (seconds % 3600) / 60
+      let secs = seconds % 60
       return String(format: "%02d:%02d:%02d", hours, minutes, secs)
     }
-    
   }
 }

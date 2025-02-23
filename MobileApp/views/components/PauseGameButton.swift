@@ -8,18 +8,27 @@
 import SwiftUI
 
 struct PauseGameButton: View {
-  private let currentColorScheme = StyleManager.current.colorScheme
-  @ObservedObject var game: Game
+  @ObservedObject var gameScene: GameScene
+  
+  var body: some View {    
+    PauseGameButtonContent(gameState: self.gameScene.game.state)
+  }
+}
 
+private struct PauseGameButtonContent: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+
+  @ObservedObject var gameState: GameState
+  
   private let vibrator = UIImpactFeedbackGenerator(style: .medium)
   
   var body: some View {
     Button {
-      self.game.togglePause()
+      self.gameState.togglePause()
       self.vibrator.impactOccurred()
     } label: {
       Image(
-        systemName: self.game.isGamePaused ? "play.fill" : "pause.fill"
+        systemName: self.gameState.isGamePaused ? "play.fill" : "pause.fill"
       )
       .font(.system(size: 24))
       .foregroundStyle(
@@ -27,7 +36,13 @@ struct PauseGameButton: View {
       )
       .apply { view in
         if #available(iOS 17.0, *) {
-          view.symbolEffect(.bounce.wholeSymbol, value: self.game.isGamePaused)
+          view
+            .symbolEffect(
+              .bounce.wholeSymbol,
+              value: self.gameState.isGamePaused
+            )
+        } else {
+          view
         }
       }
     }

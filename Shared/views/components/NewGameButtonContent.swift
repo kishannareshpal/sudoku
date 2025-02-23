@@ -22,6 +22,9 @@ struct NewGameButtonContent: View {
         if loading {
           ProgressView()
             .frame(width: 18, height: 18)
+            .progressViewStyle(.circular)
+            .tint(difficulty.color)
+
         } else {
           Image(systemName: "plus")
             .foregroundStyle(difficulty.color)

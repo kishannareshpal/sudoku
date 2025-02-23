@@ -12,7 +12,7 @@ import Combine
 class GameScene: SKScene, ObservableObject {
   private let currentColorScheme = StyleManager.current.colorScheme
 
-  @Published var game: Game
+  var game: Game
 
   public override init(size: CGSize) {
     self.game = try! Game(sceneSize: size)
@@ -38,17 +38,17 @@ class GameScene: SKScene, ObservableObject {
 
     self.game.load(on: self)
   }
-  
+
   override func update(_ currentTime: TimeInterval) {
     super.update(currentTime)
     
-    if (self.game.isGamePaused) {
+    if (self.game.state.isGamePaused) {
       self.gameDidPause()
     } else {
       self.gameDidResume()
     }
     
-    if (self.game.isGameOver) {
+    if (self.game.state.isGameOver) {
       self.gameDidOver()
     }
   }
@@ -61,9 +61,8 @@ class GameScene: SKScene, ObservableObject {
     // Resize the scene
     self.size = size
     
-    // Redraw all the elements to the scene
-    self.game = try! Game(sceneSize: size)
-    
+    // Redraw all the elements on the scene
+    self.game.resizeGraphics(to: size)
     self.sceneDidLoad()
   }
 

@@ -33,6 +33,14 @@ struct SettingsScreen: View {
     UserDefaultKey.colorSchemeName.rawValue
   ) private var colorSchemeName: String = ColorSchemeName.lightBlue.rawValue
   
+  @AppStorage(
+    UserDefaultKey.offline.rawValue
+  ) private var offline: Bool = false
+  
+  @AppStorage(
+    UserDefaultKey.useGridNumberPadStyle.rawValue
+  ) private var useGridNumberPadStyle: Bool = false
+  
   var body: some View {
     ZStack {
       Color(UIColor("#100D01"))
@@ -40,10 +48,12 @@ struct SettingsScreen: View {
       
       Form {
         Section("Gameplay") {
+          Toggle("Offline", isOn: $offline)
           Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
           Toggle("Start in notes mode", isOn: $startGameInNotesMode)
           Toggle("Auto remove notes", isOn: $autoRemoveNotes)
           Toggle("Show timer", isOn: $showTimer)
+          Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
           
           Picker("Theme", selection: $colorSchemeName) {
             ForEach(ColorSchemeName.allCases, id: \.self) { name in

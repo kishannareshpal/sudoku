@@ -1,5 +1,5 @@
 //
-//  GameState.swift
+//  ActivatedCursorState.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 09/02/2025.
@@ -7,23 +7,13 @@
 
 import SwiftUI
 
-class ActivatedCursorState: ObservableObject {
+class ActiveCursorState: ObservableObject {
   var id = UUID()
   
-  @Published private(set) var isGameOver: Bool = false
-  @Published private(set) var isGamePaused: Bool = false
-
-  @Published private(set) var duration: GameDuration
+  /// The activated cursor number cell sprite
+  @Published var numberCell: NumberCellSprite?
   
-  init() {
-    self.duration = GameDuration()
-  }
-  
-  func togglePause() {
-    self.isGamePaused.toggle()
-  }
-  
-  func endGame() {
-    self.isGameOver = true
+  var isActive: Bool {
+    self.numberCell != nil
   }
 }

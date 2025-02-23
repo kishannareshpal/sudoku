@@ -11,19 +11,31 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct HintButton: View {
-  @ObservedObject var game: Game
+  var gameScene: GameScene
+  
+  var body: some View {
+    HintButtonContent(
+      game: self.gameScene.game,
+      gameState: self.gameScene.game.state
+    )
+  }
+}
 
+private struct HintButtonContent: View {
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
+  var game: Game
+  @ObservedObject var gameState: GameState
+  
   var isHintable: Bool {
-    return !self.game.isGameOver && !self.game.isGamePaused
+    return !self.gameState.isGameOver && !self.gameState.isGamePaused
   }
   
   var body: some View {
     Button(
       action: {
         self.game.solveActivatedNumberCell()
-        vibrator.impactOccurred()
+        self.vibrator.impactOccurred()
       },
       label: {
         Image(systemName: "lightbulb")
@@ -32,7 +44,8 @@ struct HintButton: View {
       }
     )
     .disabled(!isHintable)
-    .buttonStyle(GameControlButtonStyle(isEnabled: isHintable))
-    .onAppear(perform: vibrator.prepare)
+    .buttonStyle(GameControlButtonStyle(isEnabled: self.isHintable))
+    .onAppear(perform: self.vibrator.prepare)
   }
 }
+

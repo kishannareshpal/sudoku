@@ -10,10 +10,11 @@ import SwiftUI
 struct GameOverOverlay: View {
   @Environment(\.dismiss) var dismissScreen: DismissAction
   
-  @ObservedObject var game: Game
+  var game: Game
+  @ObservedObject var gameState: GameState
   
   var body: some View {
-    if (!self.game.isGameOver) {
+    if (!self.gameState.isGameOver) {
       return AnyView(EmptyView())
     }
     
@@ -35,7 +36,7 @@ struct GameOverOverlay: View {
               .foregroundStyle(.accent)
             
             Text(
-              "You successfully solved this \(self.game.difficulty) puzzle in \(GameDurationHelper.format(self.game.durationInSeconds, pretty: true)). Your final score is \(self.game.score) points!"
+              "You successfully solved this \(self.game.difficulty.rawValue) puzzle in \(GameDurationHelper.format(self.gameState.duration.seconds, pretty: true)). Your final score is \(self.game.score) points!"
             )
               .font(.system(size: 24, weight: .regular))
               .foregroundStyle(.white)
@@ -51,9 +52,10 @@ struct GameOverOverlay: View {
             
             Button(
               action: {
-                Task {
-                  await DataManager.default.saveGamesService.detachActiveSaveGame()                  
-                }
+                // TODO: -
+//                Task {
+//                  await DataManager.default.saveGamesService.detachActiveSaveGame()
+//                }
 
                 self.dismissScreen()
               },
