@@ -175,7 +175,7 @@ class CloudSaveGameRepository: BaseCloudRepository {
       forKey: UserDefaultKey.offline.rawValue
     )
     if userPrefersBeingOffline {
-      print("User preffers being offline.")
+      print("User prefers being offline.")
       return false
     }
     

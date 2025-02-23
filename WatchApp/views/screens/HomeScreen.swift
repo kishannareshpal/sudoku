@@ -10,25 +10,32 @@ import SpriteKit
 import UIColorHexSwift
 
 struct HomeScreen: View {
+  @ObservedObject var syncManager: SyncManager
+  
   @State private var newGameConfirmationShowing: Bool = false
   @State private var newGameConfirmationDifficulty: Difficulty? = nil
   @State private var newGameConfirmed: Bool = false
 
-  @State private var activeSaveGame: SaveGameEntity?
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
   
-  private func loadLastGame() {
-    Task {
-      // TODO: use syncManager.sync()
-//      await DataManager.default.saveGamesService.sync()
-
-      self.activeSaveGame = DataManager.default.saveGamesService
-        .findActiveLocalSaveGame()
-    }
+  @FetchRequest(
+    fetchRequest:
+      FetchRequestHelper.buildFetchRequest(
+        predicate: NSPredicate(
+          format: "active == %d",
+          true
+        ),
+        limit: 1
+      ),
+    animation: .interpolatingSpring
+  ) private var activeSaveGames: FetchedResults<SaveGameEntity>
+  
+  private var activeSaveGame: SaveGameEntity? {
+    return self.activeSaveGames.first
   }
   
   private func startNewGame(difficulty: Difficulty, confirmed: Bool = false) -> Void {
-    if (self.activeSaveGame != nil && !confirmed) {
+    if ((self.activeSaveGame != nil) && !confirmed) {
       // Attempting to start a new game, but there already is one in progress.
       // - Confirm:
       self.newGameConfirmationDifficulty = difficulty
@@ -38,13 +45,11 @@ struct HomeScreen: View {
     
     withAnimation(.interpolatingSpring) {
       self.loadingNewGameForDifficulty = difficulty
+      self.newGameConfirmationDifficulty = nil
     }
     
-    self.activeSaveGame = nil
-    self.newGameConfirmationDifficulty = nil
-    
     DispatchQueue.global(qos: .userInteractive).async {
-      _ = try! DataManager.default.saveGamesService.createNewSaveGame(
+      try! DataManager.default.saveGamesService.createNewSaveGame(
         difficulty: difficulty
       )
       
@@ -52,7 +57,6 @@ struct HomeScreen: View {
       DispatchQueue.main.async {
         withAnimation(.interpolatingSpring) {
           self.loadingNewGameForDifficulty = nil
-          self.loadLastGame()
           self.newGameConfirmed = true
         }
       }
@@ -65,7 +69,9 @@ struct HomeScreen: View {
       
       List {        
         if loadingNewGameForDifficulty == nil {
-          ContinueGameSection()
+          ContinueGameSection(
+            syncManager: self.syncManager
+          )
         }
       
         Section(
@@ -93,7 +99,7 @@ struct HomeScreen: View {
             )
             .disabled(self.loadingNewGameForDifficulty != nil)
           }.confirmationDialog(
-            Text("New game?"),
+            Text("Start a new game?"),
             isPresented: $newGameConfirmationShowing
           ) {
             Button("Cancel", role: .cancel) {
@@ -108,7 +114,7 @@ struct HomeScreen: View {
             
           } message: {
             Text(
-              "Starting a new game will discard your current progress in the existing game. You will be playing on \(newGameConfirmationDifficulty?.rawValue ?? "Normal") difficulty.\nAre you sure you want to proceed?"
+              "Starting a new game will erase your current progress. Proceed?"
             )
           }
         }
@@ -142,18 +148,20 @@ struct HomeScreen: View {
         isActive: $newGameConfirmed
       ) {}.hidden()
     }
-    .onAppear {
-      self.loadLastGame()
+    .onAppear() {
+      Task {
+        await self.syncManager.sync()        
+      }
     }
   }
 }
 
-#Preview {
-  NavigationView {
-    HomeScreen()
-      .environment(
-        \.managedObjectContext,
-         AppDataProvider.shared.container.viewContext
-      )
-  }
-}
+//#Preview {
+//  NavigationView {
+//    HomeScreen()
+//      .environment(
+//        \.managedObjectContext,
+//         AppDataProvider.shared.container.viewContext
+//      )
+//  }
+//}

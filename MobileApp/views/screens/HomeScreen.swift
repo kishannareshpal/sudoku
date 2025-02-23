@@ -129,7 +129,7 @@ struct HomeScreen: View {
     
               } message: {
                 Text(
-                  "Starting a new game will discard your current progress in the existing game. You will be playing on \(newGameConfirmationDifficulty?.rawValue ?? "Normal") difficulty.\nAre you sure you want to proceed?"
+                  "Starting a new game will erase your current progress. Proceed?"
                 )
               }
             }
@@ -162,11 +162,11 @@ struct HomeScreen: View {
     .task {
       await self.syncManager.sync()
     }
-    .onAppear() {
-      UIRefreshControl.appearance().tintColor = .accent
-    }
     .refreshable {
       await self.syncManager.sync()
+    }
+    .onAppear() {
+      UIRefreshControl.appearance().tintColor = .accent
     }
     .navigationBarHidden(true)
     .preferredColorScheme(.dark)

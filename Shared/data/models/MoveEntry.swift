@@ -59,13 +59,13 @@ struct MoveEntry {
   static func getMoveTypeNotationStart(for moveType: MoveType) -> String {
     switch moveType {
     case .setNumber:
-      return "+="
+      return "+"
     case .removeNumber:
-      return "-="
+      return "-"
     case .setNote:
-      return "+=("
+      return "+("
     case .removeNotes:
-      return "-=("
+      return "-("
     }
   }
   

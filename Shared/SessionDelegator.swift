@@ -8,6 +8,7 @@
 import Combine
 import WatchConnectivity
 
+@available(*, deprecated, message: "Using CloudKit exclusively")
 public class SessionDelegator: NSObject, WCSessionDelegate {
   let valueSubject: PassthroughSubject<OTASaveGameEntity, Never>
   

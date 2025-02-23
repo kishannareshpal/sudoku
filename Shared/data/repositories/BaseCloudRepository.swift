@@ -9,7 +9,8 @@ import CoreData
 import CloudKit
 
 class BaseCloudRepository {
-  internal let container = CKContainer.default()
+  private static let CONTAINER_NAME = "iCloud.com.kishannareshpal.sudoku"
+  internal let container = CKContainer(identifier: BaseCloudRepository.CONTAINER_NAME)
   internal let database: CKDatabase
   
   /// The name of the RecordType in CloudKit

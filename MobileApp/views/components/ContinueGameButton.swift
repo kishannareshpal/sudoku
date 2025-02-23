@@ -89,7 +89,6 @@ struct ContinueGameSection: View {
         }
         .foregroundStyle(.white)
         .tint(.white)
-
       }
     }
   }
@@ -185,7 +184,6 @@ struct ResolveGameConflictButton: View {
     }
   }
 }
-
 
 struct ContinueGameButtonStyle: ButtonStyle {
   var isEnabled: Bool = false

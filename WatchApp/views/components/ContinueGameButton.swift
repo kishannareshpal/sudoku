@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContinueGameSection: View {
+  var syncManager: SyncManager
+  
   @FetchRequest(
     fetchRequest:
       FetchRequestHelper.buildFetchRequest(
@@ -17,36 +19,72 @@ struct ContinueGameSection: View {
         )
       ),
     animation: .interpolatingSpring
-  ) private var activeSaveGames: FetchedResults<SaveGameEntity>
+  ) private var activeLocalSaveGames: FetchedResults<SaveGameEntity>
   
-  private var activeSaveGame: SaveGameEntity? {
-    return self.activeSaveGames.first
+  private var activeLocalSaveGame: SaveGameEntity? {
+    return self.activeLocalSaveGames.first
   }
   
   var body: some View {
-    guard let activeSaveGame else {
-      return AnyView(EmptyView())
-    }
+    Section(
+      header: activeLocalSaveGame != nil ? VStack(alignment: .leading) {
+        Text("Welcome back!").fontWeight(.bold)
+        Text("Continue from where you left off:").font(.system(size: 12))
+      } : nil,
+      footer: VStack(alignment: .center) {
+        if self.syncManager.status == .syncing {
+          // Syncing
+          HStack(spacing: 8) {
+            ProgressView()
+              .frame(width: 10, height: 10)
+              .progressViewStyle(.circular)
+            
+            Text("Syncing...")
+              .font(.system(size: 10))
+          }
+          .foregroundStyle(.white)
+          .tint(.white)
 
-    return AnyView(
-      Section(
-        header: VStack(alignment: .leading) {
-          Text("Welcome back!").fontWeight(.bold)
-          Text("Continue where you left off:").font(.system(size: 12))
+        } else if case .completed(let syncResult) = self.syncManager.status {
+          if syncResult == .offline {
+            HStack(spacing: 8) {
+              Image(systemName: "icloud.slash.fill")
+                .font(.system(size: 10))
+              
+              Text("Offline")
+                .font(.system(size: 10))
+            }
+            .foregroundStyle(.white)
+            
+          } else if syncResult == .success {
+            HStack(spacing: 8) {
+              Image(systemName: "checkmark.icloud")
+                .font(.system(size: 10))
+              
+              Text("Synced")
+                .font(.system(size: 10))
+            }
+            .foregroundStyle(.white)
+          }
         }
-      ) {
+      }
+    ) {
+      if let activeLocalSaveGame {
         ContinueGameButton(
-          difficulty: Difficulty(rawValue: activeSaveGame.difficulty!)!,
-          activeSaveGame: activeSaveGame
+          difficulty: Difficulty(rawValue: activeLocalSaveGame.difficulty!)!,
+          activeLocalSaveGame: activeLocalSaveGame,
+          isEnabled: self.syncManager.status != .syncing
         )
-      }.padding(.vertical)
-    )
+      }
+    }.padding(.vertical)
   }
 }
 
 struct ContinueGameButton: View {
   var difficulty: Difficulty
-  @ObservedObject var activeSaveGame: SaveGameEntity
+  @ObservedObject var activeLocalSaveGame: SaveGameEntity
+  
+  var isEnabled: Bool = true
   
   var body: some View {
     NavigationLink(
@@ -54,24 +92,31 @@ struct ContinueGameButton: View {
     ) {
       HStack(alignment: .top) {
         VStack(alignment: .leading) {
-          Text(activeSaveGame.difficulty ?? "Unknown difficulty")
+          Text(activeLocalSaveGame.difficulty ?? "Unknown difficulty")
             .font(.system(size: 18, weight: .black))
             .foregroundStyle(.white)
           
-          Text("Points: \(activeSaveGame.score)")
+          Text("Points: \(activeLocalSaveGame.score)")
             .foregroundStyle(.white)
             .font(.system(size: 12, weight: .regular))
           
           Text(
-            "Played for: \(GameDurationHelper.format(Int(activeSaveGame.durationInSeconds), pretty: true))"
+            "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
           )
           .font(.system(size: 12, weight: .regular))
           .foregroundStyle(.white)
+          .apply { view in
+            if #available(watchOS 9.0, *) {
+              view.contentTransition(.numericText())
+            } else {
+              view
+            }
+          }
           
           Spacer().frame(height: 8)
           
           Text("Tap to continue")
-            .font(.system(size: 14, weight: .medium))
+            .font(.system(size: 12, weight: .medium))
             .foregroundStyle(Color(TheTheme.Colors.primary))
         }.scaledToFit()
         
@@ -81,6 +126,8 @@ struct ContinueGameButton: View {
           .font(.system(size: 28))
           .foregroundStyle(Color(TheTheme.Colors.primary))
       }
-    }.listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
+    }
+    .disabled(!self.isEnabled)
+    .listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
   }
 }

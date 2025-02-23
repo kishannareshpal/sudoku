@@ -27,7 +27,7 @@ class SyncManager: ObservableObject {
     }
 
     let syncResult = await DataManager.default.saveGamesService.sync()
-    
+
     await MainActor.run {
       withAnimation(.interactiveSpring) {
         self.status = .completed(result: syncResult)
