@@ -25,9 +25,14 @@ typealias BoardPlainStringNotation = String
 /// Typealias representing the plain string notation for notes on the board.
 typealias BoardPlainNoteStringNotation = String
 
+/// Typealias representing the plain string notation for moves performed on the board.
+typealias BoardPlainMoveStringNotation = String
+
 /// Typealias representing the parsed notes notation on the board.
 typealias BoardGridNoteNotation = [BoardGridNoteNotationRow]
 
+/// Typealias representing the parsed moves performed on the board.
+typealias BoardGridMoveNotation = [MoveEntry]
+
 /// Typealias representing the plain integer notation of the board.
-/// TODO: deprecate?
 typealias BoardPlainIntNotation = [Int]

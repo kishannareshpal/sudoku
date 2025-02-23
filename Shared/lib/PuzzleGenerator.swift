@@ -15,6 +15,7 @@ public class PuzzleGenerator {
   private(set) var given: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var solution: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var notes: BoardGridNoteNotation = BoardNotationHelper.emptyGridNoteNotation();
+  private(set) var moves: BoardGridMoveNotation = BoardNotationHelper.emptyGridMoveNotation();
 
   init() {
     self.generator = QQWing()

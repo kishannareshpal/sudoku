@@ -12,31 +12,43 @@ import UIColorHexSwift
 
 struct EraseButton: View {
   var gameScene: MobileGameScene
-  @ObservedObject var game: Game
-
-  private var eraseKeyVibrator = UIImpactFeedbackGenerator(style: .rigid)
-  
-  init(
-    gameScene: MobileGameScene,
-    game: Game
-  ) {
-    self.gameScene = gameScene
-    self.game = game
+    
+  var body: some View {
+    EraseButtonContent(
+      gameScene: self.gameScene,
+      activeCursorState: self.gameScene.game.activeCursorState,
+      gameState: self.gameScene.game.state,
+      puzzle: self.gameScene.game.puzzle
+    )
   }
+}
 
+private struct EraseButtonContent: View {
+  private let eraseKeyVibrator = UIImpactFeedbackGenerator(style: .rigid)
+  
+  var gameScene: MobileGameScene
+  @ObservedObject var activeCursorState: ActiveCursorState
+  @ObservedObject var gameState: GameState
+  
+  // This is currently unused, however you should keep this observation,
+  // because we need to detect changes to the puzzle values (note / number)
+  // to enable / disable this button accordingly.
+  @ObservedObject var puzzle: Puzzle
+
+  
   var isActiveNumberCellEraseable: Bool {
-    if self.game.isGamePaused || self.game.isGameOver {
+    if self.gameState.isGamePaused || self.gameState.isGameOver {
       return false
     }
     
-    return self.game.activatedNumberCell?.isEraseable ?? false
+    return self.activeCursorState.numberCell?.isEraseable ?? false
   }
   
   private func onEraseKeyPress() {
-    eraseKeyVibrator.impactOccurred()
+    self.eraseKeyVibrator.impactOccurred()
     self.gameScene.clearActivatedNumberCellValueAndNotes()
   }
-    
+  
   var body: some View {
     Button(
       action: self.onEraseKeyPress,
@@ -48,7 +60,7 @@ struct EraseButton: View {
     )
     .disabled(!self.isActiveNumberCellEraseable)
     .buttonStyle(GameControlButtonStyle(isEnabled: self.isActiveNumberCellEraseable))
-    .onAppear(perform: eraseKeyVibrator.prepare)
+    .onAppear(perform: self.eraseKeyVibrator.prepare)
   }
 }
 

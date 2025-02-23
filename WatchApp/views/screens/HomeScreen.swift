@@ -19,7 +19,8 @@ struct HomeScreen: View {
   
   private func loadLastGame() {
     Task {
-      await DataManager.default.saveGamesService.sync()
+      // TODO: use syncManager.sync()
+//      await DataManager.default.saveGamesService.sync()
 
       self.activeSaveGame = DataManager.default.saveGamesService
         .findActiveLocalSaveGame()
@@ -42,16 +43,16 @@ struct HomeScreen: View {
     self.activeSaveGame = nil
     self.newGameConfirmationDifficulty = nil
     
-    // Run the whole process on the MainActor context
-    Task.detached {
-      await DataManager.default.saveGamesService.detachActiveSaveGame()
-      let newSaveGame = try! await DataManager.default.saveGamesService.createNewSaveGame(difficulty: difficulty)
+    DispatchQueue.global(qos: .userInteractive).async {
+      _ = try! DataManager.default.saveGamesService.createNewSaveGame(
+        difficulty: difficulty
+      )
       
-      await MainActor.run {
-        self.activeSaveGame = newSaveGame
-        
+      // Update the UI on the main thread
+      DispatchQueue.main.async {
         withAnimation(.interpolatingSpring) {
           self.loadingNewGameForDifficulty = nil
+          self.loadLastGame()
           self.newGameConfirmed = true
         }
       }
@@ -62,7 +63,7 @@ struct HomeScreen: View {
     VStack {
       Spacer(minLength: 4)
       
-      List {
+      List {        
         if loadingNewGameForDifficulty == nil {
           ContinueGameSection()
         }
@@ -137,7 +138,7 @@ struct HomeScreen: View {
       // - When we navigate back, the isActive: bound value is toggled back to false! So this works out great.
       // - We are hiding this view as we're only using it for navigating.
       NavigationLink(
-        destination: GameScreen().navigationBarBackButtonHidden(),
+        destination: GameScreen(),
         isActive: $newGameConfirmed
       ) {}.hidden()
     }

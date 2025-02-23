@@ -9,6 +9,9 @@ enum UserDefaultKey: String {
   public var id: RawValue { rawValue }
 
   /// Stores the current ColorSchemeName
+  case offline
+  
+  /// Stores the current ColorSchemeName
   case colorSchemeName
   
   /// Stores the encoded ShapeStyle
@@ -21,4 +24,6 @@ enum UserDefaultKey: String {
   case autoRemoveNotes
   
   case showTimer
+  
+  case useGridNumberPadStyle
 }

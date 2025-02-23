@@ -55,7 +55,9 @@ struct GameSceneView: View {
       Spacer(minLength: 0)
     }
     .overlay {
-      GameDurationTracker(game: self.gameScene.game)
+      GameDurationTracker(
+        gameState: self.gameScene.game.state
+      )
     }
   }
 }

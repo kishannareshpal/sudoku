@@ -11,6 +11,7 @@ import UIColorHexSwift
 
 extension ColorScheme {
   static let darkGrey = ColorScheme(
+    mode: .dark,
     name: .darkGrey,
     board: .init(
       background: UIColor("#000000"),

@@ -10,87 +10,25 @@ import SpriteKit
 import UIKit.UIColor
 import UIColorHexSwift
 
-struct NotesModeToggleButtonWip: View {
-  @ObservedObject var game: Game
-  @ObservedObject var cursorState: CursorState
-  
-  @Namespace private var toggleAnimation
-  
-  private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
-  
-  var iconSystemName: String {
-    return self.isNotesModeToggled ? "circle.grid.3x3.fill" : "circle.grid.3x3"
-  }
-  
-  var isNotesModeToggled: Bool {
-    return self.cursorState.mode == .note
-  }
-  
-  var isNotesModeToggleable: Bool {
-    return !self.game.isGameOver && !self.game.isGamePaused
-  }
-  
-  // https://www.youtube.com/watch?v=aHtDymtNdSs
+struct NotesModeToggleButton: View {
+  var gameScene: MobileGameScene
   
   var body: some View {
-    HStack(spacing: 2) {
-      Text("Pen")
-        .padding(.vertical, 12)
-        .background {
-          ZStack {
-            if self.isNotesModeToggled {
-              Capsule()
-                .fill(.white)
-                .matchedGeometryEffect(id: "active", in: toggleAnimation)
-            }
-          }
-        }
-        .contentShape(.rect)
-        .onTapGesture {
-          self.vibrator.impactOccurred()
-          self.cursorState.mode = self.isNotesModeToggled ? .number : .note
-        }
-      
-      Text("Notes")
-        .padding(.vertical, 12)
-        .background {
-          ZStack {
-            if self.isNotesModeToggled {
-              Capsule()
-                .fill(.white)
-                .matchedGeometryEffect(id: "active", in: toggleAnimation)
-            }
-          }
-        }
-        .contentShape(.rect)
-        .onTapGesture {
-          self.vibrator.impactOccurred()
-          self.cursorState.mode = self.isNotesModeToggled ? .number : .note
-        }
-    }
-    .padding(2)
-    .background(.red, in: .capsule)
-    .scaledToFit()
-    .frame(minWidth: 0)
+    NotesModeToggleButtonContent(
+      cursorState: self.gameScene.cursorState,
+      gameState: self.gameScene.game.state
+    )
   }
 }
 
-struct NotesModeToggleButton: View {
-  @ObservedObject var game: Game
-  @ObservedObject var cursorState: CursorState
-
+struct NotesModeToggleButtonContent: View {
   private let vibrator = UIImpactFeedbackGenerator(style: .rigid)
   
-  var iconSystemName: String {
-    return self.isNotesModeToggled ? "circle.grid.3x3.fill" : "circle.grid.3x3"
-  }
-  
-  var isNotesModeToggled: Bool {
-    return self.cursorState.mode == .note
-  }
+  @ObservedObject var cursorState: CursorState
+  @ObservedObject var gameState: GameState
   
   var isNotesModeToggleable: Bool {
-    return !self.game.isGameOver && !self.game.isGamePaused
+    return !self.gameState.isGameOver && !self.gameState.isGamePaused
   }
   
   var body: some View {
@@ -99,12 +37,14 @@ struct NotesModeToggleButton: View {
         get: { cursorState.mode.rawValue },
         set: { newValue in
           withAnimation(.smooth) {
-            cursorState.mode = CursorMode(rawValue: newValue) ?? .number
+            self.cursorState.mode = CursorMode(rawValue: newValue) ?? .number
           }
+
+          vibrator.impactOccurred()
         }
       ),
       options: ["Pen", "Notes"],
-      isEnabled: isNotesModeToggleable
+      isEnabled: self.isNotesModeToggleable
     )
     .scaledToFit()
     .frame(minWidth: 0)

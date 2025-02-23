@@ -24,6 +24,10 @@ struct BoardNotationHelper {
     )
   }
   
+  static func emptyGridMoveNotation() -> BoardGridMoveNotation {
+    return []
+  }
+  
   static func emptyPlainIntNotation() -> BoardPlainIntNotation {
     return Array(repeating: 0, count: Board.cellsCount)
   }
@@ -35,6 +39,72 @@ struct BoardNotationHelper {
   static func emptyPlainNoteStringNotation() -> BoardPlainNoteStringNotation {
     // Commas separating 81 (Board.cellsCount) empty spaces
     return String(repeating: ",", count: Board.cellsCount - 1)
+  }
+  
+  static func emptyPlainMoveStringNotation() -> BoardPlainMoveStringNotation {
+    return ""
+  }
+  
+  static func toGridMoveNotation(
+    from plainMoveStringNotation: BoardPlainMoveStringNotation
+  ) -> BoardGridMoveNotation {
+    var moveEntries: BoardGridMoveNotation = []
+    
+    // Set a number:
+    // {locationNotation}={number}
+
+    // Set a note:
+    // {locationNotation}+={number}
+    
+    // Remove a number:
+    // {locationNotation}-={number}
+    
+    // Remove notes:
+    // {locationNotation}-=({number|multiple_numbers_separated_by_comma})
+    
+    // Note: The moves are ordered with the last move at the end of the array / string
+    let plainMoveEntries = plainMoveStringNotation.split(separator: ";")
+    for (moveIndex, moveEntryStringComponent) in plainMoveEntries.enumerated() {
+      let moveEntryString = String(moveEntryStringComponent)
+      
+      let moveType = MoveEntry.determineMoveType(from: moveEntryString)
+      guard let moveType else {
+        continue
+      }
+      
+      let moveTypeNotationStart = MoveEntry.getMoveTypeNotationStart(for: moveType)
+      let moveEntryStringParts = moveEntryString.components(
+        separatedBy: moveTypeNotationStart
+      )
+      
+      let locationNotation = moveEntryStringParts.first
+      guard let locationNotation else {
+        continue
+      }
+      
+      let value = moveEntryStringParts.last
+      guard var value else {
+        continue
+      }
+      
+      let moveTypeNotationEnd = MoveEntry.getMoveTypeNotationEnd(for: moveType)
+      if let moveTypeNotationEnd {
+        // E.g. .setNote and .removeNotes notation syntax have a moveTypeNotationEnd bit of ")",
+        // so we need to remove that character in this case.
+        value = value.replacingOccurrences(of: moveTypeNotationEnd, with: "")
+      }
+      
+      moveEntries.append(
+        MoveEntry(
+          index: moveIndex,
+          locationNotation: locationNotation,
+          type: moveType,
+          value: value
+        )
+      )
+    }
+    
+    return moveEntries
   }
   
   static func toGridNoteNotation(
@@ -154,6 +224,13 @@ struct BoardNotationHelper {
     }
 
     return plainNoteNotation
+  }
+  
+  static func toPlainMoveStringNotation(
+    from gridMoveNotation: BoardGridMoveNotation
+  ) -> BoardPlainMoveStringNotation {
+    return gridMoveNotation.map { moveEntry in moveEntry.encode() }
+      .joined(separator: ";")
   }
   
   static func toPlainStringNotation(

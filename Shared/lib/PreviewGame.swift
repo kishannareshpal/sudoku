@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-class StaticGame {
+class PreviewGame {
   private(set) var board: Board
   private(set) var graphics: GameGraphics
   private(set) var puzzle: Puzzle
@@ -18,13 +18,13 @@ class StaticGame {
   init(
     sceneSize: CGSize,
     puzzle: Puzzle
-  ) throws {
+  ) {
     self.puzzle = puzzle
     self.board = Board()
     self.graphics = GameGraphics(sceneSize: sceneSize, puzzle: puzzle)
   }
 
-  func load(on scene: GameScene) {
+  func load(on scene: SKScene) {
     // Draw the board
     guard let boardDrawing = self.graphics.createBoard() else { return }
     scene.addChild(boardDrawing)
@@ -36,12 +36,12 @@ class StaticGame {
 
       // Draw the notes cells
       let numberCellNoteValues = self.puzzle.notes[numberCell.location.row][numberCell.location.col]
-      numberCell
-        .toggleNotes(
-          values: numberCellNoteValues,
-          forceVisible: true,
-          animate: false
-        )
+      
+      numberCell.toggleNotes(
+        values: numberCellNoteValues,
+        forceVisible: true,
+        animate: false
+      )
     }
   }
 }

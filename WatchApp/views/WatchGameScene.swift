@@ -37,7 +37,9 @@ class WatchGameScene: GameScene {
   }
   
   private func listenToCrownRotationForActivatedCellValueChange() {
-    guard self.game.isNumberCellActive else { return }
+    guard self.game.activeCursorState.isActive else {
+      return
+    }
     
     if (
       self.cursorState.crownRotationValue != self.cursorState.previousCrownRotationValue
@@ -56,7 +58,7 @@ class WatchGameScene: GameScene {
   }
   
   private func listenToCrownRotationForCursorCellMovement() -> Void {
-    guard (self.game.isNumberCellActive == false) else { return }
+    guard !self.game.activeCursorState.isActive else { return }
     
     let a = round(self.cursorState.crownRotationValue)
     let b = round(self.cursorState.previousCrownRotationValue)

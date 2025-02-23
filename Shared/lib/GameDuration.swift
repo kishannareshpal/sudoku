@@ -1,23 +1,22 @@
 //
-//  GameState.swift
+//  GameDuration.swift
 //  sudoku
 //
 //  Created by Kishan Jadav on 09/02/2025.
 //
 
-import Combine
+import SwiftUI
 
-class GameState: ObservableObject {
-  @Published private(set) var isGameOver: Bool = false
-  @Published private(set) var isGamePaused: Bool = false
+class GameDuration: ObservableObject {
+  @Published private(set) var seconds: Int = 0
   
-  private(set) var duration: 
+  init() { }
   
-  func togglePause() {
-    self.isGamePaused.toggle()
+  func startFrom(_ seconds: Int) {
+    self.seconds = seconds
   }
   
-  func endGame() {
-    self.isGameOver = true
+  func increment() {
+    self.seconds += 1
   }
 }

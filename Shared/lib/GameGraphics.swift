@@ -9,7 +9,7 @@ import SpriteKit
 
 public class GameGraphics {
   var sceneSize: CGSize
-  var puzzle: Puzzle!
+  var puzzle: Puzzle
 
   var boardSize: CGSize!
   var boardPosition: CGPoint!
@@ -19,6 +19,12 @@ public class GameGraphics {
     self.sceneSize = sceneSize
     self.puzzle = puzzle
 
+    self.resize(to: sceneSize)
+  }
+  
+  func resize(to sceneSize: CGSize) {
+    self.sceneSize = sceneSize
+    
     let boardSize = self.determineBestBoardDimensions()
     self.boardSize = boardSize
     self.cellSize = self.determineCellSize()

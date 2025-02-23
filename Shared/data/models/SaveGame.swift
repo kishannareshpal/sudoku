@@ -16,11 +16,11 @@ struct SaveGame {
   var score: Int64
   var playerNotation: String
   var notesNotation: String
+  var movesNotation: String
   var updatedAt: Date
   var createdAt: Date
   var active: Bool
-  var moveIndex: Int32
-  var moves: [String]
+  var moveIndex: Int64
   
   static func fromCloudKitRecord(_ record: CKRecord) -> SaveGame {
     return SaveGame(
@@ -31,11 +31,11 @@ struct SaveGame {
       score: record["score"] ?? 0,
       playerNotation: record["playerNotation"]!,
       notesNotation: record["notesNotation"]!,
+      movesNotation: record["movesNotation"] ?? "",
       updatedAt: record["onDeviceUpdatedAt"]!,
       createdAt: record["onDeviceCreatedAt"]!,
       active: Bool(truncating: record["active"] as? NSNumber ?? 0),
-      moveIndex: -1,
-      moves: []
+      moveIndex: record["moveIndex"] ?? -1
     )
   }
 }

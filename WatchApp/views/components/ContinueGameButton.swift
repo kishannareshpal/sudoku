@@ -50,7 +50,7 @@ struct ContinueGameButton: View {
   
   var body: some View {
     NavigationLink(
-      destination: GameScreen().navigationBarBackButtonHidden()
+      destination: GameScreen()
     ) {
       HStack(alignment: .top) {
         VStack(alignment: .leading) {
@@ -63,7 +63,7 @@ struct ContinueGameButton: View {
             .font(.system(size: 12, weight: .regular))
           
           Text(
-            "Played for: \(GameDurationHelper.format(activeSaveGame.durationInSeconds, pretty: true))"
+            "Played for: \(GameDurationHelper.format(Int(activeSaveGame.durationInSeconds), pretty: true))"
           )
           .font(.system(size: 12, weight: .regular))
           .foregroundStyle(.white)

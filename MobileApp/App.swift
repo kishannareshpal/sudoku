@@ -10,30 +10,60 @@ import CloudKit
 
 @main
 struct SudokuApp: App {
-  @StateObject var dataProvider = AppDataProvider.shared
-//  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+  @StateObject var syncManager = SyncManager()
 
+  @StateObject var dataProvider = AppDataProvider.shared
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+  
   func requestNotificationPermission() {
     DispatchQueue.main.async {
       UIApplication.shared.registerForRemoteNotifications()
       print("Registered for remote notifications")
+      
+      Task {
+        await DataManager.default.saveGamesService.subscribeToCloudActiveSaveGameChanges()
+      }
     }
   }
   
   var body: some Scene {
     WindowGroup {
-      NavigationView {
-        HomeScreen()
+      AppNavigationStack {
+        HomeScreen(syncManager: self.syncManager)
       }
+      .background(.clear)
       .onAppear {
-        requestNotificationPermission()
+        self.appDelegate.syncManager = self.syncManager
+        self.requestNotificationPermission()
       }
     }
-    .environment(\.managedObjectContext, dataProvider.container.viewContext)
+    .environment(\.managedObjectContext, self.dataProvider.container.viewContext)
+  }
+}
+
+struct AppNavigationStack<Content: View>: View {
+  let content: Content
+  
+  init(@ViewBuilder content: () -> Content) {
+    self.content = content()
+  }
+  
+  var body: some View {
+    if #available(iOS 16.0, *) {
+      NavigationStack {
+        content
+      }
+    } else {
+      NavigationView {
+        content
+      }
+    }
   }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+  var syncManager: SyncManager?
+  
   func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -48,25 +78,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     print("Failed to register for remote notifications: \(error.localizedDescription)")
   }
   
-  // Silent notifications do not display an alert or sound but allow the app to perform background tasks. Use the didReceiveRemoteNotification method to handle them.
+  // Silent notifications do not display an alert or sound but allow the app to perform background tasks.
+  // - Used when a notification about a save game change in the cloud is received.
   func application(
     _ application: UIApplication,
     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
   ) {
     let notification = CKNotification(fromRemoteNotificationDictionary: userInfo)
-    
-    if notification?.subscriptionID == "cloud-savegames-changes" {
-      print("Silent notification received for counter changes.")
-      
-      // Fetch updated data from CloudKit
+    let hasActiveSaveGameChanged = notification?.subscriptionID == DataManager.default.saveGamesService.cloudSaveGameRepository.ACTIVE_SAVE_GAME_CHANGED_NOTIFICATION_KEY
+    if (hasActiveSaveGameChanged) {
       Task {
-//        await DataManager.default.saveGamesService.sync()
+        await syncManager?.sync()
         completionHandler(.newData)
       }
 
     } else {
-      print("No silent notification received for counter changes")
       completionHandler(.noData)
     }
   }

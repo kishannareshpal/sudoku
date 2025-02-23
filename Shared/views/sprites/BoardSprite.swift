@@ -58,7 +58,7 @@ class BoardSprite: SKSpriteNode {
     
     // Draw the board outer stroke
     let outerLineWidth = 1
-    context.setLineWidth(Double(outerLineWidth))
+    context.setLineWidth(outerLineWidth.toDouble())
     let outerRect = CGRect(
       x: 0,
       y: outerLineWidth,

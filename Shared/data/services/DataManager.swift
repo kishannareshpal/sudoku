@@ -18,11 +18,9 @@ final class DataManager {
   let context: NSManagedObjectContext
 
   let saveGamesService: SaveGameEntityService
-  let moveEntriesService: MoveEntryEntityService
 
   private let cloudSaveGameRepository: CloudSaveGameRepository
   private let saveGameEntityRepository: SaveGameEntityRepository
-  private let moveEntryEntityRepository: MoveEntryEntityRepository
   
   // Private initializer to prevent direct instantiation
   private init(context: NSManagedObjectContext) {
@@ -30,18 +28,12 @@ final class DataManager {
     
     // Repositories
     self.saveGameEntityRepository = SaveGameEntityRepository(context: context)
-    self.moveEntryEntityRepository = MoveEntryEntityRepository(context: context)
     self.cloudSaveGameRepository = CloudSaveGameRepository()
     
     // Services
     self.saveGamesService = SaveGameEntityService(
       repository: self.saveGameEntityRepository,
-      moveEntryRepository: self.moveEntryEntityRepository,
       cloudSaveGameRepository: self.cloudSaveGameRepository
-    )
-
-    self.moveEntriesService = MoveEntryEntityService(
-      repository: self.moveEntryEntityRepository
     )
   }
   

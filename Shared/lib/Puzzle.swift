@@ -7,31 +7,77 @@
 
 import Foundation
 
+typealias RemainingNumbersWithCount = [Int: Int]
+
 public class Puzzle: ObservableObject {
-  private let saveGame: SaveGameEntity
-  
   private(set) var player: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var given: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
   private(set) var solution: BoardGridNotation = BoardNotationHelper.emptyGridNotation();
-  private(set) var notes: BoardGridNoteNotation = BoardNotationHelper.emptyGridNoteNotation();
+  @Published private(set) var notes: BoardGridNoteNotation = BoardNotationHelper.emptyGridNoteNotation();
+  private(set) var moves: BoardGridMoveNotation = BoardNotationHelper.emptyGridMoveNotation()
   
-  @Published var remainingNumbersWithCount: [Int: Int] = [
-    1: 9,
-    2: 9,
-    3: 9,
-    4: 9,
-    5: 9,
-    6: 9,
-    7: 9,
-    8: 9,
-    9: 9,
-  ]
+  @Published var moveIndex: Int = -1
+  @Published var remainingNumbersWithCount: RemainingNumbersWithCount = Puzzle.emptyRemainingNumbersWithCount()
+  
+  /// Initialize an empty puzzle
+  init() {}
+  
+  init(
+    givenNotation: BoardPlainStringNotation,
+    solutionNotation: BoardPlainStringNotation,
+    playerNotation: BoardPlainStringNotation,
+    notesNotation: BoardPlainNoteStringNotation,
+    movesNotation: BoardPlainMoveStringNotation,
+    moveIndex: Int
+  ) {
+    self.loadPuzzle(
+      givenNotation: givenNotation,
+      solutionNotation: solutionNotation,
+      playerNotation: playerNotation,
+      notesNotation: notesNotation,
+      movesNotation: movesNotation,
+      moveIndex: moveIndex
+    )
+    
+    self.calculateAndUpdateRemainingNumbersWithCount()
+  }
+  
+  init(saveGameStruct: SaveGame) {
+    self.loadPuzzle(
+      givenNotation: saveGameStruct.givenNotation,
+      solutionNotation: saveGameStruct.solutionNotation,
+      playerNotation: saveGameStruct.playerNotation,
+      notesNotation: saveGameStruct.notesNotation,
+      movesNotation: saveGameStruct.movesNotation,
+      moveIndex: Int(saveGameStruct.moveIndex)
+    )
+    
+    self.calculateAndUpdateRemainingNumbersWithCount()
+  }
   
   init(saveGame: SaveGameEntity) {
-    self.saveGame = saveGame
+    self.loadPuzzle(
+      givenNotation: saveGame.givenNotation,
+      solutionNotation: saveGame.solutionNotation,
+      playerNotation: saveGame.playerNotation,
+      notesNotation: saveGame.notesNotation,
+      movesNotation: saveGame.movesNotation,
+      moveIndex: Int(saveGame.moveIndex)
+    )
 
-    self.loadPuzzleFromSaveGame()
     self.calculateAndUpdateRemainingNumbersWithCount()
+  }
+  
+  var currentMoveEntry: MoveEntry? {
+    self.moves.first { $0.index == self.moveIndex }
+  }
+  
+  var isMoveUndoable: Bool {
+    self.moveIndex >= 0
+  }
+  
+  var isMoveRedoable: Bool {
+    self.moveIndex < self.moves.count - 1
   }
   
   func updatePlayer(value: Int, at location: Location) -> Void {
@@ -65,7 +111,7 @@ public class Puzzle: ObservableObject {
       if (forceAdd == false) {
         return;
       }
-      
+
       self.notes[location.row][location.col].append(value)
     }
   }
@@ -93,33 +139,71 @@ public class Puzzle: ObservableObject {
     }
   }
   
-  private func loadPuzzleFromSaveGame() {
-    self.given = BoardNotationHelper
-      .toGridNotation(from: saveGame.givenNotation!)
+  func recordMove(
+    locationNotation: String,
+    type: MoveType,
+    value: String
+  ) {
+    self.moveIndex += 1
 
-    self.solution = BoardNotationHelper
-      .toGridNotation(from: saveGame.solutionNotation!)
+    let entry = MoveEntry(
+      index: self.moveIndex,
+      locationNotation: locationNotation,
+      type: type,
+      value: value
+    )
 
-    self.player = BoardNotationHelper
-      .toGridNotation(from: saveGame.playerNotation!)
+    self.moves.removeAll { entry in entry.index >= self.moveIndex }
+    self.moves.append(entry)
+  }
+  
+  func findLastMoveMade(
+    at locationNotation: String,
+    before index: Int
+  ) -> MoveEntry? {
+    return self.moves.first {
+      ($0.index < index) && ($0.locationNotation == locationNotation)
+    }
+  }
+  
+  private func loadPuzzle(
+    givenNotation: BoardPlainStringNotation? = nil,
+    solutionNotation: BoardPlainStringNotation? = nil,
+    playerNotation: BoardPlainStringNotation? = nil,
+    notesNotation: BoardPlainNoteStringNotation? = nil,
+    movesNotation: BoardPlainMoveStringNotation? = nil,
+    moveIndex: Int? = nil
+  ) {
+    if let givenNotation {
+      self.given = BoardNotationHelper.toGridNotation(from: givenNotation)
+    }
     
-    self.notes = BoardNotationHelper
-      .toGridNoteNotation(from: saveGame.notesNotation!)
+    if let solutionNotation {
+      self.solution = BoardNotationHelper.toGridNotation(from: solutionNotation)
+    }
+    
+    if let playerNotation {
+      self.player = BoardNotationHelper .toGridNotation(from: playerNotation)
+    }
+    
+    if let notesNotation {
+      self.notes = BoardNotationHelper.toGridNoteNotation(from: notesNotation)
+    }
+    
+    if let movesNotation {
+      self.moves = BoardNotationHelper.toGridMoveNotation(from: movesNotation)
+      print("Moves notation set to: \(movesNotation)")
+      print("Added moves: \(moves.count)")
+    }
+    
+    if let moveIndex {
+      self.moveIndex = moveIndex
+    }
   }
   
   private func calculateAndUpdateRemainingNumbersWithCount() -> Void {
     // Reset
-    self.remainingNumbersWithCount = [
-      1: 9,
-      2: 9,
-      3: 9,
-      4: 9,
-      5: 9,
-      6: 9,
-      7: 9,
-      8: 9,
-      9: 9,
-    ]
+    self.remainingNumbersWithCount = Puzzle.emptyRemainingNumbersWithCount()
     
     self.player.enumerated().forEach { (rowIndex, row) in
       return row.enumerated().forEach { (colIndex, playerValue) in
@@ -134,5 +218,19 @@ public class Puzzle: ObservableObject {
         }
       }
     }
+  }
+  
+  static func emptyRemainingNumbersWithCount() -> RemainingNumbersWithCount {
+    return [
+      1: 9,
+      2: 9,
+      3: 9,
+      4: 9,
+      5: 9,
+      6: 9,
+      7: 9,
+      8: 9,
+      9: 9,
+    ]
   }
 }

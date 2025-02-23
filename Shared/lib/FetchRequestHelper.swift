@@ -11,6 +11,7 @@ class FetchRequestHelper {
   static func buildFetchRequest<TEntity: NSManagedObject>(
     entityName: String? = nil,
     predicate: NSPredicate,
+    limit: Int? = nil,
     relationshipKeyPathsForPrefetching: [String]? = nil,
     sortDescriptors: [NSSortDescriptor] = []
   ) -> NSFetchRequest<TEntity> {
@@ -18,6 +19,10 @@ class FetchRequestHelper {
     let finalEntityName = entityName ?? String(describing: TEntity.self)
     let fetchRequest = NSFetchRequest<TEntity>(entityName: finalEntityName)
     fetchRequest.predicate = predicate
+    
+    if let limit {
+      fetchRequest.fetchLimit = limit
+    }
     
     if let relationshipKeyPathsForPrefetching {
       fetchRequest.relationshipKeyPathsForPrefetching = relationshipKeyPathsForPrefetching

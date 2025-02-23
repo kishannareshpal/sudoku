@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 struct ColorScheme {
+  var mode: ColorSchemeMode
   var name: ColorSchemeName
   var board: Board
   var ui: Ui
