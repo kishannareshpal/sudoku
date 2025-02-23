@@ -102,8 +102,6 @@ class BaseRepository<TEntity: NSManagedObject> {
       try! self.context.save()
     }
   }
-  
-  
 }
 
 

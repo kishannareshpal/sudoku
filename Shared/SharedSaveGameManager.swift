@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import WatchConnectivity
 
+@available(*, deprecated, message: "Using CloudKit exclusively")
 public class SharedSaveGameManager: ObservableObject {
   static let instance = SharedSaveGameManager()
 

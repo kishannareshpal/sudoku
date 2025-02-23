@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "Using CloudKit exclusively")
 public struct OTASaveGameEntity: Codable {
   var givenNotation: BoardPlainStringNotation?
   var playerNotation: BoardPlainStringNotation?

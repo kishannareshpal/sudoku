@@ -48,7 +48,6 @@ struct GameScreen: View {
       .ignoresSafeArea(
         edges: [.top]
       )
-
     }
     .overlay {
       GameOverOverlay(
@@ -56,5 +55,6 @@ struct GameScreen: View {
         gameState: self.gameScene.game.state
       )
     }
+    .navigationBarBackButtonHidden()
   }
 }

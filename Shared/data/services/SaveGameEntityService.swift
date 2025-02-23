@@ -30,7 +30,8 @@ class SaveGameEntityService {
   @discardableResult
   func sync(
     forceOverwriteLocalWithCloud: Bool = false,
-    forceOverwriteCloudWithLocal: Bool = false
+    forceOverwriteCloudWithLocal: Bool = false,
+    alwaysPreferLatestGame: Bool = true // TODO: Do this on apple watch only? iPhone users can resolve conflicts
   ) async -> SyncResult {
     guard await self.cloudSaveGameRepository.isCloudAvailable() else {
       return .offline
@@ -42,7 +43,6 @@ class SaveGameEntityService {
     // We don't have games anywhere (cloud or local)
     if cloudSaveGameRecord == nil && localSaveGame == nil {
       print("No active cloud or local save games found to merge.")
-
       return .success
     }
     
@@ -71,30 +71,46 @@ class SaveGameEntityService {
       return .success
     }
     
+    // -------------------------------
     // --- Manual-merge strategies ---
-
+    // -------------------------------
+    
     // Both local and cloud save games are totally different
     if (cloudSaveGame.givenNotation != localSaveGame.givenNotation) {
-      guard forceOverwriteCloudWithLocal || forceOverwriteLocalWithCloud else {
+      guard (
+        alwaysPreferLatestGame
+        || forceOverwriteCloudWithLocal
+        || forceOverwriteLocalWithCloud
+      ) else {
         // No action taken by the user. Action required!
         return .conflict
       }
       
+      let mustUseCloudAsLatest: Bool = alwaysPreferLatestGame && (
+        cloudSaveGame.updatedAt > localSaveGame.updatedAt!
+      )
+      
+      let mustUseLocalAsLatest: Bool = alwaysPreferLatestGame && (
+        cloudSaveGame.updatedAt <= localSaveGame.updatedAt!
+      )
+      
       // Action has been taken by the user:
-      if forceOverwriteLocalWithCloud {
+      if mustUseCloudAsLatest || forceOverwriteLocalWithCloud {
         self.repository.unsetActiveGame()
         self.repository.create(from: cloudSaveGame)
         return .success
         
-      } else if forceOverwriteCloudWithLocal {
+      } else if mustUseLocalAsLatest || forceOverwriteCloudWithLocal {
         await self.cloudSaveGameRepository.create(from: localSaveGame)
         return .success
       }
-
+      
       return .conflict
     }
     
-    // --- Auto-merge strategies ---
+    // -------------------------------------------------------
+    // --- Auto-merge strategies based on last updated one ---
+    // -------------------------------------------------------
     
     // Both local and cloud save games are identical
     if (cloudSaveGame.updatedAt == localSaveGame.updatedAt) {
@@ -132,7 +148,7 @@ class SaveGameEntityService {
     
     self.syncDebounceTimer = Timer.scheduledTimer(withTimeInterval: self.debounceInterval, repeats: false) { _ in
       Task {
-        await performSync(false, false)
+        await performSync(false, false, true)
       }
     }
   }
