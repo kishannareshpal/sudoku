@@ -12,6 +12,8 @@ import UIColorHexSwift
 
 struct ContinueGameSection: View {
   var syncManager: SyncManager
+
+  private let currentColorScheme = StyleManager.current.colorScheme
   
   @FetchRequest(
     fetchRequest:
@@ -48,14 +50,14 @@ struct ContinueGameSection: View {
             )
 
             if syncResult == .offline {
-              HStack(spacing: 6) {
-                Image(systemName: "icloud.slash.fill")
-                  .font(.caption)
-                
-                Text("Offline")
-                  .font(.caption)
-              }
-              .foregroundStyle(.white)
+//              HStack(spacing: 6) {
+//                Image(systemName: "icloud.slash.fill")
+//                  .font(.caption)
+//                
+//                Text("Offline")
+//                  .font(.caption)
+//              }
+//              .foregroundStyle(.white)
               
             } else if syncResult == .success {
               HStack(spacing: 6) {
@@ -95,6 +97,8 @@ struct ContinueGameSection: View {
 }
 
 struct ContinueGameButton: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   var difficulty: Difficulty
   @ObservedObject var activeLocalSaveGame: SaveGameEntity
   
@@ -108,43 +112,54 @@ struct ContinueGameButton: View {
     ) {
       HStack(alignment: .top) {
         VStack(alignment: .leading) {
-          Text(activeLocalSaveGame.difficulty ?? "Unknown difficulty")
-            .font(.system(size: 18, weight: .black))
-            .foregroundStyle(.white)
-          
-          Text("Points: \(activeLocalSaveGame.score)")
-            .foregroundStyle(.white)
+          Group {
+            Text(activeLocalSaveGame.difficulty ?? "Unknown difficulty")
+              .font(.system(size: 18, weight: .black))
+            
+            Text("Points: \(activeLocalSaveGame.score)")
+              .font(.system(size: 12, weight: .regular))
+            
+            Text(
+              "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
+            )
             .font(.system(size: 12, weight: .regular))
-          
-          Text(
-            "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
-          )
-          .font(.system(size: 12, weight: .regular))
-          .foregroundStyle(.white)
-          .apply { view in
-            if #available(iOS 16.0, *) {
-              view.contentTransition(.numericText())
-            } else {
-              view
+            .apply { view in
+              if #available(iOS 16.0, *) {
+                view.contentTransition(.numericText())
+              } else {
+                view
+              }
             }
           }
+          .foregroundStyle(
+            Color(currentColorScheme.board.cell.text.given)
+          )
           
           Spacer().frame(height: 8)
           
           Text("Tap to continue")
             .font(.system(size: 14, weight: .medium))
-            .foregroundStyle(Color(TheTheme.Colors.primary))
+            .foregroundStyle(
+              Color(currentColorScheme.board.cell.text.player.valid)
+            )
         }.scaledToFit()
         
         Spacer().frame(width: 24)
         
         Image(systemName: "play.circle.fill")
           .font(.system(size: 28))
-          .foregroundStyle(Color(TheTheme.Colors.primary))
+          .foregroundStyle(
+            Color(currentColorScheme.board.cell.text.player.valid)
+          )
       }
     }
     .disabled(!self.isEnabled)
-    .buttonStyle(ContinueGameButtonStyle(isEnabled: self.isEnabled))
+    .buttonStyle(
+      ContinueGameButtonStyle(
+        backgroundColor: Color(currentColorScheme.board.cell.text.player.valid),
+        isEnabled: self.isEnabled
+      )
+    )
     .onAppear(perform: vibrator.prepare)
   }
 }
@@ -186,13 +201,14 @@ struct ResolveGameConflictButton: View {
 }
 
 struct ContinueGameButtonStyle: ButtonStyle {
+  var backgroundColor: Color
   var isEnabled: Bool = false
   
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .scaledToFit()
       .padding(12)
-      .background(Color(TheTheme.Colors.primary).opacity(0.3))
+      .background(backgroundColor.opacity(0.3))
       .clipShape(RoundedRectangle(cornerRadius: 14))
       .scaleEffect(configuration.isPressed ? 0.9 : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)

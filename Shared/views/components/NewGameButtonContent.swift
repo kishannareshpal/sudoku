@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NewGameButtonContent: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+
   var difficulty: Difficulty
   var loading: Bool = false
   
@@ -23,11 +25,15 @@ struct NewGameButtonContent: View {
           ProgressView()
             .frame(width: 18, height: 18)
             .progressViewStyle(.circular)
-            .tint(difficulty.color)
+            .tint(
+              Color(self.currentColorScheme.ui.game.control.numpad.button.selected.background)
+            )
 
         } else {
           Image(systemName: "plus")
-            .foregroundStyle(difficulty.color)
+            .foregroundStyle(
+              Color(self.currentColorScheme.ui.game.control.numpad.button.selected.background)
+            )
         }
       }
     )

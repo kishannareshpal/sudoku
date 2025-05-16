@@ -11,13 +11,15 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct HomeScreen: View {
-  @ObservedObject var syncManager: SyncManager
+  private let currentColorScheme = StyleManager.current.colorScheme
   
+  @ObservedObject var syncManager: SyncManager
+
   @State private var newGameConfirmationShowing: Bool = false
   @State private var newGameConfirmationDifficulty: Difficulty? = nil
   @State private var newGameConfirmed: Bool = false
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
-  
+
   @FetchRequest(
     fetchRequest:
       FetchRequestHelper.buildFetchRequest(
@@ -65,21 +67,17 @@ struct HomeScreen: View {
   
   var body: some View {
     ZStack {
-      Color(UIColor("#100D01"))
+      Color(self.currentColorScheme.board.background)
         .ignoresSafeArea()
 
       ScrollView {
         VStack(spacing: 48) {
-          VStack(spacing: 8) {
-            Image("Softly rounded logo")
-              .resizable()
-              .frame(width: 82, height: 82)
-              .scaledToFit()
-            
-            Text("Sudoku")
-              .font(.system(size: 48, weight: .medium))
-              .foregroundStyle(.accent)
+          VStack(spacing: -50) {
+            Text("SUD")
+            Text("OKU")
           }
+          .font(.system(size: 140, weight: .black).italic())
+          .foregroundStyle(Color(self.currentColorScheme.board.cell.text.player.valid))
           
           if loadingNewGameForDifficulty == nil {
             ContinueGameSection(
@@ -90,7 +88,7 @@ struct HomeScreen: View {
           VStack(spacing: 12) {
             Text("Start a new game:")
               .fontWeight(.bold)
-              .foregroundStyle(.white)
+              .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
             
             VStack(spacing: 8) {
               ForEach(Difficulty.allCases) { difficulty in
@@ -108,6 +106,8 @@ struct HomeScreen: View {
                 .disabled(self.loadingNewGameForDifficulty != nil)
                 .buttonStyle(
                   NormalButtonStyle(
+                    backgroundColor: Color(self.currentColorScheme.ui.game.control.numpad.button.normal.background),
+                    foregroundColor: Color(self.currentColorScheme.ui.game.control.numpad.button.normal.text),
                     isEnabled: self.loadingNewGameForDifficulty == nil
                   )
                 )
@@ -141,6 +141,9 @@ struct HomeScreen: View {
               Text("Settings")
             }
           }
+          .foregroundStyle(
+            Color(self.currentColorScheme.board.cell.text.player.valid)
+          )
         }
         .padding()
         .padding(.vertical, 32)
@@ -166,9 +169,9 @@ struct HomeScreen: View {
       await self.syncManager.sync()
     }
     .onAppear() {
-      UIRefreshControl.appearance().tintColor = .accent
+      UIRefreshControl.appearance().tintColor = self.currentColorScheme.board.cell.text.player.valid
     }
     .navigationBarHidden(true)
-    .preferredColorScheme(.dark)
+    .preferredColorScheme(self.currentColorScheme.mode == .dark ? .dark : .light)
   }
 }

@@ -126,6 +126,12 @@ public class Puzzle: ObservableObject {
     return value == solutionValue
   }
   
+  /// Returns whether the given value has already been entered by the player at the given location.
+  func isSame(value: Int, at location: Location) -> Bool {
+    let existingPlayerValue = self.player[location.row][location.col]
+    return value == existingPlayerValue
+  }
+  
   func checkGameOver() -> Bool {
     return self.player.enumerated().allSatisfy { (rowIndex, row) in
       return row.enumerated().allSatisfy { (colIndex, playerValue) in

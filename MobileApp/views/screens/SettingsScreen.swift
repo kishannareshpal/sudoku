@@ -35,39 +35,59 @@ struct SettingsScreen: View {
   
   @AppStorage(
     UserDefaultKey.offline.rawValue
-  ) private var offline: Bool = false
+  ) private var offline: Bool = true
   
   @AppStorage(
     UserDefaultKey.useGridNumberPadStyle.rawValue
-  ) private var useGridNumberPadStyle: Bool = false
+  ) private var useGridNumberPadStyle: Bool = true
   
   var body: some View {
-    ZStack {
-      Color(UIColor("#100D01"))
-        .ignoresSafeArea()
-      
-      Form {
-        Section("Gameplay") {
-          Toggle("Offline", isOn: $offline)
-          Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
-          Toggle("Start in notes mode", isOn: $startGameInNotesMode)
-          Toggle("Auto remove notes", isOn: $autoRemoveNotes)
-          Toggle("Show timer", isOn: $showTimer)
-          Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
-          
-          Picker("Theme", selection: $colorSchemeName) {
-            ForEach(ColorSchemeName.allCases, id: \.self) { name in
-              Text(name.rawValue).tag(name.rawValue)
+      VStack {
+        Form {
+          Section {
+            VStack(spacing: 8) {
+              Toggle("Sync progress across your devices", isOn: Binding(
+                get: { !self.offline },
+                set: { self.offline = !$0 }
+              ))
+              Text(
+                "(Experimental) When enabled, your progress will be automatically synced with your other devices so you can continue from where you left off (e.g. your Apple watch).\n\n" +
+                "Please note that this feature is currently experimental and requires internet connection to work. More optimisations will be made in the upcoming app updates."
+              ).font(.footnote)
             }
           }
-          .onChange(of: self.colorSchemeName) { newColorSchemeName in
-            StyleManager.current
-              .switchColorScheme(
-                to: ColorSchemeName(rawValue: newColorSchemeName) ?? .darkYellow
-              )
+          
+          Section {
+            Toggle("Start in notes mode", isOn: $startGameInNotesMode)
+            
+            VStack(spacing: 8) {
+              Toggle("Auto remove notes", isOn: $autoRemoveNotes)
+              Text(
+                "Automatically remove invalid notes from all related cells once you place a number on a cell."
+              ).font(.footnote)
+            }
+          }
+          
+          Section {
+            Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
+            
+            Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
+            
+            Toggle("Show timer", isOn: $showTimer)
+            
+            Picker("Theme", selection: $colorSchemeName) {
+              ForEach(ColorSchemeName.allCases, id: \.self) { name in
+                Text(name.rawValue).tag(name.rawValue)
+              }
+            }
+            .onChange(of: self.colorSchemeName) { newColorSchemeName in
+              StyleManager.current
+                .switchColorScheme(
+                  to: ColorSchemeName(rawValue: newColorSchemeName) ?? .darkYellow
+                )
+            }
           }
         }
-      }
     }
   }
 }

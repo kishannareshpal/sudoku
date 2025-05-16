@@ -12,7 +12,7 @@ class Game: ObservableObject {
   var id: UUID = UUID()
   
   private static let VALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = 10
-  private static let INVALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = -5
+  private static let INVALID_MOVE_SCORE_ADDITIVE_INCREMENT: Int = -20
   
   private(set) var saveGameId: EntityID
 
@@ -199,7 +199,7 @@ class Game: ObservableObject {
     }
   }
   
-  func changeActivatedNumberCellValue(to value: Int, recordMove: Bool = false) -> Void {
+  func changeActivatedNumberCellValue(to value: Int, recordMove: Bool = false, automatedMove: Bool = false) -> Void {
     guard !self.state.isGameOver else {
       return
     }
@@ -215,7 +215,7 @@ class Game: ObservableObject {
     guard activatedNumberCell.isChangeable else { return }
     
     activatedNumberCell.changeDraftNumberValue(to: value.toDouble())
-    self.commitNumberChange(recordMove: recordMove)
+    self.commitNumberChange(recordMove: recordMove, automatedMove: automatedMove)
   }
   
   func clearActivatedNumberCellValueAndNotes(recordMove: Bool = false) -> Void {
@@ -265,7 +265,7 @@ class Game: ObservableObject {
     guard activatedNumberCell.isChangeable else { return false }
     guard activatedNumberCell.value.isNotEmpty else { return false }
     
-    self.changeActivatedNumberCellValue(to: 0, recordMove: recordMove)
+    self.changeActivatedNumberCellValue(to: 0, recordMove: recordMove, automatedMove: true)
     return true
   }
   
@@ -325,7 +325,7 @@ class Game: ObservableObject {
     let location = activatedNumberCell.location
     let cellSolutionValue = self.puzzle.solution[location.row][location.col]
     
-    self.changeActivatedNumberCellValue(to: cellSolutionValue, recordMove: true)
+    self.changeActivatedNumberCellValue(to: cellSolutionValue, recordMove: true, automatedMove: true)
   }
   
   @discardableResult
@@ -403,7 +403,7 @@ class Game: ObservableObject {
 
       } else if currentMoveEntry.type == MoveType.removeNumber {
         // Set number
-        self.changeActivatedNumberCellValue(to: Int(currentMoveEntry.value)!)
+        self.changeActivatedNumberCellValue(to: Int(currentMoveEntry.value)!, automatedMove: true)
         
       } else if currentMoveEntry.type == MoveType.setNote {
         // Set a note
@@ -443,7 +443,7 @@ class Game: ObservableObject {
       
       if currentMoveEntry.type == MoveType.setNumber {
         // Set number
-        self.changeActivatedNumberCellValue(to: Int(currentMoveEntry.value)!)
+        self.changeActivatedNumberCellValue(to: Int(currentMoveEntry.value)!, automatedMove: true)
         
       } else if currentMoveEntry.type == MoveType.removeNumber {
         // Unset number
@@ -653,7 +653,7 @@ class Game: ObservableObject {
     )
   }
   
-  private func commitNumberChange(recordMove: Bool = false) -> Void {
+  private func commitNumberChange(recordMove: Bool = false, automatedMove: Bool = false) -> Void {
     guard let activatedNumberCell = self.activeCursorState.numberCell else {
       return
     }
@@ -663,8 +663,9 @@ class Game: ObservableObject {
     
     // Validate comitting changes
     let validChange = self.puzzle.validate(value: value, at: location)
-    activatedNumberCell
-      .toggleValidation(valid: validChange, valueCleared: value.isEmpty)
+    let enteredSameValue = self.puzzle.isSame(value: value, at: location)
+    
+    activatedNumberCell.toggleValidation(valid: validChange, valueCleared: value.isEmpty)
     
     // Commit changes
     self.puzzle.updatePlayer(value: value, at: location)
@@ -676,16 +677,19 @@ class Game: ObservableObject {
       self.clearActivatedNumberCellNotes(recordMove: false)
       self.clearAllPeerCellsNotes(with: value)
       
-      let scoreToAddForThisMove = Int64(
-        (
-          validChange
-          ? Game.VALID_MOVE_SCORE_ADDITIVE_INCREMENT
-          : Game.INVALID_MOVE_SCORE_ADDITIVE_INCREMENT
-        ) * self.difficulty.scoreMultiplier
-      )
-      
-      self.score += scoreToAddForThisMove
-      self.score = max(self.score, 0)
+      if !enteredSameValue && !automatedMove {
+        // Update the score if the number has been CHANGED to another valid / invalid number
+        let scoreToAddForThisMove = Int64(
+          (
+            validChange
+            ? Game.VALID_MOVE_SCORE_ADDITIVE_INCREMENT
+            : Game.INVALID_MOVE_SCORE_ADDITIVE_INCREMENT
+          ) * self.difficulty.scoreMultiplier
+        )
+        
+        self.score += scoreToAddForThisMove
+        self.score = max(self.score, 0)
+      }
     }
 
     // Record the move, if allowed

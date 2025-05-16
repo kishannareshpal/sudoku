@@ -38,29 +38,36 @@ struct GameScreen: View {
 
         VStack {
           GameHeader(gameScene: self.gameScene)
-//            .padding(.horizontal)
+            .padding(.horizontal)
           
-          VStack {
+          VStack(spacing: 4) {
+            Spacer(minLength: 0)
+            
             GameSceneView(gameScene: self.gameScene)
             
-            Spacer(minLength: 12)
+            Spacer(minLength: 0)
             
-            VStack(spacing: 12) {
-              HStack(spacing: 12) {
-                HStack {
-                  UndoButton(gameScene: self.gameScene)
-                  // RedoButton(gameScene: self.gameScene)
-                }
-                
-                NotesModeToggleButton(gameScene: self.gameScene)
-                
-                HStack {
-                  EraseButton(gameScene: self.gameScene)
-                  // HintButton(gameScene: self.gameScene)
+            VStack(spacing: 6) {
+              ZStack(alignment: .center) {
+                HStack(spacing: 12) {
+                  HStack {
+                    UndoButton(gameScene: self.gameScene)
+                    RedoButton(gameScene: self.gameScene)
+                  }
+                  
+                  Spacer()
+                  
+                  HStack {
+                    HintButton(gameScene: self.gameScene)
+                    EraseButton(gameScene: self.gameScene)
+                  }
                 }
               }
+              .frame(maxWidth: .infinity)
               
               NumbersPad(gameScene: self.gameScene)
+              
+              NotesModeToggleButton(gameScene: self.gameScene)
             }
           }.padding()
         }

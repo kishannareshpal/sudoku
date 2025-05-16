@@ -34,21 +34,44 @@ struct CenteredInformation: View {
   
   var body: some View {
     VStack(alignment: .center) {      
-      if showTimer {
+      if self.showTimer {
         DurationText(gameDuration: self.gameScene.game.state.duration)
-          .overlay {
-            GameDurationTracker(gameState: self.gameScene.game.state)
-          }
       }
       
-      Text(
-        "\(self.gameScene.game.difficulty.rawValue) • \(self.gameScene.game.score) Points"
-      )
-        .font(.system(size: 14, weight: .regular))
-        .foregroundStyle(Color(self.currentColorScheme.ui.game.nav.text.cgColor))
+      Group {
+        if self.showTimer {
+          HStack {
+            Text("\(self.gameScene.game.difficulty.rawValue)")
+            Text("•")
+            ScoreText(game: self.gameScene.game)
+          }
+          .font(.system(size: 14, weight: .regular))
+
+        } else {
+          VStack {
+            Text("\(self.gameScene.game.difficulty.rawValue)")
+              .font(.system(size: 24, weight: .bold))
+            
+            ScoreText(game: self.gameScene.game)
+              .font(.system(size: 14, weight: .regular))
+          }
+        }
+      }
+      .foregroundStyle(Color(self.currentColorScheme.ui.game.nav.text))
+    }
+    .overlay {
+      GameDurationTracker(gameState: self.gameScene.game.state)
     }
   }
 }
 
+
+struct ScoreText: View {
+  @ObservedObject var game: Game
+  
+  var body: some View {
+    Text("\(self.game.score) Points")
+  }
+}
 
 
