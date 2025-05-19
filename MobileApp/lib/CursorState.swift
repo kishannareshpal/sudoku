@@ -8,5 +8,5 @@
 import Foundation
 
 class CursorState: ObservableObject {
-  @Published var mode: CursorMode = .number
+  @Published var mode: CursorMode = AppConfig.prefersStartingInNotesMode() ? .note : .number
 }

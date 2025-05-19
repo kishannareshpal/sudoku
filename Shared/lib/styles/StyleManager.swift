@@ -18,15 +18,9 @@ class StyleManager: ObservableObject {
   
   private init() {
     // Load current color scheme, or use a default value
-    let rememberedColorSchemeName = UserDefaults.standard.string(
-      forKey: UserDefaultKey.colorSchemeName.rawValue
-    )
-    
-    let colorSchemeName = ColorSchemeName(
-      rawValue: rememberedColorSchemeName ?? ColorSchemeName.darkYellow.rawValue
-    )!
+    let preferredColorSchemeName = AppConfig.preferredColorSchemeName();
 
-    self.colorScheme = ColorScheme.with(name: colorSchemeName)
+    self.colorScheme = ColorScheme.with(name: preferredColorSchemeName)
 
     // Load current shape style, or use a default value
     let rememberedShapeStyle = UserDefaults.standard.data(

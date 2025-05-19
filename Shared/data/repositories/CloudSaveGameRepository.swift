@@ -170,14 +170,7 @@ class CloudSaveGameRepository: BaseCloudRepository {
   
   /// Check iCloud account status (whether it has access to the apps private database).
   func isCloudAvailable() async -> Bool {
-    UserDefaults.standard.register(defaults: [UserDefaultKey.offline.rawValue: true]) // Default to being offline
-
-    // If user prefers to be offline, by enabling the option in settings, then respect that.
-    let userPrefersBeingOffline = UserDefaults.standard.bool(
-      forKey: UserDefaultKey.offline.rawValue,
-    );
-
-    if userPrefersBeingOffline {
+    if AppConfig.prefersOffline() {
       print("User prefers being offline.")
       return false
     }

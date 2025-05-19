@@ -31,7 +31,7 @@ struct SettingsScreen: View {
   
   @AppStorage(
     UserDefaultKey.colorSchemeName.rawValue
-  ) private var colorSchemeName: String = ColorSchemeName.lightBlue.rawValue
+  ) private var colorSchemeName: String = ColorSchemeName.darkYellow.rawValue
   
   @AppStorage(
     UserDefaultKey.offline.rawValue
@@ -70,7 +70,15 @@ struct SettingsScreen: View {
         }
         
         Section {
-          Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
+          VStack(alignment: .leading, spacing: 8) {
+            Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
+            Text(
+              "If enabled, the number pad is arranged in a 3x3 layout. If disabled, it uses a 5x2 layout ideal for smaller devices."
+            ).font(.footnote)
+          }
+        }
+        
+        Section {
           
           Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
           

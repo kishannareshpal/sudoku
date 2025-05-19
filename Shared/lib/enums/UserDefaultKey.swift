@@ -7,6 +7,8 @@
 
 enum UserDefaultKey: String {
   public var id: RawValue { rawValue }
+  
+  case highlightOrientation
 
   /// Stores the current ColorSchemeName
   case offline

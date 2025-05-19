@@ -359,16 +359,20 @@ class Game: ObservableObject {
     let cursorValue = numberCellUnderCursor.value
     let cursorLocation = numberCellUnderCursor.location
     
-    self.processEachPeerAndNonPeerNumberCells(for: (cursorValue, cursorLocation)) { (peerNumberCell, _) in
-      self.puzzle
-        .toggleNote(
-          value: cursorValue,
-          at: peerNumberCell.location,
-          forceAdd: false
-        )
+    self.processEachPeerAndNonPeerNumberCells(
+      for: (cursorValue, cursorLocation),
+      allowSameValueAnywherePeers: false,
+      peerFoundCallback: { (peerNumberCell, _) in
+        self.puzzle
+          .toggleNote(
+            value: cursorValue,
+            at: peerNumberCell.location,
+            forceAdd: false
+          )
 
-      peerNumberCell.toggleNote(value: cursorValue, forceVisible: false)
-    }
+        peerNumberCell.toggleNote(value: cursorValue, forceVisible: false)
+      }
+    );
   }
   
   func undoLastMove() -> Void {
@@ -514,7 +518,7 @@ class Game: ObservableObject {
   ///   - allowRowPeers: A boolean flag to allow peers from the same row (default is `true`).
   ///   - allowColumnPeers: A boolean flag to allow peers from the same column (default is `true`).
   ///   - allowGridPeers: A boolean flag to allow peers from the same grid (default is `true`).
-  ///   - allowSameValuePeers: A boolean flag to allow peers that have the same value as the current cell (default is `true`).
+  ///   - allowSameValueAnywherePeers: A boolean flag to allow peers that have the same value as the current cell - ignoring row or column sameness (default is `true`).
   ///   - allowNotePeers: A boolean flag to allow peers that have a note with the same value as the current cell (default is `true`)
   ///   - peerFoundCallback: A closure that gets called for each peer cell  its number cell reference object from the `numberCells` collection.
   ///   - nonPeerFoundCallback: An optional closure that gets called for each non-peer cell with its number cell object reference from the `numberCells` collection.
@@ -525,7 +529,7 @@ class Game: ObservableObject {
     allowRowPeers: Bool = true,
     allowColumnPeers: Bool = true,
     allowGridPeers: Bool = true,
-    allowSameValuePeers: Bool = true,
+    allowSameValueAnywherePeers: Bool = true,
     allowNotePeers: Bool = true,
     peerFoundCallback: (_ peerNumberCell: NumberCellSprite, _ peerType: PeerType) -> Void,
     nonPeerFoundCallback: ((_ nonPeerNumberCell: NumberCellSprite) -> Void)? = nil
@@ -545,7 +549,6 @@ class Game: ObservableObject {
         } else {
           nonPeerFoundCallback?(numberCell)
         }
-
         continue
       }
       
@@ -569,7 +572,7 @@ class Game: ObservableObject {
       }
       
       // Check same value condition
-      let sameValue = allowSameValuePeers && (
+      let sameValue = allowSameValueAnywherePeers && (
         !numberCell.isValueEmpty && (numberCell.value == cell.value)
       )
       if (sameValue) {
@@ -578,7 +581,7 @@ class Game: ObservableObject {
       }
       
       // Only has a peer note
-      if hasNotePeer {
+      if hasNotePeer && allowSameValueAnywherePeers {
         peerFoundCallback(numberCell, .note)
         continue
       }
@@ -675,7 +678,10 @@ class Game: ObservableObject {
       // Committed a non-empty value to the cell
       // Clear any previous notes from it
       self.clearActivatedNumberCellNotes(recordMove: false)
-      self.clearAllPeerCellsNotes(with: value)
+      
+      if AppConfig.shouldAutoRemoveNotes() {
+        self.clearAllPeerCellsNotes(with: value)
+      }
       
       if !enteredSameValue && !automatedMove {
         // Update the score if the number has been CHANGED to another valid / invalid number

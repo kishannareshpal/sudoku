@@ -13,7 +13,9 @@ struct SettingsScreen: View {
     UserDefaultKey.offline.rawValue
   ) private var offline: Bool = true
 
-  @AppStorage(AppConfig.Keys.highlightOrientation) var highlightOrientation: String = LocationIndexOrientation.topToBottom.rawValue
+  @AppStorage(
+    UserDefaultKey.highlightOrientation.rawValue
+  ) var highlightOrientation: String = LocationIndexOrientation.topToBottom.rawValue
 
   var body: some View {
     List {
