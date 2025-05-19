@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AppNavigationStack<Content: View>: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   let content: Content
   
   init(@ViewBuilder content: () -> Content) {
@@ -19,6 +21,9 @@ struct AppNavigationStack<Content: View>: View {
       NavigationStack {
         content
       }
+      .tint(
+        Color(self.currentColorScheme.board.cell.text.player.valid)
+      )
     } else {
       NavigationView {
         content

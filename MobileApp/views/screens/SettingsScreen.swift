@@ -11,7 +11,7 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct SettingsScreen: View {
-  @ObservedObject var tm: StyleManager = StyleManager.current
+  @ObservedObject var styleManager: StyleManager
   
   @AppStorage(
     UserDefaultKey.hapticFeedbackEnabled.rawValue
@@ -44,7 +44,11 @@ struct SettingsScreen: View {
   var body: some View {
     VStack {
       Form {
-        Section {
+        Section(
+          header: Text("General")
+        ) {
+          Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
+          
           VStack(alignment: .leading, spacing: 8) {
             Toggle("Sync progress across your devices", isOn: Binding(
               get: { !self.offline },
@@ -58,6 +62,8 @@ struct SettingsScreen: View {
         }
         
         Section {
+          Toggle("Show timer", isOn: $showTimer)
+          
           Toggle("Start in notes mode", isOn: $startGameInNotesMode)
           
           VStack(alignment: .leading, spacing: 8) {
@@ -77,18 +83,19 @@ struct SettingsScreen: View {
             ).font(.footnote)
           }
         }
-        
+
         Section {
-          
-          Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
-          
-          Toggle("Show timer", isOn: $showTimer)
-          
           Picker("Theme", selection: $colorSchemeName) {
             ForEach(ColorSchemeName.allCases, id: \.self) { name in
               Text(name.rawValue).tag(name.rawValue)
             }
           }
+          .colorMultiply(
+            Color(
+              self.styleManager.colorScheme.board.cell.text.player.valid
+            )
+          )
+          .tint(.white)
           .onChange(of: self.colorSchemeName) { newColorSchemeName in
             StyleManager.current
               .switchColorScheme(

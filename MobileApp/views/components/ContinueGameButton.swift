@@ -57,7 +57,7 @@ struct ContinueGameSection: View {
 //                Text("Offline")
 //                  .font(.caption)
 //              }
-//              .foregroundStyle(.white)
+//              .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
               
             } else if syncResult == .success {
               HStack(spacing: 6) {
@@ -67,7 +67,9 @@ struct ContinueGameSection: View {
                 Text("Synced")
                   .font(.caption)
               }
-              .foregroundStyle(.white)
+              .foregroundStyle(
+                Color(self.currentColorScheme.board.cell.text.given)
+              )
             }
           }
 
@@ -89,8 +91,12 @@ struct ContinueGameSection: View {
           Text("Syncing your progress...")
             .font(.caption)
         }
-        .foregroundStyle(.white)
-        .tint(.white)
+        .foregroundStyle(
+          Color(self.currentColorScheme.board.cell.text.given)
+        )
+        .tint(
+          Color(self.currentColorScheme.board.cell.text.given)
+        )
       }
     }
   }

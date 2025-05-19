@@ -12,6 +12,8 @@ import UIColorHexSwift
 import SwiftDate
 
 struct SaveGameConflictResolutionScreen: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+
   @Environment(\.dismiss) var dismissScreen
   
   @State private var saveGameOptions: [SaveGameOption] = []
@@ -81,7 +83,9 @@ struct SaveGameConflictResolutionScreen: View {
                 }
               }
             )
-            .tint(.accentColor)
+            .tint(
+              Color(self.currentColorScheme.board.cell.text.player.valid)
+            )
             .disabled(self.selectedOptionId == nil || self.confirming)
           }
         }

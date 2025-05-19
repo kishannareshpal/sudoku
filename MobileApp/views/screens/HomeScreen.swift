@@ -11,7 +11,7 @@ import UIKit.UIColor
 import UIColorHexSwift
 
 struct HomeScreen: View {
-  private let currentColorScheme = StyleManager.current.colorScheme
+  @ObservedObject var styleManager: StyleManager
   
   @ObservedObject var syncManager: SyncManager
 
@@ -67,7 +67,14 @@ struct HomeScreen: View {
   
   var body: some View {
     ZStack {
-      Color(self.currentColorScheme.board.background)
+      Color(
+        self.styleManager.colorScheme.mode == .dark ? (
+          self.styleManager.colorScheme.ui.game.control.numpad.button.selected.background
+        ) : (
+          self.styleManager.colorScheme.ui.game.background
+        )
+      )
+        .brightness(self.styleManager.colorScheme.mode == .dark ? -0.93 : 0)
         .ignoresSafeArea()
 
       ScrollView {
@@ -77,7 +84,7 @@ struct HomeScreen: View {
             Text("OKU")
           }
           .font(.system(size: 140, weight: .black).italic())
-          .foregroundStyle(Color(self.currentColorScheme.board.cell.text.player.valid))
+          .foregroundStyle(Color(self.styleManager.colorScheme.board.cell.text.player.valid))
           
           if loadingNewGameForDifficulty == nil {
             ContinueGameSection(
@@ -88,7 +95,7 @@ struct HomeScreen: View {
           VStack(spacing: 12) {
             Text("Start a new game:")
               .fontWeight(.bold)
-              .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
+              .foregroundStyle(Color(self.styleManager.colorScheme.board.cell.text.given))
             
             VStack(spacing: 8) {
               ForEach(Difficulty.allCases) { difficulty in
@@ -106,11 +113,25 @@ struct HomeScreen: View {
                 .disabled(self.loadingNewGameForDifficulty != nil)
                 .buttonStyle(
                   NormalButtonStyle(
-                    backgroundColor: Color(self.currentColorScheme.ui.game.control.numpad.button.normal.background),
-                    foregroundColor: Color(self.currentColorScheme.ui.game.control.numpad.button.normal.text),
+                    backgroundColor: Color(
+                      self.styleManager.colorScheme.mode == .dark ? (
+                        self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+                      ) : (
+                        self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+                      )
+                    ),
+                    foregroundColor:
+                      Color(
+                        self.styleManager.colorScheme.mode == .dark ? (
+                          self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+                        ) : (
+                          self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+                        )
+                      ),
                     isEnabled: self.loadingNewGameForDifficulty == nil
                   )
                 )
+                .frame(maxWidth: 400)
               }
               .confirmationDialog(
                 "Start a new game?",
@@ -133,17 +154,19 @@ struct HomeScreen: View {
                 )
               }
             }
-            .frame(maxWidth: 400)
           }
           
-          NavigationLink(destination: SettingsScreen()) {
+          NavigationLink(
+            destination:
+              SettingsScreen(styleManager: StyleManager.current)
+          ) {
             HStack {
               Image(systemName: "gear")
               Text("Settings")
             }
           }
           .foregroundStyle(
-            Color(self.currentColorScheme.board.cell.text.player.valid)
+            Color(self.styleManager.colorScheme.board.cell.text.player.valid)
           )
         }
         .padding()
@@ -170,9 +193,12 @@ struct HomeScreen: View {
       await self.syncManager.sync()
     }
     .onAppear() {
-      UIRefreshControl.appearance().tintColor = self.currentColorScheme.board.cell.text.player.valid
+      UIRefreshControl.appearance().tintColor = self.styleManager.colorScheme.board.cell.text.player.valid
     }
     .navigationBarHidden(true)
-    .preferredColorScheme(self.currentColorScheme.mode == .dark ? .dark : .light)
+    .preferredColorScheme(self.styleManager.colorScheme.mode == .dark ? .dark : .light)
+    .tint(
+      Color(self.styleManager.colorScheme.board.cell.text.player.valid)
+    )
   }
 }

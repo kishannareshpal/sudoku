@@ -47,8 +47,4 @@ class StyleManager: ObservableObject {
       forKey: UserDefaultKey.colorSchemeName.rawValue
     )
   }
-  
-  func update() {
-    
-  }
 }
