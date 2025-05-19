@@ -69,6 +69,7 @@ struct GameScreen: View {
               
               NotesModeToggleButton(gameScene: self.gameScene)
             }
+            .frame(maxWidth: 400)
           }.padding()
         }
       }

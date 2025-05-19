@@ -133,6 +133,7 @@ struct HomeScreen: View {
                 )
               }
             }
+            .frame(maxWidth: 400)
           }
           
           NavigationLink(destination: SettingsScreen()) {
