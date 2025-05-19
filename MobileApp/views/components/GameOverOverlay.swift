@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GameOverOverlay: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
   @Environment(\.dismiss) var dismissScreen: DismissAction
   
   var game: Game
@@ -20,8 +21,10 @@ struct GameOverOverlay: View {
     
     return AnyView(
       ZStack {
-        Color(UIColor("#352800"))
-          .opacity(0.95)
+        Color(
+          self.currentColorScheme.board.cell.text.player.valid
+        )
+          .opacity(0.9)
           .ignoresSafeArea()
         
         VStack {
@@ -32,14 +35,22 @@ struct GameOverOverlay: View {
           
           VStack(alignment: .center) {
             Text("Well done!")
-              .font(.system(size: 48, weight: .bold))
-              .foregroundStyle(.accent)
+              .font(.system(size: 48, weight: .black))
+              .foregroundStyle(
+                Color(
+                  self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                )
+              )
             
             Text(
               "You successfully solved this \(self.game.difficulty.rawValue) puzzle in \(GameDurationHelper.format(self.gameState.duration.seconds, pretty: true)). Your final score is \(self.game.score) points!"
             )
-              .font(.system(size: 24, weight: .regular))
-              .foregroundStyle(.white)
+            .font(.system(size: 24, weight: .bold))
+              .foregroundStyle(
+                Color(
+                  self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                )
+              )
               .multilineTextAlignment(.center)
           }
           
@@ -48,32 +59,46 @@ struct GameOverOverlay: View {
           VStack(spacing: 14) {
             Text("Up for another challenge?")
               .font(.system(size: 12, weight: .bold))
-              .foregroundStyle(.white)
+              .foregroundStyle(
+                Color(
+                  self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                )
+              )
             
             Button(
               action: {
-                // TODO: -
-//                Task {
-//                  await DataManager.default.saveGamesService.detachActiveSaveGame()
-//                }
-
                 self.dismissScreen()
               },
               label: {
                 HStack {
                   Text("New game")
                     .fontWeight(.bold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(
+                      Color(
+                        self.currentColorScheme.ui.game.control.numpad.button.normal.text
+                      )
+                    )
                   
                   Spacer()
                   
                   Image(systemName: "plus")
-                    .foregroundStyle(.black)
+                    .foregroundStyle(
+                      Color(
+                        self.currentColorScheme.ui.game.control.numpad.button.normal.text
+                      )
+                    )
                 }
               }
-            ).buttonStyle(NormalButtonStyle(backgroundColor: .accent))
+            ).buttonStyle(
+              NormalButtonStyle(
+                backgroundColor: Color(
+                  self.currentColorScheme.ui.game.control.numpad.button.normal.background
+                )
+              )
+            )
           }
         }
+        .frame(maxWidth: 400)
         .padding(24)
       }
     )
