@@ -12,10 +12,6 @@ import UIColorHexSwift
 
 struct SettingsScreen: View {
   @ObservedObject var styleManager: StyleManager
-  
-  @AppStorage(
-    UserDefaultKey.hapticFeedbackEnabled.rawValue
-  ) private var hapticFeedbackEnabled: Bool = true
 
   @AppStorage(
     UserDefaultKey.startGameInNotesMode.rawValue
@@ -47,8 +43,6 @@ struct SettingsScreen: View {
         Section(
           header: Text("General")
         ) {
-          Toggle("Haptic feedback", isOn: $hapticFeedbackEnabled)
-          
           VStack(alignment: .leading, spacing: 8) {
             Toggle("Sync progress across your devices", isOn: Binding(
               get: { !self.offline },

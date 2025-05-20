@@ -39,7 +39,9 @@ struct SettingsScreen: View {
             Text("Highlight orientation")
           }
         }
-        
+      }
+      
+      Section {
         Picker("Theme", selection: $colorSchemeName) {
           ForEach(ColorSchemeName.allCases, id: \.self) { name in
             Text(name.rawValue).tag(name.rawValue)

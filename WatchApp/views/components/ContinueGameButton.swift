@@ -34,7 +34,7 @@ struct ContinueGameSection: View {
         Text("Welcome back!").fontWeight(.bold)
         Text("Continue from where you left off:").font(.system(size: 12))
       }.foregroundStyle(Color(self.currentColorScheme.board.cell.text.given)) : nil,
-      footer: VStack(alignment: .center) {
+      footer: activeLocalSaveGame != nil ? VStack(alignment: .center) {
         if self.syncManager.status == .syncing {
           // Syncing
           HStack(spacing: 8) {
@@ -51,7 +51,7 @@ struct ContinueGameSection: View {
           .tint(.white)
 
         } else if case .completed(let syncResult) = self.syncManager.status {
-          if syncResult == .offline {
+          if !AppConfig.prefersOffline() && syncResult == .offline {
             HStack(spacing: 8) {
               Image(systemName: "icloud.slash.fill")
                 .font(.system(size: 10))
@@ -76,7 +76,7 @@ struct ContinueGameSection: View {
             )
           }
         }
-      }
+      } : nil
     ) {
       if let activeLocalSaveGame {
         ContinueGameButton(

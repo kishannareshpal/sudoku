@@ -9,6 +9,7 @@ import SwiftUI
 import UIColorHexSwift
 
 struct GameOverOverlay: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
   @Environment(\.dismiss) var dismissScreen: DismissAction
 
   var game: Game
@@ -21,8 +22,10 @@ struct GameOverOverlay: View {
     
     return AnyView(
       ZStack {
-        Color(UIColor("#352800"))
-          .opacity(0.95)
+        Color(
+          self.currentColorScheme.board.cell.text.player.valid
+        )
+          .opacity(0.9)
           .ignoresSafeArea()
         
         GeometryReader { geometry in
@@ -40,6 +43,11 @@ struct GameOverOverlay: View {
               Text("Well done!")
                 .font(.headline)
                 .fontWeight(.black)
+                .foregroundStyle(
+                  Color(
+                    self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                  )
+                )
               
               Text(
                 "You've solved this \(self.game.difficulty) puzzle in \(GameDurationHelper.format(self.gameState.duration.seconds, pretty: true)). Your final score is \(self.game.score) points!"
@@ -47,11 +55,21 @@ struct GameOverOverlay: View {
                 .font(.system(size: 12))
                 .fontWeight(.regular)
                 .multilineTextAlignment(.center)
+                .foregroundStyle(
+                  Color(
+                    self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                  )
+                )
               
               Text("Up for another challenge?")
                 .font(.system(size: 12))
                 .fontWeight(.regular)
                 .multilineTextAlignment(.center)
+                .foregroundStyle(
+                  Color(
+                    self.currentColorScheme.ui.game.control.numpad.button.selected.text
+                  )
+                )
               
               Spacer(minLength: 12)
               
@@ -65,6 +83,12 @@ struct GameOverOverlay: View {
                 Image(systemName: "plus")
                 Text("New game")
               }
+              .tint(
+                Color(
+                  self.currentColorScheme.ui.game.control.numpad.button.normal.background
+                )
+              )
+              
               
               Spacer()
             }
