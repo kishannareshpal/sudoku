@@ -10,6 +10,8 @@ import SwiftUI
 struct ContinueGameSection: View {
   var syncManager: SyncManager
   
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   @FetchRequest(
     fetchRequest:
       FetchRequestHelper.buildFetchRequest(
@@ -28,9 +30,10 @@ struct ContinueGameSection: View {
   var body: some View {
     Section(
       header: activeLocalSaveGame != nil ? VStack(alignment: .leading) {
+        Logo()
         Text("Welcome back!").fontWeight(.bold)
         Text("Continue from where you left off:").font(.system(size: 12))
-      } : nil,
+      }.foregroundStyle(Color(self.currentColorScheme.board.cell.text.given)) : nil,
       footer: VStack(alignment: .center) {
         if self.syncManager.status == .syncing {
           // Syncing
@@ -42,7 +45,9 @@ struct ContinueGameSection: View {
             Text("Syncing...")
               .font(.system(size: 10))
           }
-          .foregroundStyle(.white)
+          .foregroundStyle(
+            Color(self.currentColorScheme.board.cell.text.given)
+          )
           .tint(.white)
 
         } else if case .completed(let syncResult) = self.syncManager.status {
@@ -54,7 +59,9 @@ struct ContinueGameSection: View {
               Text("Offline")
                 .font(.system(size: 10))
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(
+              Color(self.currentColorScheme.board.cell.text.given)
+            )
             
           } else if syncResult == .success {
             HStack(spacing: 8) {
@@ -64,7 +71,9 @@ struct ContinueGameSection: View {
               Text("Synced")
                 .font(.system(size: 10))
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(
+              Color(self.currentColorScheme.board.cell.text.given)
+            )
           }
         }
       }
@@ -81,6 +90,8 @@ struct ContinueGameSection: View {
 }
 
 struct ContinueGameButton: View {
+  private let currentColorScheme = StyleManager.current.colorScheme
+  
   var difficulty: Difficulty
   @ObservedObject var activeLocalSaveGame: SaveGameEntity
   
@@ -92,42 +103,52 @@ struct ContinueGameButton: View {
     ) {
       HStack(alignment: .top) {
         VStack(alignment: .leading) {
-          Text(activeLocalSaveGame.difficulty ?? "Unknown difficulty")
-            .font(.system(size: 18, weight: .black))
-            .foregroundStyle(.white)
-          
-          Text("Points: \(activeLocalSaveGame.score)")
-            .foregroundStyle(.white)
+          Group {
+            Text(activeLocalSaveGame.difficulty ?? "Unknown difficulty")
+              .font(.system(size: 18, weight: .black))
+            
+            Text("Points: \(activeLocalSaveGame.score)")
+              .font(.system(size: 12, weight: .regular))
+            
+            Text(
+              "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
+            )
             .font(.system(size: 12, weight: .regular))
-          
-          Text(
-            "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
-          )
-          .font(.system(size: 12, weight: .regular))
-          .foregroundStyle(.white)
-          .apply { view in
-            if #available(watchOS 9.0, *) {
-              view.contentTransition(.numericText())
-            } else {
-              view
+            .apply { view in
+              if #available(watchOS 9.0, *) {
+                view.contentTransition(.numericText())
+              } else {
+                view
+              }
             }
           }
+          .foregroundStyle(
+            Color(self.currentColorScheme.board.cell.text.given)
+          )
           
           Spacer().frame(height: 8)
           
           Text("Tap to continue")
             .font(.system(size: 12, weight: .medium))
-            .foregroundStyle(Color(TheTheme.Colors.primary))
+            .foregroundStyle(
+              Color(currentColorScheme.board.cell.text.player.valid)
+            )
         }.scaledToFit()
         
         Spacer().frame(width: 24)
         
         Image(systemName: "play.circle.fill")
           .font(.system(size: 28))
-          .foregroundStyle(Color(TheTheme.Colors.primary))
+          .foregroundStyle(
+            Color(currentColorScheme.board.cell.text.player.valid)
+          )
       }
     }
     .disabled(!self.isEnabled)
-    .listItemTint(Color(TheTheme.Colors.primary).opacity(0.3))
+    .listItemTint(
+      Color(
+        currentColorScheme.board.cell.text.player.valid
+      ).opacity(0.3)
+    )
   }
 }

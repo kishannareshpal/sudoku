@@ -31,6 +31,7 @@ struct GameNotesToolbarNumberButton: View {
             )
           
           Text(number.toString())
+            .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
             .font(.custom(TheTheme.Fonts.mono, size: 12))
         }
       }

@@ -49,15 +49,15 @@ struct ContinueGameSection: View {
               isEnabled: self.syncManager.status != .syncing
             )
 
-            if syncResult == .offline {
-//              HStack(spacing: 6) {
-//                Image(systemName: "icloud.slash.fill")
-//                  .font(.caption)
-//                
-//                Text("Offline")
-//                  .font(.caption)
-//              }
-//              .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
+            if !AppConfig.prefersOffline() && syncResult == .offline {
+              HStack(spacing: 6) {
+                Image(systemName: "icloud.slash.fill")
+                  .font(.caption)
+                
+                Text("Offline")
+                  .font(.caption)
+              }
+              .foregroundStyle(Color(self.currentColorScheme.board.cell.text.given))
               
             } else if syncResult == .success {
               HStack(spacing: 6) {

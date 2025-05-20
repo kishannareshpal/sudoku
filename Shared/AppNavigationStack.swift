@@ -28,6 +28,9 @@ struct AppNavigationStack<Content: View>: View {
       NavigationView {
         content
       }
+      .tint(        
+        Color(self.currentColorScheme.board.cell.text.player.valid)
+      )
     }
   }
 }

@@ -9,6 +9,8 @@ import SwiftUI
 import SpriteKit
 
 struct SettingsScreen: View {
+  @ObservedObject var styleManager: StyleManager
+  
   @AppStorage(
     UserDefaultKey.offline.rawValue
   ) private var offline: Bool = true
@@ -16,6 +18,10 @@ struct SettingsScreen: View {
   @AppStorage(
     UserDefaultKey.highlightOrientation.rawValue
   ) var highlightOrientation: String = LocationIndexOrientation.topToBottom.rawValue
+  
+  @AppStorage(
+    UserDefaultKey.colorSchemeName.rawValue
+  ) private var colorSchemeName: String = ColorSchemeName.darkYellow.rawValue
 
   var body: some View {
     List {
@@ -32,6 +38,18 @@ struct SettingsScreen: View {
             Image(systemName: "digitalcrown.arrow.clockwise")
             Text("Highlight orientation")
           }
+        }
+        
+        Picker("Theme", selection: $colorSchemeName) {
+          ForEach(ColorSchemeName.allCases, id: \.self) { name in
+            Text(name.rawValue).tag(name.rawValue)
+          }
+        }
+        .onChange(of: self.colorSchemeName) { newColorSchemeName in
+          StyleManager.current
+            .switchColorScheme(
+              to: ColorSchemeName(rawValue: newColorSchemeName) ?? .darkYellow
+            )
         }
       }
       
@@ -54,7 +72,7 @@ struct SettingsScreen: View {
       VStack(alignment: .leading) {
         Divider()
         Text("App version: \(Bundle.main.appVersionNumber)").font(.caption2)
-        Text("sudoku@kishanjadav.com").font(.system(size: 10))
+        Text("sudoku@kishanjadav.com").font(.system(size: 11))
       }.listRowBackground(Color.clear)
       
     }.navigationTitle {
@@ -62,6 +80,9 @@ struct SettingsScreen: View {
         Image(systemName: "gear")
         Text("Settings")
       }
+      .foregroundStyle(
+        Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text)
+      )
     }
   }
 }

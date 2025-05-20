@@ -9,8 +9,8 @@ import SwiftUI
 
 @main
 struct SudokuApp: App {
+  @StateObject var styleManager = StyleManager.current
   @StateObject var syncManager = SyncManager()
-
   @StateObject var dataProvider = AppDataProvider.shared
   @WKApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   
@@ -28,13 +28,17 @@ struct SudokuApp: App {
   var body: some Scene {
     WindowGroup {
       AppNavigationStack {
-        HomeScreen(syncManager: self.syncManager)
+        HomeScreen(
+          styleManager: self.styleManager,
+          syncManager: self.syncManager
+        )
       }
       .background(.clear)
       .onAppear {
         self.appDelegate.syncManager = self.syncManager
         self.requestNotificationPermission()
       }
+      
     }
     .environment(\.managedObjectContext, dataProvider.container.viewContext)
   }

@@ -9,6 +9,8 @@ import SwiftUI
 import SpriteKit
 
 struct GameNotesToolbar: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
+
   var gameScene: WatchGameScene
   @ObservedObject var cursorState: CursorState
 
@@ -94,10 +96,15 @@ struct GameNotesToolbar: View {
           .padding(.top, self.position == .bottom ? 6 : 0)
           .padding(.bottom, self.position == .top ? 6 : 0)
           .background(
-            Color.black
+            Color(self.currentColorScheme.ui.game.background)
+//              .brightness(-0.6)
               .opacity(0.8)
               .shadow(color: .black, radius: 10)
               .ignoresSafeArea()
+            
+//            Color.black
+//              .opacity(0.8)
+//              .ignoresSafeArea()
           )
           
           if (position == .top) {

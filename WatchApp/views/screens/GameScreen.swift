@@ -9,6 +9,8 @@ import SwiftUI
 import SpriteKit
 
 struct GameScreen: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
+
   @StateObject private var gameScene: WatchGameScene
   
   init() {
@@ -21,9 +23,10 @@ struct GameScreen: View {
   
   var body: some View {
     GeometryReader { geometry in
-      Color.clear.onAppear() {
+      Color(self.currentColorScheme.ui.game.background)
+        .onAppear() {
         self.gameScene.resize(size: geometry.size)
-      }
+      }.ignoresSafeArea()
 
       GameSceneView(
         gameScene: self.gameScene,

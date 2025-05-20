@@ -28,7 +28,7 @@ struct GameScreen: View {
   
   var body: some View {
     ZStack {
-      Color(currentColorScheme.ui.game.background)
+      Color(self.currentColorScheme.ui.game.background)
         .ignoresSafeArea()
 
       GeometryReader { geometry in

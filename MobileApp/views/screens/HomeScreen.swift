@@ -12,7 +12,6 @@ import UIColorHexSwift
 
 struct HomeScreen: View {
   @ObservedObject var styleManager: StyleManager
-  
   @ObservedObject var syncManager: SyncManager
 
   @State private var newGameConfirmationShowing: Bool = false

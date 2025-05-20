@@ -9,6 +9,8 @@ import SwiftUI
 import SpriteKit
 
 struct GameMenuToolbar: View {
+  private let currentColorScheme: ColorScheme = StyleManager.current.colorScheme
+
   @Environment(\.dismiss) var dismissScreen: DismissAction
   
   var gameScene: WatchGameScene
@@ -23,7 +25,7 @@ struct GameMenuToolbar: View {
         // Cancel currently active number cell
         GameToolbarItem(
           label: cursorState.mode == .note ? "Dismiss" : "Cancel",
-          tint: cursorState.mode == .note ? .yellow : .red,
+          tint: cursorState.mode == .note ? Color(self.currentColorScheme.board.cell.text.player.valid) : .red,
           symbolName: "xmark.circle.fill"
         ) {
           self.gameScene.toggleCellUnderCursor(
@@ -39,7 +41,7 @@ struct GameMenuToolbar: View {
         // Back button
         GameToolbarItem(
           label: "Back",
-          tint: .white,
+          tint: Color(self.currentColorScheme.board.cell.text.given),
           symbolName: "chevron.backward.circle.fill"
         ) {
           self.backConfirmationShowing = true

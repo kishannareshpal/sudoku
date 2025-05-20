@@ -10,6 +10,7 @@ import SpriteKit
 import UIColorHexSwift
 
 struct HomeScreen: View {
+  @ObservedObject var styleManager: StyleManager
   @ObservedObject var syncManager: SyncManager
   
   @State private var newGameConfirmationShowing: Bool = false
@@ -64,77 +65,105 @@ struct HomeScreen: View {
   }
   
   var body: some View {
-    VStack {
-      Spacer(minLength: 4)
+    ZStack {
+      LinearGradient(
+        gradient: Gradient(stops: [
+          .init(color: Color(UIColor("#C2C2C2")), location: 0.01),
+          .init(color: Color(self.styleManager.colorScheme.ui.game.background), location: 1.0)
+        ]),
+        startPoint: .topTrailing,
+        endPoint: .bottom
+      )
+      .ignoresSafeArea()
       
-      List {        
-        if loadingNewGameForDifficulty == nil {
-          ContinueGameSection(
-            syncManager: self.syncManager
-          )
-        }
-      
-        Section(
-          header: VStack(alignment: .leading) {
-            if activeSaveGame == nil {
-              Text("Welcome!").fontWeight(.bold)
-              Text("Start a new game:").font(.system(size: 12))
-            } else {
-              Text("Start a new game:")
-            }
-          }.padding(.vertical)
-        ) {
-          ForEach(Difficulty.allCases) { difficulty in
-            Button(
-              action: {
-                self.startNewGame(difficulty: difficulty)
-              },
-              label: {
-                NewGameButtonContent(
-                  difficulty: difficulty,
-                  loading:
-                    self.loadingNewGameForDifficulty == difficulty
-                )
-              }
-            )
-            .disabled(self.loadingNewGameForDifficulty != nil)
-          }.confirmationDialog(
-            Text("Start a new game?"),
-            isPresented: $newGameConfirmationShowing
-          ) {
-            Button("Cancel", role: .cancel) {
-              self.newGameConfirmationDifficulty = nil
-            }
-            Button("New game", role: .destructive) {
-              self.startNewGame(
-                difficulty: newGameConfirmationDifficulty!,
-                confirmed: true
-              )
-            }
-            
-          } message: {
-            Text(
-              "Starting a new game will erase your current progress. Proceed?"
+      VStack {
+        List {
+          if loadingNewGameForDifficulty == nil {
+            ContinueGameSection(
+              syncManager: self.syncManager
             )
           }
-        }
-        
-        Section() {
-          NavigationLink(destination: SettingsScreen()) {
-            Button(
-              action: {},
-              label: {
-                HStack {
-                  Image(systemName: "gear")
-                  Text("Settings")
-                }
+          
+          Section(
+            header: VStack(alignment: .leading) {
+              if activeSaveGame == nil {
+                Logo()
+                Text("Welcome!").fontWeight(.bold)
+                Text("Start a new game:").font(.system(size: 12))
+              } else {
+                Text("Start a new game:")
               }
+            }
+              .padding(.vertical)
+              .foregroundStyle(Color(self.styleManager.colorScheme.board.cell.text.given))
+          ) {
+            ForEach(Difficulty.allCases) { difficulty in
+              Button(
+                action: {
+                  self.startNewGame(difficulty: difficulty)
+                },
+                label: {
+                  NewGameButtonContent(
+                    difficulty: difficulty,
+                    loading:
+                      self.loadingNewGameForDifficulty == difficulty
+                  )
+                }
+              )
+              .listItemTint(
+                Color(
+                  self.styleManager.colorScheme.mode == .dark ? (
+                    self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+                  ) : (
+                    self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+                  )
+                )
+              )
+              .foregroundColor(.black)
+              .disabled(self.loadingNewGameForDifficulty != nil)
+            }.confirmationDialog(
+              Text("Start a new game?"),
+              isPresented: $newGameConfirmationShowing
+            ) {
+              Button("Cancel", role: .cancel) {
+                self.newGameConfirmationDifficulty = nil
+              }
+              Button("New game", role: .destructive) {
+                self.startNewGame(
+                  difficulty: newGameConfirmationDifficulty!,
+                  confirmed: true
+                )
+              }
+              
+            } message: {
+              Text(
+                "Starting a new game will erase your current progress. Proceed?"
+              )
+            }
+          }
+          
+          Section() {
+            NavigationLink(destination: SettingsScreen(styleManager: self.styleManager)) {
+              Button(
+                action: {},
+                label: {
+                  HStack {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                  }
+                }
+              )
+            }
+            .foregroundStyle(
+              Color(self.styleManager.colorScheme.board.cell.text.player.valid)
             )
           }
         }
       }
     }
-    .navigationTitle("MiniSudoku")
+//    .navigationTitle(
+//      
+//    )
     .overlay {
       // Note: This is a workaround, in order to support watchOS 8. Navigating in SwiftUI is cumbersome,
       // especially when you want to do so from an alert or a dialog. Because dialogs are rendered out of scope
