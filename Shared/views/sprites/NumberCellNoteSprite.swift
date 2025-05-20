@@ -88,23 +88,23 @@ class NumberCellNoteSprite: SKShapeNode {
   static func color(for value: Int, with colorScheme: ColorScheme) -> SKColor {
     switch value {
     case 1:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 2:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 3:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 4:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 5:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 6:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 7:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 8:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     case 9:
-      return colorScheme.board.cell.background.note.highlighted
+      return colorScheme.board.cell.text.given
     default:
       return .clear
     }

@@ -96,15 +96,10 @@ struct GameNotesToolbar: View {
           .padding(.top, self.position == .bottom ? 6 : 0)
           .padding(.bottom, self.position == .top ? 6 : 0)
           .background(
-            Color(self.currentColorScheme.ui.game.background)
-//              .brightness(-0.6)
+            Color(self.currentColorScheme.board.background)
               .opacity(0.8)
               .shadow(color: .black, radius: 10)
               .ignoresSafeArea()
-            
-//            Color.black
-//              .opacity(0.8)
-//              .ignoresSafeArea()
           )
           
           if (position == .top) {

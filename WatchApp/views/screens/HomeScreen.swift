@@ -66,15 +66,28 @@ struct HomeScreen: View {
   
   var body: some View {
     ZStack {
-      LinearGradient(
-        gradient: Gradient(stops: [
-          .init(color: Color(UIColor("#C2C2C2")), location: 0.01),
-          .init(color: Color(self.styleManager.colorScheme.ui.game.background), location: 1.0)
-        ]),
-        startPoint: .topTrailing,
-        endPoint: .bottom
-      )
-      .ignoresSafeArea()
+      if self.styleManager.colorScheme.mode == .light {
+        LinearGradient(
+          gradient: Gradient(stops: [
+            .init(color: Color(UIColor("#C2C2C2")), location: 0.01),
+            .init(color: Color(self.styleManager.colorScheme.ui.game.background), location: 1.0)
+          ]),
+          startPoint: .topTrailing,
+          endPoint: .bottom
+        )
+        .ignoresSafeArea()
+        
+      } else {
+        Color(
+          self.styleManager.colorScheme.mode == .dark ? (
+            self.styleManager.colorScheme.ui.game.control.numpad.button.selected.background
+          ) : (
+            self.styleManager.colorScheme.ui.game.background
+          )
+        )
+        .brightness(self.styleManager.colorScheme.mode == .dark ? -0.93 : 0)
+        .ignoresSafeArea()
+      }
       
       VStack {
         List {
@@ -119,7 +132,15 @@ struct HomeScreen: View {
                   )
                 )
               )
-              .foregroundColor(.black)
+              .foregroundColor(
+                Color(
+                  self.styleManager.colorScheme.mode == .dark ? (
+                    self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+                  ) : (
+                    self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+                  )
+                )
+              )
               .disabled(self.loadingNewGameForDifficulty != nil)
             }.confirmationDialog(
               Text("Start a new game?"),
