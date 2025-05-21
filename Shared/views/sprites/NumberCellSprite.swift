@@ -294,29 +294,35 @@ class NumberCellSprite: SKSpriteNode, ObservableObject {
     self.numberLabelNode.zPosition = ZIndex.Cell.numberText
     self.addChild(self.numberLabelNode)
     
-    // Create a path from the bottom-left to the top-right corner
-    let forwardDiagonalLinePath = CGMutablePath()
-    let invalidNumberShapePadding: CGFloat = 6.0
-    let bottomLeftPoint = CGPoint(
-      x: -self.size.width.half() + invalidNumberShapePadding,
-      y: -self.size.height.half() + invalidNumberShapePadding
-    )
-    let topRightPoint = CGPoint(
-      x: self.size.width.half() - invalidNumberShapePadding,
-      y: self.size.height.half() - invalidNumberShapePadding
-    )
-    forwardDiagonalLinePath.move(to: bottomLeftPoint)
-    forwardDiagonalLinePath.addLine(to: topRightPoint)
-
-    self.invalidNumberShapeNode.path = forwardDiagonalLinePath
-    self.invalidNumberShapeNode.isUserInteractionEnabled = false
-    self.invalidNumberShapeNode.lineWidth = 4.0
-    self.invalidNumberShapeNode.strokeColor = self.currentColorScheme.board.cell.text.player.invalid
-    self.invalidNumberShapeNode.alpha = 0.3
-    self.invalidNumberShapeNode.zPosition = ZIndex.Cell.invalidNumberShape
-    self.invalidNumberShapeNode.isHidden = true
-    self.invalidNumberShapeNode.isAntialiased = true
-    self.addChild(invalidNumberShapeNode)
+    if (currentDevice != Device.appleWatch) {
+      // On Apple Watch the diagonal line looked too small hindering the actual number.
+      // - So we're explicitly disabling it on those devices.
+      
+      // Create a path from the bottom-left to the top-right corner
+      let forwardDiagonalLinePath = CGMutablePath()
+      let invalidNumberShapePadding: CGFloat = 6.0
+      let bottomLeftPoint = CGPoint(
+        x: -self.size.width.half() + invalidNumberShapePadding,
+        y: -self.size.height.half() + invalidNumberShapePadding
+      )
+      let topRightPoint = CGPoint(
+        x: self.size.width.half() - invalidNumberShapePadding,
+        y: self.size.height.half() - invalidNumberShapePadding
+      )
+      forwardDiagonalLinePath.move(to: bottomLeftPoint)
+      forwardDiagonalLinePath.addLine(to: topRightPoint)
+      
+      self.invalidNumberShapeNode.path = forwardDiagonalLinePath
+      self.invalidNumberShapeNode.isUserInteractionEnabled = false
+      self.invalidNumberShapeNode.lineWidth = 4.0
+      self.invalidNumberShapeNode.strokeColor = self.currentColorScheme.board.cell.text.player.invalid
+      self.invalidNumberShapeNode.alpha = 0.3
+      self.invalidNumberShapeNode.zPosition = ZIndex.Cell.invalidNumberShape
+      self.invalidNumberShapeNode.isHidden = true
+      self.invalidNumberShapeNode.isAntialiased = true
+      self.addChild(invalidNumberShapeNode)
+    }
+    
     
     // Draw the notes holding node
     self.notesNode.zPosition = ZIndex.Cell.noteText
