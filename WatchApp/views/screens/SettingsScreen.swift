@@ -77,7 +77,8 @@ struct SettingsScreen: View {
         Text("sudoku@kishanjadav.com").font(.system(size: 11))
       }.listRowBackground(Color.clear)
       
-    }.navigationTitle {
+    }
+    .navigationTitle {
       HStack {
         Image(systemName: "gear")
         Text("Settings")

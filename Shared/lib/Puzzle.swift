@@ -167,7 +167,7 @@ public class Puzzle: ObservableObject {
     at locationNotation: String,
     before index: Int
   ) -> MoveEntry? {
-    return self.moves.first {
+    return self.moves.last {
       ($0.index < index) && ($0.locationNotation == locationNotation)
     }
   }
