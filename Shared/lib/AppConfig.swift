@@ -8,13 +8,14 @@
 import Foundation
 
 public class AppConfig {
-  
   static func getHighlightOrientation() -> LocationIndexOrientation {
+    UserDefaults.standard.register(defaults: [UserDefaultKey.highlightOrientation.rawValue: LocationIndexOrientation.topToBottom.rawValue])
+
     return LocationIndexOrientation(
       rawValue: UserDefaults.standard.string(
-        forKey: UserDefaultKey.hapticFeedbackEnabled.rawValue
-      ) ?? LocationIndexOrientation.topToBottom.rawValue
-    ) ?? .topToBottom
+        forKey: UserDefaultKey.highlightOrientation.rawValue
+      )!
+    )!
   }
   
   static func preferredColorSchemeName() -> ColorSchemeName {
