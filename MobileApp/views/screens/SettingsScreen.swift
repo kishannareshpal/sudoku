@@ -55,7 +55,9 @@ struct SettingsScreen: View {
           }
         }
         
-        Section {
+        Section(
+          header: Text("Gameplay")
+        ) {
           Toggle("Show timer", isOn: $showTimer)
           
           Toggle("Start in notes mode", isOn: $startGameInNotesMode)
@@ -71,9 +73,25 @@ struct SettingsScreen: View {
         
         Section {
           VStack(alignment: .leading, spacing: 8) {
-            Toggle("Use grid styled number pad", isOn: $useGridNumberPadStyle)
+            HStack {
+              Text("Number pad style")
+              Spacer()
+              Picker("Number pad style", selection: Binding(
+                get: { useGridNumberPadStyle ? "3x3" : "5x2" },
+                set: { newValue in
+                  useGridNumberPadStyle = (newValue == "3x3")
+                }
+              )) {
+                Text("3x3").tag("3x3")
+                Text("5x2").tag("5x2")
+              }
+              .pickerStyle(SegmentedPickerStyle())
+              .scaledToFit()
+              .frame(minWidth: 0)
+            }
+
             Text(
-              "If enabled, the number pad is arranged in a 3x3 layout. If disabled, it uses a 5x2 layout ideal for smaller devices."
+              "Tip: Prefer 5x2 on devices with smaller screens."
             ).font(.footnote)
           }
         }
