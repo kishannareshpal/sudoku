@@ -93,7 +93,6 @@ public class Puzzle: ObservableObject {
     values.forEach { value in
       self.toggleNote(value: value, at: location, forceAdd: forceAdd)
     }
-    
   }
   
   func toggleNote(value: Int, at location: Location, forceAdd: Bool? = nil) -> Void {

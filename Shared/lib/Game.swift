@@ -243,7 +243,7 @@ class Game: ObservableObject {
     
     let encodedClearedNumber: String = CellValueNotationHelper.encodeNumber(activatedNumberCell.value)
     let encodedClearedNotes: String = CellValueNotationHelper.encodeNotes(activatedNumberCell.notes.map(\.value))
-    
+
     let hasClearedNumber = self.clearActivatedNumberCellValue(recordMove: false)
     let hasClearedNotes = self.clearActivatedNumberCellNotes(recordMove: false)
     
@@ -374,7 +374,7 @@ class Game: ObservableObject {
     return true
   }
   
-  func clearAllPeerCellsNotes(with value: Int) -> Void {
+  func clearAllPeerCellsNotes(with value: Int, recordMove: Bool) -> Void {
     let cursorValue = numberCellUnderCursor.value
     let cursorLocation = numberCellUnderCursor.location
     
@@ -382,14 +382,25 @@ class Game: ObservableObject {
       for: (cursorValue, cursorLocation),
       allowSameValueAnywherePeers: false,
       peerFoundCallback: { (peerNumberCell, _) in
-        self.puzzle
-          .toggleNote(
+        if self.puzzle.isNoteToggled(value: cursorValue, at: peerNumberCell.location) {
+          self.puzzle
+            .toggleNote(
+              value: cursorValue,
+              at: peerNumberCell.location,
+              forceAdd: false
+            )
+          
+          peerNumberCell.toggleNote(
             value: cursorValue,
-            at: peerNumberCell.location,
-            forceAdd: false
+            forceVisible: false
           )
-
-        peerNumberCell.toggleNote(value: cursorValue, forceVisible: false)
+          
+          self.puzzle.recordMove(
+            locationNotation: peerNumberCell.location.notation,
+            type: .removeNotes,
+            value: CellValueNotationHelper.encodeNote(cursorValue)
+          )
+        }
       }
     );
   }
@@ -413,19 +424,34 @@ class Game: ObservableObject {
     
     if moveEntry.type == MoveType.setNumber {
       // Unset number
-      // Lookup the history for the last move made on this location, if any
+      // Lookup the history for the last move made at this location, if any
       let lastMoveOnThisCell = self.puzzle.findLastMoveMade(
         at: moveEntry.locationNotation,
         before: moveEntry.index
       )
       
       if let lastMoveOnThisCell {
-        print("Last move on this cell: ", lastMoveOnThisCell)
-        self.handleUndoneMoveEntry(lastMoveOnThisCell)
+        if lastMoveOnThisCell.type == .setNumber {
+          self.changeActivatedNumberCellValue(
+            to: Int(lastMoveOnThisCell.value)!,
+            recordMove: false,
+            automatedMove: true
+          )
+        } else if moveEntry.type == MoveType.removeNotes {
+          // Add notes
+          let noteValues = CellValueNotationHelper.decodeNotes(lastMoveOnThisCell.value)
+          self.toggleActivatedNumberCellNoteValues(
+            with: noteValues,
+            forceVisible: true,
+            recordMove: false,
+          )
+        } else {
+          self.handleUndoneMoveEntry(lastMoveOnThisCell)
+        }
 
       } else {
         // No other moves made on this cell, so it must be 0 / empty
-        self.changeActivatedNumberCellValue(to: 0)
+        self.changeActivatedNumberCellValue(to: 0, recordMove: false)
       }
 
     } else if moveEntry.type == MoveType.removeNumber {
@@ -477,24 +503,30 @@ class Game: ObservableObject {
       
       if currentMoveEntry.type == MoveType.setNumber {
         // Set number
-        self.changeActivatedNumberCellValue(to: Int(currentMoveEntry.value)!, automatedMove: true)
+        self.changeActivatedNumberCellValue(
+          to: Int(currentMoveEntry.value)!,
+          recordMove: false,
+          automatedMove: true
+        )
         
       } else if currentMoveEntry.type == MoveType.removeNumber {
         // Unset number
-        self.changeActivatedNumberCellValue(to: 0)
+        self.changeActivatedNumberCellValue(to: 0, recordMove: false)
         
       } else if currentMoveEntry.type == MoveType.setNote {
         // Set note
         let noteValues = CellValueNotationHelper.decodeNotes(currentMoveEntry.value)
         self.toggleActivatedNumberCellNoteValues(
-          with: noteValues
+          with: noteValues,
+          recordMove: false
         )
 
       } else if currentMoveEntry.type == MoveType.removeNotes {
         // Unset note
         let noteValues = CellValueNotationHelper.decodeNotes(currentMoveEntry.value)
         self.toggleActivatedNumberCellNoteValues(
-          with: noteValues
+          with: noteValues,
+          recordMove: false
         )
       }
     }
@@ -710,7 +742,7 @@ class Game: ObservableObject {
       self.clearActivatedNumberCellNotes(recordMove: true)
       
       if AppConfig.shouldAutoRemoveNotes() {
-        self.clearAllPeerCellsNotes(with: value)
+        self.clearAllPeerCellsNotes(with: value, recordMove: true)
       }
       
       if !enteredSameValue && !automatedMove {
@@ -761,6 +793,8 @@ class Game: ObservableObject {
     let value = activatedNumberCell.noteValueToBeCommitted
     let location = activatedNumberCell.location
     
+    let willRemoveNote = self.puzzle.isNoteToggled(value: value, at: location)
+    
     activatedNumberCell.toggleNote(value: value)
     self.puzzle.toggleNote(value: value, at: location)
     
@@ -768,7 +802,7 @@ class Game: ObservableObject {
     if recordMove {
       self.puzzle.recordMove(
         locationNotation: location.notation,
-        type: value.isEmpty ? .removeNotes : .setNote,
+        type: willRemoveNote ? .removeNotes : .setNote,
         value: CellValueNotationHelper.encodeNumber(value)
       )
     }

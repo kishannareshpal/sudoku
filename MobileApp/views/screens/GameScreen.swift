@@ -68,9 +68,11 @@ struct GameScreen: View {
               NumbersPad(gameScene: self.gameScene)
               
               NotesModeToggleButton(gameScene: self.gameScene)
+              
             }
             .frame(maxWidth: 400)
           }.padding()
+
         }
       }
       .overlay {
