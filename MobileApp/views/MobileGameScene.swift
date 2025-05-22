@@ -101,7 +101,28 @@ class MobileGameScene: GameScene {
         || keyPress.key == .downArrow
         || keyPress.key == .leftArrow
         || keyPress.key == .rightArrow
+        || keyPress.characters == "w"
+        || keyPress.characters == "a"
+        || keyPress.characters == "s"
+        || keyPress.characters == "d"
     ) {
+      switch keyPress.characters {
+      case "w":
+        self.game.cursorLocation.moveUp(wrap: true)
+        break
+      case "a":
+        self.game.cursorLocation.moveLeft(wrap: true)
+        break
+      case "s":
+        self.game.cursorLocation.moveDown(wrap: true)
+        break
+      case "d":
+        self.game.cursorLocation.moveRight(wrap: true)
+        break
+      default:
+        break
+      }
+      
       switch keyPress.key {
       case .downArrow:
         self.game.cursorLocation.moveDown(wrap: true)
@@ -115,9 +136,8 @@ class MobileGameScene: GameScene {
       case .leftArrow:
         self.game.cursorLocation.moveLeft(wrap: true)
         break
-        
       default:
-        return .ignored
+        break
       }
       
       self.game.moveCursor(
