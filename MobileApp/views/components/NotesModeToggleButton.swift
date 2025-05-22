@@ -48,6 +48,21 @@ struct NotesModeToggleButtonContent: View {
     )
     .scaledToFit()
     .frame(minWidth: 0)
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .focusable()
+          .onKeyPress(keys: [.space, .return], phases: .down, action: { keyPress in
+            withAnimation(.smooth) {
+              self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
+            }
+            return .handled
+          })
+          .focusEffectDisabled(!self.isNotesModeToggleable)
+      } else {
+        view
+      }
+    }
   }
 }
 

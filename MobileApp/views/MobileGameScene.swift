@@ -21,7 +21,7 @@ class MobileGameScene: GameScene {
   
   override init(size: CGSize) {
     super.init(size: size)
-    
+
     self.cellSelectionVibrator.prepare()
   }
   
@@ -45,51 +45,34 @@ class MobileGameScene: GameScene {
     guard let touch = touches.first else { return }
     let touchLocation = touch.location(in: self)
     
-    // Retrieve all nodes at the touch location, and iterate through each one that is a cell node
-    let nodesAtTouchLocation = self.nodes(at: touchLocation)
-    for node in nodesAtTouchLocation {
-      guard let nodeName = node.name else { continue }
-      guard Location.validateNotationFormat(nodeName) else { continue }
-      
-      // Cell nodes have their names as their location in notation format
-      let newCursorLocation = Location(notation: nodeName)
-      guard newCursorLocation != self.lastCursorLocation else {
-        continue
-      }
-      
-      self.game.moveCursor(
-        to: newCursorLocation,
-        activateCellImmediately: true
-      )
-      
-      let hasCursorLocationChanged = newCursorLocation != self.lastCursorLocation
-      if hasCursorLocationChanged {
-        self.lastCursorLocation = newCursorLocation
-        self.onCursorLocationChanged()
-      }
-    }
+    self.registerCursorChange(whenTouchedOrHoveredAt: touchLocation)
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard let touch = touches.first else { return }
     let touchLocation = touch.location(in: self)
     
-    // Retrieve all nodes at the touch location
-    let nodesAtTouchLocation = self.nodes(at: touchLocation)
     
-    // Print the names of the nodes, if they have names
-    for node in nodesAtTouchLocation {
-      guard let nodeName = node.name else { continue }
-      guard Location.validateNotationFormat(nodeName) else { continue }
-      
-      // Cell nodes have their names as their location in notation format
-      let newCursorLocation = Location(notation: nodeName)
-      self.game.moveCursor(
-        to: newCursorLocation,
-        activateCellImmediately: true
+    self.registerCursorChange(
+      whenTouchedOrHoveredAt: touchLocation,
+      forceLocationChanged: true
+    )
+  }
+  
+  /// To use this, setup .onContinuousHover(coordinateSpace: .local, perform: self.gameScene.onHovered) to the SpriteView element in GameSceneView.
+  @available(iOS 16.0, *)
+  func onHovered(phase: HoverPhase) {
+    if self.isPaused { return }
+    guard view != nil else { return }
+    
+    switch phase {
+    case .active(let rawLocation):
+      let hoveredLocation = convertPoint(fromView: rawLocation)
+
+      self.registerCursorChange(
+        whenTouchedOrHoveredAt: hoveredLocation
       )
-      
-      self.onCursorLocationChanged()
+    case .ended: break
     }
   }
   
@@ -106,6 +89,44 @@ class MobileGameScene: GameScene {
       return .handled
     }
     
+    if keyPress.key == .space {
+      withAnimation(.smooth) {
+        self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
+      }
+      return .handled
+    }
+    
+    if (
+      keyPress.key == .upArrow
+        || keyPress.key == .downArrow
+        || keyPress.key == .leftArrow
+        || keyPress.key == .rightArrow
+    ) {
+      switch keyPress.key {
+      case .downArrow:
+        self.game.cursorLocation.moveDown(wrap: true)
+        break
+      case .upArrow:
+        self.game.cursorLocation.moveUp(wrap: true)
+        break
+      case .rightArrow:
+        self.game.cursorLocation.moveRight(wrap: true)
+        break
+      case .leftArrow:
+        self.game.cursorLocation.moveLeft(wrap: true)
+        break
+        
+      default:
+        return .ignored
+      }
+      
+      self.game.moveCursor(
+        to: self.game.cursorLocation,
+        activateCellImmediately: true
+      )
+      return .handled
+    }
+    
     return .ignored
   }
   
@@ -114,6 +135,42 @@ class MobileGameScene: GameScene {
       self.toggleActivatedNumberCellNoteValue(with: number)
     } else {
       self.changeActivatedNumberCellValue(to: number)
+    }
+  }
+  
+  private func registerCursorChange(
+    whenTouchedOrHoveredAt location: CGPoint,
+    forceLocationChanged: Bool? = nil
+  ) {
+    // Retrieve all nodes at the location, and iterate through each one that is a cell node
+    let nodesAtTouchLocation = self.nodes(at: location)
+    for node in nodesAtTouchLocation {
+      guard let nodeName = node.name else { continue }
+      guard Location.validateNotationFormat(nodeName) else { continue }
+      
+      // Cell nodes have their names as their location in notation format
+      let newCursorLocation = Location(notation: nodeName)
+      guard newCursorLocation != self.lastCursorLocation else {
+        continue
+      }
+      
+      self.game.moveCursor(
+        to: newCursorLocation,
+        activateCellImmediately: true
+      )
+
+      if (forceLocationChanged == nil) {
+        // Determine change automatically
+        let hasCursorLocationChanged = newCursorLocation != self.lastCursorLocation
+        if hasCursorLocationChanged {
+          self.lastCursorLocation = newCursorLocation
+          self.onCursorLocationChanged()
+        }
+        
+      } else if (forceLocationChanged == true) {
+        // Change should be detected forcefully
+        self.onCursorLocationChanged()
+      }
     }
   }
   

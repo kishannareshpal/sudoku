@@ -131,6 +131,15 @@ struct HomeScreen: View {
                   )
                 )
                 .frame(maxWidth: 400)
+                .hoverEffect()
+                .apply { view in
+                  if #available(iOS 17.0, *) {
+                    view
+                      .hoverEffectDisabled(self.loadingNewGameForDifficulty != nil)
+                  } else {
+                    view
+                  }
+                }
               }
               .confirmationDialog(
                 "Start a new game?",
@@ -167,6 +176,7 @@ struct HomeScreen: View {
           .foregroundStyle(
             Color(self.styleManager.colorScheme.board.cell.text.player.valid)
           )
+          .hoverEffect()
         }
         .padding()
         .padding(.vertical, 32)

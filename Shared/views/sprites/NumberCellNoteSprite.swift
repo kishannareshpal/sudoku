@@ -167,7 +167,7 @@ class NumberCellNoteSprite: SKShapeNode {
     guard !self.highlighted else { return }
     
     self.labelNode.fontColor = self.currentColorScheme.board.cell.text.note.highlighted
-    print("highlighted: \(self.currentColorScheme.board.cell.text.note.highlighted)")
+//    print("highlighted: \(self.currentColorScheme.board.cell.text.note.highlighted)")
     
     self.highlighted = true;
     self.labelBackgroundNode.isHidden = false

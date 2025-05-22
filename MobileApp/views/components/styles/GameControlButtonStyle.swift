@@ -20,5 +20,14 @@ struct GameControlButtonStyle: ButtonStyle {
       .clipShape(.capsule)
       .scaleEffect(configuration.isPressed ? 0.9 : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+      .hoverEffect()
+      .apply { view in
+        if #available(iOS 17.0, *) {
+          view
+            .hoverEffectDisabled(!self.isEnabled)
+        } else {
+          view
+        }
+      }
   }
 }

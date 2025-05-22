@@ -139,6 +139,8 @@ public class GameGraphics {
       height: sizeThatFits - padding
     )
     
+    print(boardSize)
+    
     return boardSize
   }
   

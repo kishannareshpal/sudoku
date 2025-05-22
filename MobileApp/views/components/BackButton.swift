@@ -25,5 +25,13 @@ struct BackButton: View {
           .foregroundStyle(Color(currentColorScheme.ui.game.nav.text))
       }
     )
+    .hoverEffect()
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view.focusable()
+      } else {
+        view
+      }
+    }
   }
 }

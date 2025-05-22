@@ -46,6 +46,15 @@ private struct HintButtonContent: View {
     .disabled(!isHintable)
     .buttonStyle(GameControlButtonStyle(isEnabled: self.isHintable))
     .onAppear(perform: self.vibrator.prepare)
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .focusable()
+          .focusEffectDisabled(!self.isHintable)
+      } else {
+        view
+      }
+    }
   }
 }
 

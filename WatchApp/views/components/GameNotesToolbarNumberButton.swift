@@ -26,7 +26,7 @@ struct GameNotesToolbarNumberButton: View {
             .foregroundStyle(
               self.selected
                 ? Color(self.currentColorScheme.board.cell.text.given)
-                : Color(self.currentColorScheme.board.cell.text.given)              .opacity(0.3)
+                : Color(self.currentColorScheme.board.cell.text.given).opacity(0.3)
             )
           
           Text(number.toString())

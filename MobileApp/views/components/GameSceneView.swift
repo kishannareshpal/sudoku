@@ -44,6 +44,7 @@ private struct GameSceneViewContent: View {
           if #available(iOS 17.0, *) {
             view
               .focusable()
+              .focusEffectDisabled(self.gameState.isGamePaused)
               .onKeyPress(phases: .down, action: self.gameScene.keyPressed)
           } else {
             view

@@ -46,5 +46,14 @@ private struct UndoButtonContent: View {
     )
     .disabled(!self.canUndo)
     .buttonStyle(GameControlButtonStyle(isEnabled: self.canUndo))
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .focusable()
+          .focusEffectDisabled(!self.canUndo)
+      } else {
+        view
+      }
+    }
   }
 }

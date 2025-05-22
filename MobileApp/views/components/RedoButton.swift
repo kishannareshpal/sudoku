@@ -46,5 +46,14 @@ private struct RedoButtonContent: View {
     )
     .disabled(!self.canRedo)
     .buttonStyle(GameControlButtonStyle(isEnabled: self.canRedo))
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .focusable()
+          .focusEffectDisabled(!self.canRedo)
+      } else {
+        view
+      }
+    }
   }
 }

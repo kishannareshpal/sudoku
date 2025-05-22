@@ -322,8 +322,7 @@ class NumberCellSprite: SKSpriteNode, ObservableObject {
       self.invalidNumberShapeNode.isAntialiased = true
       self.addChild(invalidNumberShapeNode)
     }
-    
-    
+
     // Draw the notes holding node
     self.notesNode.zPosition = ZIndex.Cell.noteText
     self.addChild(self.notesNode)

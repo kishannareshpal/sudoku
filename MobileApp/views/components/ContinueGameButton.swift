@@ -167,6 +167,15 @@ struct ContinueGameButton: View {
       )
     )
     .onAppear(perform: vibrator.prepare)
+    .hoverEffect(.highlight)
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .hoverEffectDisabled(!self.isEnabled)
+      } else {
+        view
+      }
+    }
   }
 }
 
@@ -236,5 +245,14 @@ struct ResolveGameConflictButtonStyle: ButtonStyle {
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
       .disabled(!isEnabled)
       .opacity(isEnabled ? 1 : 0.6)
+      .hoverEffect(.lift)
+      .apply { view in
+        if #available(iOS 17.0, *) {
+          view
+            .hoverEffectDisabled(!self.isEnabled)
+        } else {
+          view
+        }
+      }
   }
 }

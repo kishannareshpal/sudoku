@@ -116,6 +116,10 @@ public struct Location: Equatable {
     )
   }
   
+  func clone() -> Location {
+    return Location(index: self.index, orientation: self.indexOrientation)
+  }
+  
   mutating func moveToNextIndex(wrap: Bool = true) -> Void {
     let newIndex = self.index.advanced(by: 1)
     
@@ -169,6 +173,66 @@ public struct Location: Equatable {
       index: self.index,
       forOrientation: self.indexOrientation
     )
+  }
+  
+  mutating func moveDown(wrap: Bool = true) -> Void {
+    let nextRowIndex = self.row + 1
+    if (wrap) {
+      // If reached the end, wrap around and move to the beginning and continue from there:
+      self.row = nextRowIndex % Board.rowsCount
+
+    } else {
+      // If not wrapping, ensure you're not moving out of bounds:
+      let canMove = nextRowIndex <= (Board.rowsCount - 1)
+      if (canMove) {
+        self.row = nextRowIndex
+      }
+    }
+  }
+  
+  mutating func moveUp(wrap: Bool = true) -> Void {
+    let nextRowIndex = self.row - 1
+    if (wrap) {
+      // If reached the end, wrap around and move to the beginning and continue from there:
+      self.row = nextRowIndex % Board.rowsCount
+
+    } else {
+      // If not wrapping, ensure you're not moving out of bounds:
+      let canMove = nextRowIndex >= 0
+      if (canMove) {
+        self.row = nextRowIndex
+      }
+    }
+  }
+  
+  mutating func moveRight(wrap: Bool = true) -> Void {
+    let nextColIndex = self.col + 1
+    if (wrap) {
+      // If reached the end, wrap around and move to the beginning and continue from there:
+      self.col = nextColIndex % Board.colsCount
+
+    } else {
+      // If not wrapping, ensure you're not moving out of bounds:
+      let canMove = nextColIndex <= (Board.colsCount - 1)
+      if (canMove) {
+        self.col = nextColIndex
+      }
+    }
+  }
+  
+  mutating func moveLeft(wrap: Bool = true) -> Void {
+    let nextColIndex = self.col - 1
+    if (wrap) {
+      // If reached the end, wrap around and move to the beginning and continue from there:
+      self.col = nextColIndex % Board.colsCount
+
+    } else {
+      // If not wrapping, ensure you're not moving out of bounds:
+      let canMove = nextColIndex >= 0
+      if (canMove) {
+        self.col = nextColIndex
+      }
+    }
   }
   
   mutating func changeOrientation(to orientation: LocationIndexOrientation) -> Void {

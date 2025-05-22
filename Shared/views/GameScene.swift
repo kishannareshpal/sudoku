@@ -52,7 +52,7 @@ class GameScene: SKScene, ObservableObject {
       self.gameDidOver()
     }
   }
-  
+
   func resize(size: CGSize) {
     // Cleanup previous elements from the scene
     self.removeAllActions()

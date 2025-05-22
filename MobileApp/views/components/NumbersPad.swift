@@ -164,9 +164,9 @@ private struct NumberPadButton: View {
   var cursorStateMode: CursorMode
   var game: Game
   @ObservedObject var puzzle: Puzzle
-
+  
   var onPress: () -> Void
-
+  
   var isNumberUsedUp: Bool {
     (self.puzzle.remainingNumbersWithCount[number] ?? 0) <= 0
   }
@@ -179,15 +179,26 @@ private struct NumberPadButton: View {
     return self.puzzle.isNoteToggled(value: self.number, at: self.game.cursorLocation)
   }
   
+  var isDisabled: Bool { !self.isPressable || self.isNumberUsedUp }
+  
   var body: some View {
     Button("\(self.number)", action: self.onPress)
-      .disabled(!self.isPressable || self.isNumberUsedUp)
+      .disabled(self.isDisabled)
       .buttonStyle(
         NumbersPadButtonStyle(
-          isEnabled: self.isPressable && !self.isNumberUsedUp,
+          isEnabled: !isDisabled,
           isChecked: self.isNoteForNumberToggled
         )
       )
+      .hoverEffect(.lift)
+      .apply { view in
+        if #available(iOS 17.0, *) {
+          view
+            .hoverEffectDisabled(self.isDisabled)
+        } else {
+          view
+        }
+      }
   }
 }
 

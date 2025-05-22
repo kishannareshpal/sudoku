@@ -61,6 +61,15 @@ private struct EraseButtonContent: View {
     .disabled(!self.isActiveNumberCellEraseable)
     .buttonStyle(GameControlButtonStyle(isEnabled: self.isActiveNumberCellEraseable))
     .onAppear(perform: self.eraseKeyVibrator.prepare)
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view
+          .focusable()
+          .focusEffectDisabled(!self.isActiveNumberCellEraseable)
+      } else {
+        view
+      }
+    }
   }
 }
 

@@ -32,22 +32,22 @@ private struct PauseGameButtonContent: View {
       )
       .font(.system(size: 24))
       .foregroundStyle(
-        Color(currentColorScheme.ui.game.nav.text)
+        Color(
+          self.gameState.isGamePaused
+          ? currentColorScheme.board.cell.text.player.valid
+          : currentColorScheme.ui.game.nav.text
+        )
       )
-      .apply { view in
-        if #available(iOS 17.0, *) {
-          view
-            .symbolEffect(
-              .bounce.wholeSymbol,
-              value: self.gameState.isGamePaused
-            )
-        } else {
-          view
-        }
-      }
     }
     .onAppear() {
       vibrator.prepare()
+    }
+    .apply { view in
+      if #available(iOS 17.0, *) {
+        view.focusable()
+      } else {
+        view
+      }
     }
   }
 }
