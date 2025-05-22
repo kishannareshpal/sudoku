@@ -79,8 +79,17 @@ class MobileGameScene: GameScene {
   @available(iOS 17.0, *)
   func keyPressed(_ keyPress: KeyPress) -> KeyPress.Result {
     if self.isNumberKey(keyPress.characters) {
+      
       let number = Int(keyPress.characters)!
-      self.changeOrToggleActivatedNumberCellValueOrNote(with: number)
+
+      if keyPress.modifiers.contains(.shift) && self.cursorState.mode == .number {
+        // If in numbers mode, and the user is holding the Shift key, insert a note instead.
+        self.toggleActivatedNumberCellNoteValue(with: number)
+      } else {
+        // Otherwise, insert a note or value based on whatever mode the user is currently on
+        self.changeOrToggleActivatedNumberCellValueOrNote(with: number)
+      }
+      
       return .handled
     }
     
