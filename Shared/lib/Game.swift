@@ -761,7 +761,7 @@ class Game: ObservableObject {
     }
 
     // Record the move, if allowed
-    if recordMove || !enteredSameValue {
+    if recordMove && !enteredSameValue {
       self.puzzle.recordMove(
         locationNotation: location.notation,
         type: value.isEmpty ? .removeNumber : .setNumber,
