@@ -95,30 +95,7 @@ struct ContinueGameButton: View {
   var difficulty: Difficulty
   @ObservedObject var activeLocalSaveGame: SaveGameEntity
   
-  @State private var restartGameConfirmationShowing: Bool = false
-  @State private var restartGameConfirmed: Bool = false
-  
   var isEnabled: Bool = true
-  
-  private func restartGame(confirmed: Bool = false) -> Void {
-    // If not confirmed, ask for confirmation
-    guard confirmed else {
-      self.restartGameConfirmationShowing = true
-      return
-    }
-    
-    // Reset the current game
-    DispatchQueue.global(qos: .userInteractive).async {
-      try! DataManager.default.saveGamesService.resetSaveGame(activeLocalSaveGame.objectID)
-    }
-    
-    // Update the UI on the main thread
-    DispatchQueue.main.async {
-      withAnimation(.interpolatingSpring) {
-        self.restartGameConfirmed = true
-      }
-    }
-  }
   
   var body: some View {
     NavigationLink(
@@ -173,36 +150,5 @@ struct ContinueGameButton: View {
         currentColorScheme.board.cell.text.player.valid
       ).opacity(0.3)
     )
-    .onLongPressGesture(perform: {
-      self.restartGame(confirmed: false)
-    })
-    .overlay {
-      // Note: This is a workaround, in order to support watchOS 8. Navigating in SwiftUI is cumbersome,
-      // especially when you want to do so from an alert or a dialog. Because dialogs are rendered out of scope
-      // of the navigation container, having a "NavigationLink" button as an action within a dialog is not supported.
-      // There's no static API to use to navigate other than using these Navigation* views.
-      // - For that reason, here we're taking advantage of using the isActive: property to programmatically navigate to the view.
-      // - When we navigate back, the isActive: bound value is toggled back to false! So this works out great.
-      // - We are hiding this view as we're only using it for navigating.
-      NavigationLink(
-        destination: GameScreen(),
-        isActive: $restartGameConfirmed
-      ) {}.hidden()
-    }
-    .confirmationDialog(
-      "Restart your current game?",
-      isPresented: $restartGameConfirmationShowing,
-      titleVisibility: .visible
-    ) {
-      Button("Cancel", role: .cancel) {}
-      Button("Restart", role: .destructive) {
-        self.restartGame(confirmed: true)
-      }
-
-    } message: {
-      Text(
-        "Restarting will erase your previous progress. Proceed?"
-      )
-    }
   }
 }
