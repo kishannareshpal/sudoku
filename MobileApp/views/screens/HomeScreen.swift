@@ -130,7 +130,6 @@ struct HomeScreen: View {
                     isEnabled: self.loadingNewGameForDifficulty == nil
                   )
                 )
-                .frame(maxWidth: 400)
                 .hoverEffect()
                 .apply { view in
                   if #available(iOS 17.0, *) {
@@ -162,7 +161,9 @@ struct HomeScreen: View {
                 )
               }
             }
+            .frame(maxWidth: 400)
           }
+          .frame(minWidth: 0, maxWidth: .infinity)
           
           NavigationLink(
             destination:
@@ -180,6 +181,13 @@ struct HomeScreen: View {
         }
         .padding()
         .padding(.vertical, 32)
+      }
+      .apply { view in
+        if #available(iOS 16.0, *) {
+          view.scrollIndicators(.hidden)
+        } else {
+          view
+        }
       }
     }
     .overlay {

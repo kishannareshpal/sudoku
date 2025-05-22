@@ -24,7 +24,7 @@ struct GameSceneView: View {
 
 private struct GameSceneViewContent: View {
   private let currentColorScheme = StyleManager.current.colorScheme
-  
+
   var gameScene: MobileGameScene
   @ObservedObject var gameState: GameState
 
