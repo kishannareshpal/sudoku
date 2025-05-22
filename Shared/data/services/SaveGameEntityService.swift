@@ -243,6 +243,27 @@ class SaveGameEntityService {
     
     return newGameEntity
   }
+
+  func resetSaveGame(
+    _ saveGameId: EntityID,
+  ) throws -> Void {
+    let serializedEmptyPlayerNotation = BoardNotationHelper.emptyPlainStringNotation()
+    let serializedEmptyNotesNotation = BoardNotationHelper.emptyPlainNoteStringNotation()
+    let serializedEmptyMovesNotation = BoardNotationHelper.emptyPlainMoveStringNotation()
+
+    try self.repository.update(
+      saveGameId,
+      playerNotation: serializedEmptyPlayerNotation,
+      notesNotation: serializedEmptyNotesNotation,
+      movesNotation: serializedEmptyMovesNotation,
+      score: 0,
+      duration: 0,
+      moveIndex: 0
+    )
+    
+    // Sync with the cloud asynchronously
+    self.debounceSyncAsync()
+  }
   
   func autoSave(
     _ saveGameId: EntityID,
