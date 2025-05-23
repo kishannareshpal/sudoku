@@ -73,8 +73,15 @@ struct HomeScreen: View {
           self.styleManager.colorScheme.ui.game.background
         )
       )
-        .brightness(self.styleManager.colorScheme.mode == .dark ? -0.93 : 0)
-        .ignoresSafeArea()
+      .opacity(self.styleManager.colorScheme.mode == .dark ? 0.1 : 1)
+      .apply({ view in
+        if self.styleManager.colorScheme.mode == .dark {
+          view.background(.black)
+        } else {
+          view
+        }
+      })
+      .ignoresSafeArea()
 
       ScrollView {
         VStack(spacing: 48) {

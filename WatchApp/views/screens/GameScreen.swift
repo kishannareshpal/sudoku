@@ -43,7 +43,14 @@ struct GameScreen: View {
               self.currentColorScheme.ui.game.background
             )
           )
-          .brightness(self.currentColorScheme.mode == .dark ? -0.93 : 0)
+          .opacity(self.currentColorScheme.mode == .dark ? 0.1 : 1)
+          .apply({ view in
+            if self.currentColorScheme.mode == .dark {
+              view.background(.black)
+            } else {
+              view
+            }
+          })
           .ignoresSafeArea()
         }
       }
