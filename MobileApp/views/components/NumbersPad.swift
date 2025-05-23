@@ -179,7 +179,9 @@ private struct NumberPadButton: View {
     return self.puzzle.isNoteToggled(value: self.number, at: self.game.cursorLocation)
   }
   
-  var isDisabled: Bool { !self.isPressable || self.isNumberUsedUp }
+  var isDisabled: Bool {
+    !self.isPressable || self.isNumberUsedUp
+  }
   
   var body: some View {
     Button("\(self.number)", action: self.onPress)

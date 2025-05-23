@@ -47,6 +47,10 @@ private struct EraseButtonContent: View {
   private func onEraseKeyPress() {
     self.eraseKeyVibrator.impactOccurred()
     self.gameScene.clearActivatedNumberCellValueAndNotes()
+
+    // Forces the number pad to update. E.g. Resolves an issue where
+    // when you enter a number, change to notes, press delete, it wouldn't reactive the number pad on the cell.
+    self.gameScene.cursorState.objectWillChange.send()
   }
   
   var body: some View {
