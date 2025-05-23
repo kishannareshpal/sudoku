@@ -258,7 +258,7 @@ class SaveGameEntityService {
       movesNotation: serializedEmptyMovesNotation,
       score: 0,
       duration: 0,
-      moveIndex: 0
+      moveIndex: -1
     )
     
     // Sync with the cloud asynchronously

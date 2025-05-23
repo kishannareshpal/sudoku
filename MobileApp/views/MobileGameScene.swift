@@ -52,7 +52,6 @@ class MobileGameScene: GameScene {
     guard let touch = touches.first else { return }
     let touchLocation = touch.location(in: self)
     
-    
     self.registerCursorChange(
       whenTouchedOrHoveredAt: touchLocation,
       forceLocationChanged: true
@@ -78,11 +77,13 @@ class MobileGameScene: GameScene {
   
   @available(iOS 17.0, *)
   func keyPressed(_ keyPress: KeyPress) -> KeyPress.Result {
+    // Enter a number or a note
     if self.isNumberKey(keyPress.characters) {
-      
       let number = Int(keyPress.characters)!
 
       if keyPress.modifiers.contains(.shift) && self.cursorState.mode == .number {
+        // SHIFT + <NUM>
+        
         // If in numbers mode, and the user is holding the Shift key, insert a note instead.
         self.toggleActivatedNumberCellNoteValue(with: number)
       } else {
@@ -93,11 +94,18 @@ class MobileGameScene: GameScene {
       return .handled
     }
     
-    if keyPress.key == .delete || keyPress.key == .delete || keyPress.key == .clear || keyPress.characters == "0" {
+    // Clear
+    if (
+      keyPress.key == .delete
+        || keyPress.key == .delete
+        || keyPress.key == .clear
+        || keyPress.characters == "0"
+    ) {
       self.clearActivatedNumberCellValueAndNotes()
       return .handled
     }
     
+    // Toggle cursor mode
     if keyPress.key == .space {
       withAnimation(.smooth) {
         self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
