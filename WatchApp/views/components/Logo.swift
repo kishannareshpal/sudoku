@@ -12,8 +12,13 @@ struct Logo: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: -8) {
-      Text("Mini").font(.system(size: 18, weight: .bold).italic())
+      Text("Mini")
+        .font(.system(size: 18, weight: .bold).italic())
+        .lineLimit(1)
+        .minimumScaleFactor(0.1)
       Text("SUDOKU")
+        .lineLimit(1)
+        .minimumScaleFactor(0.1)
     }
     .font(.system(size: 24, weight: .black).italic())
     .foregroundStyle(Color(self.currentColorScheme.board.cell.text.player.valid))

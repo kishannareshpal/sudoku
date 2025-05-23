@@ -113,7 +113,9 @@ struct ContinueGameButton: View {
             Text(
               "Played for: \(GameDurationHelper.format(Int(activeLocalSaveGame.durationInSeconds), pretty: true))"
             )
+            .lineLimit(1)
             .font(.system(size: 12, weight: .regular))
+            .minimumScaleFactor(0.1)
             .apply { view in
               if #available(watchOS 9.0, *) {
                 view.contentTransition(.numericText())
@@ -133,6 +135,8 @@ struct ContinueGameButton: View {
             .foregroundStyle(
               Color(currentColorScheme.board.cell.text.player.valid)
             )
+            .lineLimit(1)
+            .minimumScaleFactor(0.1)
         }.scaledToFit()
         
         Spacer().frame(width: 24)

@@ -75,11 +75,12 @@ struct HomeScreen: View {
       ScrollView {
         VStack(spacing: 48) {
           VStack(spacing: -50) {
-            Text("SUD")
-            Text("OKU")
+            Text("SUD").lineLimit(1)
+            Text("OKU").lineLimit(1)
           }
           .font(.system(size: 140, weight: .black).italic())
           .foregroundStyle(Color(self.styleManager.colorScheme.board.cell.text.player.valid))
+          .minimumScaleFactor(0.1)
           
           if loadingNewGameForDifficulty == nil {
             ContinueGameSection(
