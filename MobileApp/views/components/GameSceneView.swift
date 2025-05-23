@@ -46,6 +46,19 @@ private struct GameSceneViewContent: View {
               .focusable()
               .focusEffectDisabled(self.gameState.isGamePaused)
               .onKeyPress(phases: .down, action: self.gameScene.keyPressed)
+              .apply { view in
+                if #available(iOS 17.5, *) {
+                  view.onPencilSqueeze { phase in
+                    switch phase {
+                    case .ended:
+                      self.gameScene.cursorState.toggleMode()
+                      break
+                    default:
+                      break
+                    }
+                  }
+                }
+              }
           } else {
             view
           }

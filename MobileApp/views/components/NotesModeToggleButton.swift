@@ -53,9 +53,7 @@ struct NotesModeToggleButtonContent: View {
         view
           .focusable()
           .onKeyPress(keys: [.space, .return], phases: .down, action: { keyPress in
-            withAnimation(.smooth) {
-              self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
-            }
+            self.cursorState.toggleMode()
             return .handled
           })
           .focusEffectDisabled(!self.isNotesModeToggleable)

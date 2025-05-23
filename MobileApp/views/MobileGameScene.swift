@@ -107,9 +107,7 @@ class MobileGameScene: GameScene {
     
     // Toggle cursor mode
     if keyPress.key == .space {
-      withAnimation(.smooth) {
-        self.cursorState.mode = self.cursorState.mode == .number ? .note : .number
-      }
+      self.cursorState.toggleMode()
       return .handled
     }
     
