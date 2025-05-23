@@ -105,6 +105,44 @@ class MobileGameScene: GameScene {
       return .handled
     }
     
+    // Hint
+    if keyPress.characters == "h" {
+      self.game.solveActivatedNumberCell()
+      return .handled
+    }
+    
+    // Undo / Redo
+    if keyPress.characters == "z" || keyPress.characters == "y" {
+      switch keyPress.characters {
+      case "z":
+        if keyPress.modifiers.contains(.command) || keyPress.modifiers.contains(.control) {
+          if keyPress.modifiers.contains(.shift) {
+            // CMD/CTRL + SHIFT + Z
+            // Redo
+            self.game.redoLastMove()
+          } else {
+            // CMD/CTRL + Z
+            // Undo
+            self.game.undoLastMove()
+          }
+        }
+        
+      case "y":
+        // Not a standard in Apple ecosystem as it prefers CMD+SHIFT+Z instead.
+        // However it is a standard in the Windows ecosystem, so just for fun
+        if keyPress.modifiers.contains(.command) || keyPress.modifiers.contains(.control) {
+          // CMD/CTRL + Y
+          // Redo
+          self.game.redoLastMove()
+        }
+        
+      default:
+        break
+      }
+      return .handled
+    }
+    
+    // Cursor movement
     if (
       keyPress.key == .upArrow
         || keyPress.key == .downArrow
