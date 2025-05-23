@@ -23,10 +23,36 @@ class AppDataProvider: ObservableObject {
     
     container.loadPersistentStores { storeDescription, error in
       if let error {
-        fatalError("Core Data failed to load \(error.localizedDescription)")
+        // Check if the error is related to migration
+        print("Failed to load Core Data. Probably due to migration error. Attempting to reset the store.")
+        self.deletePersistentStore(at: storeDescription.url)
+        
+        // Attempt to reload the persistent store
+        self.container.loadPersistentStores { retryStoreDescription, retryError in
+          if let retryError = retryError {
+            fatalError("Core Data failed to load even after deletion \(retryError.localizedDescription)")
+          } else {
+            print("Core Data successfully reloaded after deletion. \(error.localizedDescription)")
+          }
+        }
       }
     }
     
     container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
   }
+  
+  private func deletePersistentStore(at url: URL?) {
+      guard let url = url else {
+        print("Persistent store URL is nil, cannot delete.")
+        return
+      }
+      
+      let fileManager = FileManager.default
+      do {
+        try fileManager.removeItem(at: url)
+        print("Persistent store successfully deleted at \(url).")
+      } catch {
+        print("Failed to delete persistent store at \(url): \(error.localizedDescription)")
+      }
+    }
 }

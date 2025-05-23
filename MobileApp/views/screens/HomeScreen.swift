@@ -181,9 +181,14 @@ struct HomeScreen: View {
         }
         .padding()
         .padding(.vertical, 32)
+        .padding(.bottom, 42)
       }
       .apply { view in
-        if #available(iOS 16.0, *) {
+        if #available(iOS 18.0, *) {
+          view
+            .scrollIndicators(.hidden)
+            .defaultScrollAnchor(.center, for: .alignment)
+        } else if #available(iOS 16.0, *) {
           view.scrollIndicators(.hidden)
         } else {
           view
