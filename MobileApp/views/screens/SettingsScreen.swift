@@ -15,7 +15,7 @@ struct SettingsScreen: View {
 
   @AppStorage(
     UserDefaultKey.startGameInNotesMode.rawValue
-  ) private var startGameInNotesMode: Bool = true
+  ) private var startGameInNotesMode: Bool = false
   
   @AppStorage(
     UserDefaultKey.autoRemoveNotes.rawValue

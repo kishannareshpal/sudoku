@@ -55,7 +55,7 @@ public class AppConfig {
   }
   
   static func prefersStartingInNotesMode() -> Bool {
-    UserDefaults.standard.register(defaults: [UserDefaultKey.startGameInNotesMode.rawValue: true])
+    UserDefaults.standard.register(defaults: [UserDefaultKey.startGameInNotesMode.rawValue: false])
 
     return UserDefaults.standard.bool(
       forKey: UserDefaultKey.startGameInNotesMode.rawValue,
