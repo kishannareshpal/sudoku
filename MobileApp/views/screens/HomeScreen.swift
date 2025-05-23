@@ -19,6 +19,8 @@ struct HomeScreen: View {
   @State private var newGameConfirmed: Bool = false
   @State private var loadingNewGameForDifficulty: Difficulty? = nil
 
+  @State private var diyScanAndPlayShowing: Bool = false
+
   @FetchRequest(
     fetchRequest:
       FetchRequestHelper.buildFetchRequest(
@@ -66,22 +68,9 @@ struct HomeScreen: View {
   
   var body: some View {
     ZStack {
-      Color(
-        self.styleManager.colorScheme.mode == .dark ? (
-          self.styleManager.colorScheme.ui.game.control.numpad.button.selected.background
-        ) : (
-          self.styleManager.colorScheme.ui.game.background
-        )
+      ScreenBackgroundColor(
+        currentColorScheme: self.styleManager.colorScheme
       )
-      .opacity(self.styleManager.colorScheme.mode == .dark ? 0.1 : 1)
-      .apply({ view in
-        if self.styleManager.colorScheme.mode == .dark {
-          view.background(.black)
-        } else {
-          view
-        }
-      })
-      .ignoresSafeArea()
 
       ScrollView {
         VStack(spacing: 48) {
@@ -96,6 +85,15 @@ struct HomeScreen: View {
             ContinueGameSection(
               syncManager: self.syncManager
             )
+          }
+          
+          Button(action: {
+            self.diyScanAndPlayShowing.toggle()
+          }) {
+            Text("Scan and Play")
+          }
+          .fullScreenCover(isPresented: self.$diyScanAndPlayShowing) {
+            DiyScanScreen()
           }
           
           VStack(spacing: 12) {
