@@ -60,7 +60,22 @@ struct SettingsScreen: View {
             }
           }
           .listRowBackground(
-            Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background)
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              )
+            )
+          )
+          .foregroundStyle(
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              )
+            )
           )
           
           Section(
@@ -79,7 +94,22 @@ struct SettingsScreen: View {
             }
           }
           .listRowBackground(
-            Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background)
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              )
+            )
+          )
+          .foregroundStyle(
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              )
+            )
           )
           
           Section {
@@ -107,7 +137,22 @@ struct SettingsScreen: View {
             }
           }
           .listRowBackground(
-            Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background)
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              )
+            )
+          )
+          .foregroundStyle(
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              )
+            )
           )
 
           Section {
@@ -130,7 +175,22 @@ struct SettingsScreen: View {
             }
           }
           .listRowBackground(
-            Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background)
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              )
+            )
+          )
+          .foregroundStyle(
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              )
+            )
           )
           
           Section(
@@ -140,7 +200,22 @@ struct SettingsScreen: View {
             Link("sudoku@kishanjadav.com", destination: URL(string: "mailto:sudoku@kishanjadav.com")!)
           }
           .listRowBackground(
-            Color(self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background)
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              )
+            )
+          )
+          .foregroundStyle(
+            Color(
+              self.styleManager.colorScheme.mode == .dark ? (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.text
+              ) : (
+                self.styleManager.colorScheme.ui.game.control.numpad.button.normal.background
+              )
+            )
           )
         }
         .apply({ view in
