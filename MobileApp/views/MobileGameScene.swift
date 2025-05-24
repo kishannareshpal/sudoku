@@ -80,8 +80,8 @@ class MobileGameScene: GameScene {
     // Enter a number or a note
     if self.isNumberKey(keyPress.characters) {
       let number = Int(keyPress.characters)!
-
-      if keyPress.modifiers.contains(.shift) && self.cursorState.mode == .number {
+      
+      if keyPress.modifiers == .shift && self.cursorState.mode == .number {
         // SHIFT + <NUM>
         
         // If in numbers mode, and the user is holding the Shift key, insert a note instead.
@@ -97,17 +97,11 @@ class MobileGameScene: GameScene {
     // Clear
     if (
       keyPress.key == .delete
-        || keyPress.key == .delete
-        || keyPress.key == .clear
-        || keyPress.characters == "0"
+      || keyPress.key == .delete
+      || keyPress.key == .clear
+      || keyPress.characters == "0"
     ) {
       self.clearActivatedNumberCellValueAndNotes()
-      return .handled
-    }
-    
-    // Toggle cursor mode
-    if keyPress.key == .space {
-      self.cursorState.toggleMode()
       return .handled
     }
     
@@ -121,22 +115,26 @@ class MobileGameScene: GameScene {
     if keyPress.characters == "z" || keyPress.characters == "y" {
       switch keyPress.characters {
       case "z":
-        if keyPress.modifiers.contains(.command) || keyPress.modifiers.contains(.control) {
-          if keyPress.modifiers.contains(.shift) {
-            // CMD/CTRL + SHIFT + Z
-            // Redo
-            self.game.redoLastMove()
-          } else {
-            // CMD/CTRL + Z
-            // Undo
-            self.game.undoLastMove()
-          }
+        if (
+          keyPress.modifiers == .command
+            || keyPress.modifiers == .control
+        ) {
+          // CMD/CTRL + SHIFT + Z
+          // Redo
+          self.game.redoLastMove()
+        } else {
+          // CMD/CTRL + Z
+          // Undo
+          self.game.undoLastMove()
         }
         
       case "y":
         // Not a standard in Apple ecosystem as it prefers CMD+SHIFT+Z instead.
         // However it is a standard in the Windows ecosystem, so just for fun
-        if keyPress.modifiers.contains(.command) || keyPress.modifiers.contains(.control) {
+        if (
+          keyPress.modifiers == .command
+            || keyPress.modifiers == .control
+        ) {
           // CMD/CTRL + Y
           // Redo
           self.game.redoLastMove()
@@ -197,6 +195,12 @@ class MobileGameScene: GameScene {
         to: self.game.cursorLocation,
         activateCellImmediately: true
       )
+      return .handled
+    }
+    
+    // Toggle cursor mode
+    if keyPress.key == .space || keyPress.key == .return {
+      self.cursorState.toggleMode()
       return .handled
     }
     

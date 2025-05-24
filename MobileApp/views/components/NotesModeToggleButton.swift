@@ -52,11 +52,11 @@ struct NotesModeToggleButtonContent: View {
       if #available(iOS 17.0, *) {
         view
           .focusable()
+          .focusEffectDisabled(!self.isNotesModeToggleable)
           .onKeyPress(keys: [.space, .return], phases: .down, action: { keyPress in
             self.cursorState.toggleMode()
             return .handled
           })
-          .focusEffectDisabled(!self.isNotesModeToggleable)
       } else {
         view
       }
