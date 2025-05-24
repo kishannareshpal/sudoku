@@ -135,17 +135,21 @@ struct ContinueGameButton: View {
             .foregroundStyle(
               Color(currentColorScheme.board.cell.text.player.valid)
             )
+            .scaledToFill()
             .lineLimit(1)
             .minimumScaleFactor(0.1)
-        }.scaledToFit()
+        }
+        .layoutPriority(1)
         
-        Spacer().frame(width: 24)
+        Spacer()
+          .frame(minWidth: 6)
         
         Image(systemName: "play.circle.fill")
           .font(.system(size: 28))
           .foregroundStyle(
             Color(currentColorScheme.board.cell.text.player.valid)
           )
+          .scaledToFit()
       }
     }
     .disabled(!self.isEnabled)
