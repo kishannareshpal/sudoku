@@ -66,35 +66,8 @@ struct HomeScreen: View {
   
   var body: some View {
     ZStack {
-      if self.styleManager.colorScheme.mode == .light {
-        LinearGradient(
-          gradient: Gradient(stops: [
-            .init(color: Color(UIColor("#C2C2C2")), location: 0.01),
-            .init(color: Color(self.styleManager.colorScheme.ui.game.background), location: 1.0)
-          ]),
-          startPoint: .topTrailing,
-          endPoint: .bottom
-        )
+      ScreenBackgroundColor(currentColorScheme: self.styleManager.colorScheme)
         .ignoresSafeArea()
-        
-      } else {
-        Color(
-          self.styleManager.colorScheme.mode == .dark ? (
-            self.styleManager.colorScheme.ui.game.control.numpad.button.selected.background
-          ) : (
-            self.styleManager.colorScheme.ui.game.background
-          )
-        )
-        .opacity(self.styleManager.colorScheme.mode == .dark ? 0.1 : 1)
-        .apply({ view in
-          if self.styleManager.colorScheme.mode == .dark {
-            view.background(.black)
-          } else {
-            view
-          }
-        })
-        .ignoresSafeArea()
-      }
       
       VStack {
         List {
@@ -173,7 +146,9 @@ struct HomeScreen: View {
           Section() {
             NavigationLink(
               destination:
-                SettingsScreen(styleManager: self.styleManager)
+                SettingsScreen(
+                  styleManager: self.styleManager
+                )
             ) {
               Button(
                 action: {},
@@ -190,6 +165,17 @@ struct HomeScreen: View {
             )
           }
         }
+      }
+    }
+    .apply { view in
+      if #available(watchOS 9.0, *) {
+        view
+          .toolbarColorScheme(
+            self.styleManager.colorScheme.mode == .light ? .light : .dark,
+            for: .automatic
+          )
+      } else {
+        view
       }
     }
     .overlay {

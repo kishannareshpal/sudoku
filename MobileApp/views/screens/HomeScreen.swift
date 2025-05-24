@@ -88,15 +88,6 @@ struct HomeScreen: View {
             )
           }
           
-          Button(action: {
-            self.diyScanAndPlayShowing.toggle()
-          }) {
-            Text("Scan and Play")
-          }
-          .fullScreenCover(isPresented: self.$diyScanAndPlayShowing) {
-            DiyScanScreen()
-          }
-          
           VStack(spacing: 12) {
             Text("Start a new game:")
               .fontWeight(.bold)

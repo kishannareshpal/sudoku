@@ -23,37 +23,9 @@ struct GameScreen: View {
   
   var body: some View {
     GeometryReader { geometry in
-      Group {
-        if self.currentColorScheme.mode == .light {
-          LinearGradient(
-            gradient: Gradient(stops: [
-              .init(color: Color(UIColor("#C2C2C2")), location: 0.01),
-              .init(color: Color(self.currentColorScheme.ui.game.background), location: 1.0)
-            ]),
-            startPoint: .topTrailing,
-            endPoint: .bottom
-          )
-          .ignoresSafeArea()
-          
-        } else {
-          Color(
-            self.currentColorScheme.mode == .dark ? (
-              self.currentColorScheme.ui.game.control.numpad.button.selected.background
-            ) : (
-              self.currentColorScheme.ui.game.background
-            )
-          )
-          .opacity(self.currentColorScheme.mode == .dark ? 0.1 : 1)
-          .apply({ view in
-            if self.currentColorScheme.mode == .dark {
-              view.background(.black)
-            } else {
-              view
-            }
-          })
-          .ignoresSafeArea()
-        }
-      }
+      ScreenBackgroundColor(
+        currentColorScheme: self.currentColorScheme
+      )
       .onAppear() {
         self.gameScene.resize(size: geometry.size)
       }
@@ -82,6 +54,17 @@ struct GameScreen: View {
       .ignoresSafeArea(
         edges: [.top]
       )
+    }
+    .apply { view in
+      if #available(watchOS 9.0, *) {
+        view
+          .toolbarColorScheme(
+            self.currentColorScheme.mode == .light ? .light : .dark,
+            for: .automatic
+          )
+      } else {
+        view
+      }
     }
     .overlay {
       GameOverOverlay(

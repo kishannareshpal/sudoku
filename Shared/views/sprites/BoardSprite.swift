@@ -60,10 +60,10 @@ class BoardSprite: SKSpriteNode {
     let outerLineWidth = 2
     context.setLineWidth(outerLineWidth.toDouble())
     let outerRect = CGRect(
-      x: outerLineWidth,
-      y: outerLineWidth,
-      width: context.width - (outerLineWidth * 2),
-      height: context.height - (outerLineWidth * 2)
+      x: outerLineWidth / 2,
+      y: outerLineWidth / 2,
+      width: context.width - outerLineWidth,
+      height: context.height - outerLineWidth
     )
     context.stroke(outerRect)
     context.strokePath()

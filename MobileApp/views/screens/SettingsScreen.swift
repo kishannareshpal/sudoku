@@ -219,7 +219,7 @@ struct SettingsScreen: View {
           )
         }
         .apply({ view in
-          if #available(iOS 16.0, *) {
+          if #available(iOS 16.0, *) {      
             view.scrollContentBackground(.hidden)
           } else {
             view
