@@ -41,20 +41,22 @@ class MobileGameScene: GameScene {
     self.lastCursorLocation = self.game.cursorLocation
   }
 
+  // MARK: - Touch events
+
   override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard let touch = touches.first else { return }
-    let touchLocation = touch.location(in: self)
+    let touchPosition = touch.location(in: self)
     
-    self.registerCursorChange(whenTouchedOrHoveredAt: touchLocation)
+    self.registerCursorChange(whenTouchedOrHoveredAt: touchPosition)
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard let touch = touches.first else { return }
-    let touchLocation = touch.location(in: self)
+    let touchPosition = touch.location(in: self)
     
     self.registerCursorChange(
-      whenTouchedOrHoveredAt: touchLocation,
-      forceLocationChanged: true
+      whenTouchedOrHoveredAt: touchPosition,
+      forceChange: true
     )
   }
   
@@ -66,10 +68,10 @@ class MobileGameScene: GameScene {
     
     switch phase {
     case .active(let rawLocation):
-      let hoveredLocation = convertPoint(fromView: rawLocation)
+      let hoverPosition = convertPoint(fromView: rawLocation)
 
       self.registerCursorChange(
-        whenTouchedOrHoveredAt: hoveredLocation
+        whenTouchedOrHoveredAt: hoverPosition
       )
     case .ended: break
     }
@@ -83,7 +85,6 @@ class MobileGameScene: GameScene {
       
       if keyPress.modifiers == .shift && self.cursorState.mode == .number {
         // SHIFT + <NUM>
-        
         // If in numbers mode, and the user is holding the Shift key, insert a note instead.
         self.toggleActivatedNumberCellNoteValue(with: number)
       } else {
@@ -215,40 +216,49 @@ class MobileGameScene: GameScene {
     }
   }
   
+  /// Register a cursor movement based on a point.
+  ///
+  /// - Parameters:
+  ///   - position: The point to move the cursor to as it will determine the cell to select underneath it.
+  ///   - forceChange: Whether or not to treat this as a change, regardless of selecting the same cell.
+  ///                  If set to false, selecting the same cell will not have any side-effects like vibration.
+  ///                  Default: nil – meaning: Does not force by default.
   private func registerCursorChange(
-    whenTouchedOrHoveredAt location: CGPoint,
-    forceLocationChanged: Bool? = nil
-  ) {
-    // Retrieve all nodes at the location, and iterate through each one that is a cell node
-    let nodesAtTouchLocation = self.nodes(at: location)
+    whenTouchedOrHoveredAt touchOrHoverPosition: CGPoint,
+    forceChange: Bool? = nil
+  ) -> Void {
+    let potentialNumberCellLocation = self.getNumberCellLocationAt(touchOrHoverPosition)
+    
+    guard let cellLocation = potentialNumberCellLocation else {
+      return
+    }
+
+    let hasCursorLocationChanged = cellLocation != self.lastCursorLocation
+    if !hasCursorLocationChanged && forceChange != true {
+      return
+    }
+
+    self.game.moveCursor(
+      to: cellLocation,
+      activateCellImmediately: true
+    )
+
+    self.lastCursorLocation = cellLocation
+    if forceChange != false {
+      self.onCursorLocationChanged()
+    }
+  }
+  
+  private func getNumberCellLocationAt(_ position: CGPoint) -> Location? {
+    let nodesAtTouchLocation = self.nodes(at: position)
     for node in nodesAtTouchLocation {
       guard let nodeName = node.name else { continue }
       guard Location.validateNotationFormat(nodeName) else { continue }
       
-      // Cell nodes have their names as their location in notation format
-      let newCursorLocation = Location(notation: nodeName)
-      guard newCursorLocation != self.lastCursorLocation else {
-        continue
-      }
-      
-      self.game.moveCursor(
-        to: newCursorLocation,
-        activateCellImmediately: true
-      )
-
-      if (forceLocationChanged == nil) {
-        // Determine change automatically
-        let hasCursorLocationChanged = newCursorLocation != self.lastCursorLocation
-        if hasCursorLocationChanged {
-          self.lastCursorLocation = newCursorLocation
-          self.onCursorLocationChanged()
-        }
-        
-      } else if (forceLocationChanged == true) {
-        // Change should be detected forcefully
-        self.onCursorLocationChanged()
-      }
+      return Location(notation: nodeName)
     }
+
+    return nil
   }
   
   private func onCursorLocationChanged() {

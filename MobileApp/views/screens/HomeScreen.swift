@@ -146,11 +146,11 @@ struct HomeScreen: View {
                   }
                 }
               }
-              .confirmationDialog(
-                "Start a new game?",
-                isPresented: $newGameConfirmationShowing,
-                titleVisibility: .visible
-              ) {
+            }
+            .alert(
+              "Start a new game",
+              isPresented: $newGameConfirmationShowing,
+              actions: {
                 Button("Cancel", role: .cancel) {
                   self.newGameConfirmationDifficulty = nil
                 }
@@ -160,13 +160,14 @@ struct HomeScreen: View {
                     confirmed: true
                   )
                 }
-    
-              } message: {
+                
+              },
+              message: {
                 Text(
                   "Starting a new game will erase your current progress. Proceed?"
                 )
               }
-            }
+            )
             .frame(maxWidth: 400)
           }
           .frame(minWidth: 0, maxWidth: .infinity)

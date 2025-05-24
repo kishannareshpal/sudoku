@@ -230,7 +230,7 @@ struct ContinueGameButton: View {
 
     } message: {
       Text(
-        "Restarting will erase your previous progress. Proceed?"
+        "Restarting will erase your current progress. Proceed?"
       )
     }
     .hoverEffect(.highlight)
