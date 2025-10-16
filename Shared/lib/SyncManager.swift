@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 class SyncManager: ObservableObject {
   enum SyncStatus: Equatable {

@@ -5,7 +5,7 @@
 //  Created by Kishan Jadav on 08/01/2023.
 //
 
-import SwiftUICore
+import SwiftUI
 import SpriteKit
 import UIColorHexSwift
 

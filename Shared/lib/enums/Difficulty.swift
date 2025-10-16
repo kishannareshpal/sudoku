@@ -5,7 +5,7 @@
 //  Created by Kishan Jadav on 18/04/2022.
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// Difficulty of a playing game
 public enum Difficulty: String, CaseIterable, Identifiable, Codable {

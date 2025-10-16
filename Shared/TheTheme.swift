@@ -5,7 +5,7 @@
 //  Created by Kishan Jadav on 24/08/2024.
 //
 
-import SwiftUICore
+import SwiftUI
 import UIKit.UIColor
 import UIColorHexSwift
 
