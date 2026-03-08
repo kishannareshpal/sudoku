@@ -31,6 +31,7 @@ struct AppNavigationStack<Content: View>: View {
       .tint(
         Color(self.currentColorScheme.board.cell.text.player.valid)
       )
+      .preferredColorScheme(.light)
     }
   }
 }

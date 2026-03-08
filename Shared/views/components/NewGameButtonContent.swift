@@ -25,6 +25,7 @@ struct NewGameButtonContent: View {
           ProgressView()
             .frame(width: 18, height: 18)
             .progressViewStyle(.circular)
+            .glassEffect()
 
         } else {
           Image(systemName: "plus")
